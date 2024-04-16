@@ -8,10 +8,7 @@
 import SwiftUI
 
 public struct RegEmailView: View {
-    public init() {
-        
-    }
-    
+    public init() { }
     
     public var body: some View {
         VStack(alignment: .leading, spacing: 10) {
