@@ -1,11 +1,13 @@
 import SwiftUI
+import Authorization
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Text("Hello, world!")
-        }
-        .padding()
+        RegEmailView()
+//        EntryPointView()
+//            .background(.white)
+//            .edgesIgnoringSafeArea(.all)
+        
     }
 }
 
