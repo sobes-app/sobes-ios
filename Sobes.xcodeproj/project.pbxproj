@@ -1,0 +1,416 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7FF03488FC3A5564B68E6E /* Media.xcassets */; };
+		323FF5DB2C45B16EBB0002CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF46344658ABC2FD254BED77 /* ContentView.swift */; };
+		6F382E0557D9704D1522BB20 /* SobesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BC15B7AEE733B31130AE65 /* SobesApp.swift */; };
+		9EC70BF7D942830F831516E0 /* TuistAssets+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9CD791A8619AA6C2F195BA /* TuistAssets+Sobes.swift */; };
+		F39C8251D0D1F1D4110F9E58 /* Authorization in Frameworks */ = {isa = PBXBuildFile; productRef = FC26DF8BBF38D7FC04EF7C17 /* Authorization */; };
+		F5EAFD9CBDA1B3243CE71DC1 /* TuistBundle+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB50BB33AB3D2F382AAFAC22 /* TuistBundle+Sobes.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		545BD0E2939DB14804AFD4D6 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		308FAA419A3AF3827A2BFDF9 /* Sobes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobes.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		73BC15B7AEE733B31130AE65 /* SobesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SobesApp.swift; sourceTree = "<group>"; };
+		B1B962421BB71F10ECD6DC02 /* Sobes-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Sobes-Info.plist"; sourceTree = "<group>"; };
+		BF46344658ABC2FD254BED77 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		CB50BB33AB3D2F382AAFAC22 /* TuistBundle+Sobes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistBundle+Sobes.swift"; sourceTree = "<group>"; };
+		CB7FF03488FC3A5564B68E6E /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		CC9CD791A8619AA6C2F195BA /* TuistAssets+Sobes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistAssets+Sobes.swift"; sourceTree = "<group>"; };
+		E436B704D2E1609F0162A2DB /* Authorization */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Authorization; path = Sobes/Libraries/Authorization; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EFCB803DA3B583EC07EF99DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F39C8251D0D1F1D4110F9E58 /* Authorization in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3BE4383E0FB230B491613722 /* InfoPlists */ = {
+			isa = PBXGroup;
+			children = (
+				B1B962421BB71F10ECD6DC02 /* Sobes-Info.plist */,
+			);
+			path = InfoPlists;
+			sourceTree = "<group>";
+		};
+		633E0B5AD19666F57FF3254D /* Sobes */ = {
+			isa = PBXGroup;
+			children = (
+				7200855899902B5C8E351F3E /* Resources */,
+				BE2CE8B267D8CFFF4CC19627 /* Sources */,
+			);
+			path = Sobes;
+			sourceTree = "<group>";
+		};
+		7200855899902B5C8E351F3E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CB7FF03488FC3A5564B68E6E /* Media.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		720B1E35ED662266430FCE19 = {
+			isa = PBXGroup;
+			children = (
+				DE64F142281DCAA9CB37CA9E /* Project */,
+				CAEAB2C2BF0DD83C38196ECF /* Products */,
+				B71E3A24B7FA6386E95EC181 /* Packages */,
+			);
+			sourceTree = "<group>";
+		};
+		A3B3AED4B4450A81D4F7FA1B /* Derived */ = {
+			isa = PBXGroup;
+			children = (
+				3BE4383E0FB230B491613722 /* InfoPlists */,
+				DAE833DDD5770798D1AAD0C8 /* Sources */,
+			);
+			path = Derived;
+			sourceTree = "<group>";
+		};
+		B71E3A24B7FA6386E95EC181 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				E436B704D2E1609F0162A2DB /* Authorization */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		BE2CE8B267D8CFFF4CC19627 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				BF46344658ABC2FD254BED77 /* ContentView.swift */,
+				73BC15B7AEE733B31130AE65 /* SobesApp.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		CAEAB2C2BF0DD83C38196ECF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				308FAA419A3AF3827A2BFDF9 /* Sobes.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DAE833DDD5770798D1AAD0C8 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				CC9CD791A8619AA6C2F195BA /* TuistAssets+Sobes.swift */,
+				CB50BB33AB3D2F382AAFAC22 /* TuistBundle+Sobes.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		DE64F142281DCAA9CB37CA9E /* Project */ = {
+			isa = PBXGroup;
+			children = (
+				A3B3AED4B4450A81D4F7FA1B /* Derived */,
+				633E0B5AD19666F57FF3254D /* Sobes */,
+			);
+			name = Project;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		41533BAA324D0D28236ACBA1 /* Sobes */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 709541B4DDE51A313897C17F /* Build configuration list for PBXNativeTarget "Sobes" */;
+			buildPhases = (
+				1CF99AD25B155FE895CDE27D /* Sources */,
+				C6EFEAC3C89ACDBCE9AE7ED3 /* Resources */,
+				545BD0E2939DB14804AFD4D6 /* Embed Frameworks */,
+				EFCB803DA3B583EC07EF99DD /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Sobes;
+			packageProductDependencies = (
+				FC26DF8BBF38D7FC04EF7C17 /* Authorization */,
+			);
+			productName = Sobes;
+			productReference = 308FAA419A3AF3827A2BFDF9 /* Sobes.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0B6A1E3886B9A35215D909F5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				ORGANIZATIONNAME = FCS;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 1AD83AFD799ED8F09B299CBE /* Build configuration list for PBXProject "Sobes" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 720B1E35ED662266430FCE19;
+			productRefGroup = CAEAB2C2BF0DD83C38196ECF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				41533BAA324D0D28236ACBA1 /* Sobes */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C6EFEAC3C89ACDBCE9AE7ED3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1CF99AD25B155FE895CDE27D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9EC70BF7D942830F831516E0 /* TuistAssets+Sobes.swift in Sources */,
+				F5EAFD9CBDA1B3243CE71DC1 /* TuistBundle+Sobes.swift in Sources */,
+				323FF5DB2C45B16EBB0002CE /* ContentView.swift in Sources */,
+				6F382E0557D9704D1522BB20 /* SobesApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		083595EFCD9C39A1BB0F8F4C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1EC7890ACE92473D45F9ACEA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Derived/InfoPlists/Sobes-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = FCS.Sobes;
+				PRODUCT_NAME = Sobes;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+					"$(inherited)",
+					DEBUG,
+				);
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		26B9A8D84BA80402F2FB7CC1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F32E4D2D2EFD0DD296AA112B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = "Derived/InfoPlists/Sobes-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = FCS.Sobes;
+				PRODUCT_NAME = Sobes;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1AD83AFD799ED8F09B299CBE /* Build configuration list for PBXProject "Sobes" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				26B9A8D84BA80402F2FB7CC1 /* Debug */,
+				083595EFCD9C39A1BB0F8F4C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		709541B4DDE51A313897C17F /* Build configuration list for PBXNativeTarget "Sobes" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1EC7890ACE92473D45F9ACEA /* Debug */,
+				F32E4D2D2EFD0DD296AA112B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FC26DF8BBF38D7FC04EF7C17 /* Authorization */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Authorization;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 0B6A1E3886B9A35215D909F5 /* Project object */;
+}
