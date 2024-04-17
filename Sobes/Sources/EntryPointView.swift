@@ -1,11 +1,3 @@
-//
-//  SwiftUIView.swift
-//  Sobes
-//
-//  Created by Алиса Вышегородцева on 16.04.2024.
-//  Copyright © 2024 FCS. All rights reserved.
-//
-
 import SwiftUI
 
 struct EntryPointView: View {
