@@ -3,12 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7FF03488FC3A5564B68E6E /* Media.xcassets */; };
 		323FF5DB2C45B16EBB0002CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF46344658ABC2FD254BED77 /* ContentView.swift */; };
+		48470A712BCF0D970083FC68 /* EntryPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48470A702BCF0D970083FC68 /* EntryPointView.swift */; };
+		48470A752BCF11C20083FC68 /* CoFoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 48470A732BCF11C20083FC68 /* CoFoSans-Bold.ttf */; };
+		48470A762BCF11C20083FC68 /* CoFoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 48470A742BCF11C20083FC68 /* CoFoSans-Regular.ttf */; };
 		6F382E0557D9704D1522BB20 /* SobesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BC15B7AEE733B31130AE65 /* SobesApp.swift */; };
 		9EC70BF7D942830F831516E0 /* TuistAssets+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9CD791A8619AA6C2F195BA /* TuistAssets+Sobes.swift */; };
 		F39C8251D0D1F1D4110F9E58 /* Authorization in Frameworks */ = {isa = PBXBuildFile; productRef = FC26DF8BBF38D7FC04EF7C17 /* Authorization */; };
@@ -30,6 +33,9 @@
 
 /* Begin PBXFileReference section */
 		308FAA419A3AF3827A2BFDF9 /* Sobes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobes.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		48470A702BCF0D970083FC68 /* EntryPointView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryPointView.swift; sourceTree = "<group>"; };
+		48470A732BCF11C20083FC68 /* CoFoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CoFoSans-Bold.ttf"; sourceTree = "<group>"; };
+		48470A742BCF11C20083FC68 /* CoFoSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CoFoSans-Regular.ttf"; sourceTree = "<group>"; };
 		73BC15B7AEE733B31130AE65 /* SobesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SobesApp.swift; sourceTree = "<group>"; };
 		B1B962421BB71F10ECD6DC02 /* Sobes-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Sobes-Info.plist"; sourceTree = "<group>"; };
 		BF46344658ABC2FD254BED77 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -59,6 +65,22 @@
 			path = InfoPlists;
 			sourceTree = "<group>";
 		};
+		48470A722BCF110D0083FC68 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				48470A732BCF11C20083FC68 /* CoFoSans-Bold.ttf */,
+				48470A742BCF11C20083FC68 /* CoFoSans-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		617D91222A1F96274994A73F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		633E0B5AD19666F57FF3254D /* Sobes */ = {
 			isa = PBXGroup;
 			children = (
@@ -71,6 +93,7 @@
 		7200855899902B5C8E351F3E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				48470A722BCF110D0083FC68 /* Fonts */,
 				CB7FF03488FC3A5564B68E6E /* Media.xcassets */,
 			);
 			path = Resources;
@@ -80,9 +103,18 @@
 			isa = PBXGroup;
 			children = (
 				DE64F142281DCAA9CB37CA9E /* Project */,
+				617D91222A1F96274994A73F /* Frameworks */,
+				85A194BA7C2EC45672C8F3EA /* Cache */,
 				CAEAB2C2BF0DD83C38196ECF /* Products */,
 				B71E3A24B7FA6386E95EC181 /* Packages */,
 			);
+			sourceTree = "<group>";
+		};
+		85A194BA7C2EC45672C8F3EA /* Cache */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Cache;
 			sourceTree = "<group>";
 		};
 		A3B3AED4B4450A81D4F7FA1B /* Derived */ = {
@@ -107,6 +139,7 @@
 			children = (
 				BF46344658ABC2FD254BED77 /* ContentView.swift */,
 				73BC15B7AEE733B31130AE65 /* SobesApp.swift */,
+				48470A702BCF0D970083FC68 /* EntryPointView.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -169,8 +202,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				ORGANIZATIONNAME = FCS;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = 1AD83AFD799ED8F09B299CBE /* Build configuration list for PBXProject "Sobes" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -196,6 +227,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */,
+				48470A752BCF11C20083FC68 /* CoFoSans-Bold.ttf in Resources */,
+				48470A762BCF11C20083FC68 /* CoFoSans-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,6 +243,7 @@
 				F5EAFD9CBDA1B3243CE71DC1 /* TuistBundle+Sobes.swift in Sources */,
 				323FF5DB2C45B16EBB0002CE /* ContentView.swift in Sources */,
 				6F382E0557D9704D1522BB20 /* SobesApp.swift in Sources */,
+				48470A712BCF0D970083FC68 /* EntryPointView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,23 +308,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = LM3CWDSTFW;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Derived/InfoPlists/Sobes-Info.plist";
+				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = FCS.Sobes;
+				PRODUCT_BUNDLE_IDENTIFIER = Sobes;
 				PRODUCT_NAME = Sobes;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
-					"$(inherited)",
-					DEBUG,
-				);
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -362,14 +395,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = LM3CWDSTFW;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Derived/InfoPlists/Sobes-Info.plist";
+				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = FCS.Sobes;
+				PRODUCT_BUNDLE_IDENTIFIER = Sobes;
 				PRODUCT_NAME = Sobes;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
