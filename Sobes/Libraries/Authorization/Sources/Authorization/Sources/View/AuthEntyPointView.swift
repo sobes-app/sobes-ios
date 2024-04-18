@@ -57,7 +57,7 @@ public struct AuthEntyPointView: View {
     var button: some View {
         MainButton(action: {presentMain = true}, label: "Войти")
             .navigationDestination(isPresented: $presentMain) {
-                //TODO: на главную
+                //TODO: на главную (в профиль)
 //                RegCodeView()
 //                    .navigationBarBackButtonHidden()
             }

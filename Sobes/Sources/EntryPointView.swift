@@ -5,6 +5,7 @@ import Authorization
 struct EntryPointView: View {
     @State private var presentRegistration: Bool = false
     @State private var presentAuth: Bool = false
+    @Binding var isAuthorized: Bool
     
     var body: some View {
         NavigationStack {
@@ -49,6 +50,6 @@ struct EntryPointView: View {
     }
 }
 
-#Preview {
-    EntryPointView()
-}
+//#Preview {
+////    EntryPointView()
+//}

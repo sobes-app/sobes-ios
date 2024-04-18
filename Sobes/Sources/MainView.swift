@@ -1,11 +1,13 @@
 import SwiftUI
 import UIComponents
+import Authorization
 
-struct MainView: View {
+public struct MainView: View {
 
-    @State var selectedTab: TabItem = .materials
+    @State var selectedTab: TabItem = .profile
+    @Binding var isAuthorized: Bool
 
-    var body: some View {
+    public var body: some View {
         VStack {
             switch selectedTab {
             case .materials:
@@ -27,11 +29,7 @@ struct MainView: View {
                     Text("Buy")
                 }
             case .profile:
-                VStack {
-                    Text("Hi guys")
-                    Spacer()
-                    Text("Buy")
-                }
+                ProfileView()
             }
 
             Spacer()
