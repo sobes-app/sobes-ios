@@ -4,17 +4,21 @@
 import PackageDescription
 
 let package = Package(
-    name: "UIComponents",
+    name: "Materials",
     defaultLocalization: "ru",
     platforms: [.iOS(.v16)],
     products: [
         .library(
-            name: "UIComponents",
-            targets: ["UIComponents"]),
+            name: "Materials",
+            targets: ["Materials"]),
+    ],
+    dependencies: [
+        .package(path: "Sobes/Sources/Libraries/UIComponents"),
     ],
     targets: [
         .target(
-            name: "UIComponents",
+            name: "Materials",
+            dependencies: ["UIComponents"],
             sources: ["Sources"],
             resources: [.process("Resources")]
         ),

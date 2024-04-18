@@ -32,15 +32,15 @@
 		<key>UISceneConfigurations</key>
 		<dict/>
 	</dict>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>armv7</string>
-	</array>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIImageName</key>
 		<string>LaunchImage</string>
 	</dict>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -53,7 +53,7 @@ public struct TabBar: View {
         .ignoresSafeArea(.keyboard)
         .frame(height: 60)
         .frame(maxWidth: .infinity)
-        .background(Color("grey",bundle: .module))
+        .background(Color("grey", bundle: .module))
     }
 
 }
