@@ -1,66 +1,74 @@
-//
-//  SwiftUIView.swift
-//  
-//
-//  Created by Алиса Вышегородцева on 17.04.2024.
-//
-
 import SwiftUI
+import UIComponents
+
+public enum Source {
+    case recreatePassword
+    case register
+}
 
 struct RegCodeView: View {
+    
+    @State private var input: String = ""
+    @State private var inputState: TextFieldView.InputState = .correct
+    @State private var present: Bool = false
+    private let from: Source
+
+    public init(from: Source) {
+        self.from = from
+    }
+    
+    
     public var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading) {
             back
-            Text("Код")
-                .font(Font.custom("CoFoSans-Bold", size: 23))
-                .foregroundColor(.black)
-                .padding(.top, 20)
-            Text("На вашу электронную почту было отправлено письмо с кодом подтверждения")
-                .font(Font.custom("CoFoSans-Regular", size: 17))
-                .foregroundColor(.black)
-                .padding(.top, 16)
-            //TODO: место для техтфилда
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Код")
+                    .font(Font.custom("CoFoSans-Bold", size: 23))
+                    .foregroundColor(.black)
+                Text("На вашу электронную почту было отправлено письмо с кодом подтверждения")
+                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .foregroundColor(.black)
+                TextFieldView(model: .code, input: $input, inputState: $inputState)
+                HStack {
+                    Spacer()
+                    repeatCode
+                }
+            }
+            .padding(.top, 20)
             Spacer()
             button
             
         }
-        .padding(.top, 66)
         .padding(.horizontal, 31)
         .padding(.bottom, 53)
     }
     
-    //TODO: перенести в компоненты
     var button: some View {
-        Button (action: {}) {
-            Text("Дальше")
-                .bold()
-                .font(Font.custom("CoFoSans-Bold", size: 17))
-                .foregroundColor(.white)
-                .padding(.vertical, 15)
-                .frame(maxWidth: .infinity)
-            
-        }.background {
-            RoundedRectangle(cornerRadius: 10)
-                .foregroundColor(Color("accent", bundle: .module))
-        }
-        .padding(.horizontal, 20)
+        MainButton(action: {present = true}, label: "Дальше")
+            .navigationDestination(isPresented: $present) {
+                if from == .recreatePassword {
+                    AuthNewPasswordView()
+                        .navigationBarBackButtonHidden()
+                } else if from == .register {
+                    RegFinalView()
+                        .navigationBarBackButtonHidden()
+                }
+            }
     }
     
-    //TODO: перенести в компоненты
     var back: some View {
+        BackButton()
+    }
+    
+    var repeatCode: some View {
         Button(action: {}) {
-            Image(systemName: "chevron.backward")
-                .frame(width: 28, height: 28)
-                .foregroundColor(.black)
-                .padding(15)
-        }
-        .background {
-            RoundedRectangle(cornerRadius: 10)
-                .foregroundColor(Color("light", bundle: .module))
+            Text("отправить повторно")
+                .foregroundColor(Color(.accent))
+                .font(Font.custom("CoFoSans-Regular", size: 13))
         }
     }
 }
 
 #Preview {
-    RegCodeView()
+    RegCodeView(from: .recreatePassword)
 }
