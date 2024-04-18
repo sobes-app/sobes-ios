@@ -1,10 +1,14 @@
+//
+//  SwiftUIView.swift
+//  
+//
+//  Created by Алиса Вышегородцева on 19.04.2024.
+//
+
 import SwiftUI
 import UIComponents
 
-struct RegFinalView: View {
-    @State private var inputName: String = ""
-    @State private var inputNameState: TextFieldView.InputState = .correct
-    
+struct AuthNewPasswordView: View {
     @State private var inputPassword: String = ""
     @State private var inputPasswordState: TextFieldView.InputState = .correct
     
@@ -17,10 +21,9 @@ struct RegFinalView: View {
         VStack(alignment: .leading) {
             back
             VStack(alignment: .leading, spacing: 16){
-                Text("Почти закончили!")
+                Text("Восстановление пароля")
                     .font(Font.custom("CoFoSans-Bold", size: 23))
                     .foregroundColor(.black)
-                TextFieldView(model: .name, input: $inputName, inputState: $inputNameState)
                 TextFieldView(model: .password, input: $inputPassword, inputState: $inputPasswordState)
                 TextFieldView(model: .repPassword, input: $inputRep, inputState: $inputRepState)
                 Spacer()
@@ -33,9 +36,9 @@ struct RegFinalView: View {
     }
     
     var button: some View {
-        MainButton(action: {presentProfile = true}, label: "Зарегистрироваться")
+        MainButton(action: {presentProfile = true}, label: "Войти")
             .navigationDestination(isPresented: $presentProfile) {
-                //TODO: презент
+                //TODO: на главную
             }
     }
     
@@ -45,5 +48,5 @@ struct RegFinalView: View {
 }
 
 #Preview {
-    RegFinalView()
+    AuthNewPasswordView()
 }

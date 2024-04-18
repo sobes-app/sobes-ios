@@ -1,45 +1,51 @@
 import SwiftUI
+import UIComponents
+import Authorization
 
 struct EntryPointView: View {
+    @State private var presentRegistration: Bool = false
+    @State private var presentAuth: Bool = false
+    
     var body: some View {
-        VStack (spacing: 30){
-            Spacer()
-            Text("Готовься продуктивно")
-                .font(Font.custom("CoFoSans-Bold", size: 35))
-                .multilineTextAlignment(.center)
-                .foregroundColor(.black)
-            
-            button
-            
-            Text("уже есть аккаунт? ")
-                .font(Font.custom("CoFoSans-Regular", size: 13))
-                .foregroundColor(Color("grey",bundle: .main))
-            +
+        NavigationStack {
+            VStack (spacing: 30){
+                Spacer()
+                Text("Готовься продуктивно")
+                    .font(Font.custom("CoFoSans-Bold", size: 35))
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.black)
+                button
+                HStack {
+                    Text("уже есть аккаунт?")
+                        .font(Font.custom("CoFoSans-Regular", size: 13))
+                        .foregroundColor(Color("grey",bundle: .main))
+                    authButton
+                }
+            }
+            .padding(.horizontal, 31)
+            .padding(.bottom, 89)
+        }
+    }
+    
+    var authButton: some View {
+        Button(action: {presentAuth = true}) {
             Text("Войти")
                 .bold()
                 .font(Font.custom("CoFoSans-Bold", size: 13))
                 .foregroundColor(Color("accent", bundle: .main))
         }
-        .padding(.horizontal, 31)
-        .padding(.bottom, 89)
+        .navigationDestination(isPresented: $presentAuth) {
+            AuthEntyPointView()
+                .navigationBarBackButtonHidden()
+        }
     }
     
-    //TODO: перенести в компоненты
-
     var button: some View {
-        Button (action: {}) {
-            Text("Регистрация")
-                .bold()
-                .font(Font.custom("CoFoSans-Bold", size: 17))
-                .foregroundColor(.white)
-                .padding(.vertical, 15)
-                .frame(maxWidth: .infinity)
-            
-        }.background {
-            RoundedRectangle(cornerRadius: 10)
-                .foregroundColor(Color("accent", bundle: .main))
-        }
-        .padding(.horizontal, 20)
+        MainButton(action: {presentRegistration = true}, label: "Регистрация")
+            .navigationDestination(isPresented: $presentRegistration) {
+                RegEmailView()
+                    .navigationBarBackButtonHidden()
+            }
     }
 }
 

@@ -1,9 +1,17 @@
+//
+//  SwiftUIView.swift
+//  
+//
+//  Created by Алиса Вышегородцева on 19.04.2024.
+//
+
 import SwiftUI
 import UIComponents
 
-public struct RegEmailView: View {
-    @State private var input: String = ""
-    @State private var inputState: TextFieldView.InputState = .correct
+struct AuthPasswordRecreateView: View {
+    @State private var inputEmail: String = ""
+    @State private var inputEmailState: TextFieldView.InputState = .correct
+    
     @State private var presentCode: Bool = false
     
     public init() { }
@@ -12,10 +20,10 @@ public struct RegEmailView: View {
         VStack(alignment: .leading) {
             back
             VStack(alignment: .leading, spacing: 16) {
-                Text("Поехали!")
+                Text("Восстановление пароля")
                     .font(Font.custom("CoFoSans-Bold", size: 23))
                     .foregroundColor(.black)
-                TextFieldView(model: .email, input: $input, inputState: $inputState)
+                TextFieldView(model: .email, input: $inputEmail, inputState: $inputEmailState)
                 Spacer()
                 button
             }
@@ -28,7 +36,7 @@ public struct RegEmailView: View {
     var button: some View {
         MainButton(action: {presentCode = true}, label: "Дальше")
             .navigationDestination(isPresented: $presentCode) {
-                RegCodeView(from: .register)
+                RegCodeView(from: .recreatePassword)
                     .navigationBarBackButtonHidden()
             }
     }
@@ -39,5 +47,5 @@ public struct RegEmailView: View {
 }
 
 #Preview {
-    RegEmailView()
+    AuthPasswordRecreateView()
 }

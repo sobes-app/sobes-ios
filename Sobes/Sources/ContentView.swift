@@ -4,8 +4,8 @@ import Authorization
 struct ContentView: View {
     var body: some View {
 //        MainView()
-        RegEmailView()
-//        EntryPointView()
+//        RegEmailView()
+        EntryPointView()
 //            .background(.white)
 //            .edgesIgnoringSafeArea(.all)
         

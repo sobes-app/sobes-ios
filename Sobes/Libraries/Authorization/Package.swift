@@ -11,9 +11,13 @@ let package = Package(
             name: "Authorization",
             targets: ["Authorization"]),
     ],
+    dependencies: [
+        .package(path: "Sobes/Sources/Libraries/UIComponents"),
+    ],
     targets: [
         .target(
             name: "Authorization",
+            dependencies: ["UIComponents"],
             sources: ["Sources"],
             resources: [.process("Resources")]
         ),

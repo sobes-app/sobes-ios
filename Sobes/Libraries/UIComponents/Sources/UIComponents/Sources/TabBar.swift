@@ -17,7 +17,7 @@ public struct TabBar: View {
                     .renderingMode(.template)
                     .resizable()
                     .frame(width: 17, height: 27)
-                    .foregroundStyle(selectedTab == .materials ? .white : Color(.lightsecondary))
+                    .foregroundStyle(selectedTab == .materials ? .white : Color(.light))
             }
 
             Button {
@@ -27,7 +27,7 @@ public struct TabBar: View {
                     .renderingMode(.template)
                     .resizable()
                     .frame(width: 28, height: 28)
-                    .foregroundStyle(selectedTab == .interview ? .white : Color(.lightsecondary))
+                    .foregroundStyle(selectedTab == .interview ? .white : Color(.light))
             }
 
             Button {
@@ -37,7 +37,7 @@ public struct TabBar: View {
                     .renderingMode(.template)
                     .resizable()
                     .frame(width: 28, height: 28)
-                    .foregroundStyle(selectedTab == .chat ? .white : Color(.lightsecondary))
+                    .foregroundStyle(selectedTab == .chat ? .white : Color(.light))
             }
 
             Button {
@@ -47,13 +47,13 @@ public struct TabBar: View {
                     .renderingMode(.template)
                     .resizable()
                     .frame(width: 28, height: 28)
-                    .foregroundStyle(selectedTab == .profile ? .white : Color(.lightsecondary))
+                    .foregroundStyle(selectedTab == .profile ? .white : Color(.light))
             }
         }
         .ignoresSafeArea(.keyboard)
         .frame(height: 80)
         .frame(maxWidth: .infinity)
-        .background(Color(.secondary))
+        .background(Color("grey",bundle: .module))
     }
 
 }
