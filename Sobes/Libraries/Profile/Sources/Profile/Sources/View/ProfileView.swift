@@ -4,6 +4,7 @@ import UIComponents
 public struct ProfileView: View {
     private let name: String = "Алиса Вышегородцева"
     @State private var presentSettings: Bool = false
+    @State private var presentFill: Bool = false
     
     public init() {}
     
@@ -24,7 +25,11 @@ public struct ProfileView: View {
         }
     }
     var button: some View {
-        MainButton(action: {}, label: "Рассказать о себе")
+        MainButton(action: {presentFill=true}, label: "Рассказать о себе")
+            .navigationDestination(isPresented: $presentFill) {
+                FillProfileSpecView()
+                    .navigationBarBackButtonHidden()
+            }
     }
     
     var emptyView: some View {

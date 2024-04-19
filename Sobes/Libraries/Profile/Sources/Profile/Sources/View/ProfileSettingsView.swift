@@ -39,7 +39,7 @@ public struct ProfileSettingsView: View {
             .padding(.top, 20)
         }
         .padding(.horizontal, 31)
-        .padding(.bottom, 31)
+        .padding(.bottom, 53)
     }
     
     var changePassword: some View {
