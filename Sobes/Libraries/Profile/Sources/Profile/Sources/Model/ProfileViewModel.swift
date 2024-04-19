@@ -10,6 +10,7 @@ import Foundation
 @MainActor
 public protocol ProfileViewModel: ObservableObject {
     var specs: [Spec] {get}
+    var savedSpecs: [Spec] {get}
     var stepsCount: Double {get set}
     
     func onViewAppear()
@@ -19,11 +20,13 @@ public protocol ProfileViewModel: ObservableObject {
     func saveInfo()
     func saveNewName(newName: String)
     func getCurrentSpec(ind: Double) -> String
+    func createString() -> String
 }
 
 @MainActor
 public final class ProfileViewModelImpl: ProfileViewModel {
     @Published private(set) public var specs: [Spec] = []
+    @Published private(set) public var savedSpecs: [Spec] = []
     @Published public var stepsCount: Double = 0.0
     
     private let onLogoutAction: () -> Void
@@ -51,7 +54,7 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     }
     
     public func saveInfo() {
-        
+        savedSpecs = specs
     }
     
     public func saveNewName(newName: String) {
@@ -64,6 +67,17 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         } else {
             return specs[Int(ind)-1].rawValue
         }
+    }
+    
+    public func createString() -> String {
+        var st = ""
+        for ind in savedSpecs {
+            st += ind.rawValue
+            st += ", "
+        }
+        st.removeLast()
+        st.removeLast()
+        return st
     }
     
     //    public func getProfile() -> Types.Profile {
