@@ -1,6 +1,6 @@
 //
 //  SwiftUIView.swift
-//  
+//
 //
 //  Created by Алиса Вышегородцева on 19.04.2024.
 //
@@ -8,16 +8,25 @@
 import SwiftUI
 import UIComponents
 
-struct FillProfileCompView: View {
-    @State private var present: Bool = false
+struct FillProfileCompView<Model: ProfileViewModel>: View {
+    @ObservedObject private var model: Model
     @State private var isOn: Bool = false
+    @Binding private var rootIsPresented: Bool
+    
+    public init(model: Model, root: Binding<Bool>) {
+        self._model = ObservedObject(wrappedValue: model)
+        self._rootIsPresented = root
+        DispatchQueue.main.async {
+            model.step += 1
+        }
+    }
     
     public var body: some View {
         VStack(alignment: .leading) {
             back
             VStack(alignment: .leading, spacing: 16) {
-                VStack {
-                    Text("Последний рывок!")
+                VStack (alignment: .leading) {
+                    Text("Последний рывок")
                         .font(Font.custom("CoFoSans-Regular", size: 13))
                         .foregroundColor(.black)
                     Text("В каких компаниях ты хочешь работать?")
@@ -29,8 +38,9 @@ struct FillProfileCompView: View {
             .padding(.top, 20)
             Spacer()
             VStack(spacing: 16) {
-                ProgressView(value: 1)
+                ProgressView(value: model.step/model.stepsCount)
                     .padding(.horizontal, 20)
+                    .tint(Color(.accent))
                     .scaleEffect(x: 1, y: 3, anchor: .center)
                 button
             }
@@ -39,7 +49,7 @@ struct FillProfileCompView: View {
         .padding(.horizontal, 31)
         .padding(.bottom, 53)
     }
-
+    
     
     var specListView: some View {
         VStack (alignment: .leading, spacing: 16) {
@@ -67,17 +77,19 @@ struct FillProfileCompView: View {
     }
     
     var back: some View {
-        BackButton()
+        BackButton(onTap: {model.step -= 1})
     }
     
     var button: some View {
-        MainButton(action: {present = true}, label: "Закончили!")
-            .navigationDestination(isPresented: $present) {
-
+        MainButton(action: {
+            if isOn {
+                model.saveInfo()
+                //TODO: как-то вернуться к корню
+                rootIsPresented = false
+            } else {
+                
             }
+        }, label: "Закончили!")
     }
 }
 
-#Preview {
-    FillProfileCompView()
-}

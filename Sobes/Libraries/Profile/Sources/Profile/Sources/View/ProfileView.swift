@@ -5,6 +5,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     private let name: String = "Алиса Вышегородцева"
     @State private var presentSettings: Bool = false
     @State private var presentFill: Bool = false
+    @State private var rootIsPresented: Bool = true
     @ObservedObject private var model: Model
     
     public init(model: Model) {
@@ -18,6 +19,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                     nameView
                     Spacer()
                     settingsView
+                    logoutView
                 }
                 Spacer()
                 emptyView
@@ -31,7 +33,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     var button: some View {
         MainButton(action: {presentFill=true}, label: "Рассказать о себе")
             .navigationDestination(isPresented: $presentFill) {
-                FillProfileSpecView(model: model)
+                FillProfileSpecView(model: model, root: $rootIsPresented)
                     .navigationBarBackButtonHidden()
             }
     }

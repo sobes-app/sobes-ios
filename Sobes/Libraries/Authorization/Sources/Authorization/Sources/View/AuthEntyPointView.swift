@@ -8,7 +8,9 @@
 import SwiftUI
 import UIComponents
 
-public struct AuthEntyPointView: View {
+public struct AuthEntyPointView<Model: LoginViewModel>: View {
+    @ObservedObject private var model: Model
+    
     @State private var inputEmail: String = ""
     @State private var inputEmailState: TextFieldView.InputState = .correct
     
@@ -18,7 +20,9 @@ public struct AuthEntyPointView: View {
     @State private var presentMain: Bool = false
     @State private var presentPasswordRecreate: Bool = false
     
-    public init() { }
+    public init(model: Model) {
+        self._model = ObservedObject(wrappedValue: model)
+    }
     
     public var body: some View {
         VStack(alignment: .leading) {
@@ -49,23 +53,19 @@ public struct AuthEntyPointView: View {
                 .foregroundColor(Color(.accent))
         }
         .navigationDestination(isPresented: $presentPasswordRecreate) {
-            AuthPasswordRecreateView()
+            AuthPasswordRecreateView(model: model)
                 .navigationBarBackButtonHidden()
         }
     }
     
     var button: some View {
-        MainButton(action: {presentMain = true}, label: "Войти")
-            .navigationDestination(isPresented: $presentMain) {
-                //TODO: вошел надо на главную (в профиль)
-            }
+        MainButton(action: {
+            presentMain = true
+            model.onLoginTap()
+        }, label: "Войти")
     }
     
     var back: some View {
-        BackButton()
+        BackButton(onTap: {})
     }
-}
-
-#Preview {
-    AuthEntyPointView()
 }

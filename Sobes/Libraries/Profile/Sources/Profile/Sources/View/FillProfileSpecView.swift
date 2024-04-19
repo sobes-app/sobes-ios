@@ -19,13 +19,13 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
     @State private var isProd: Bool = false
     @State private var isProj: Bool = false
     @State private var isAnal: Bool = false
+    @Binding private var rootIsPresented: Bool
     
     @ObservedObject private var model: Model
-    
-    private let progress = 0.0
-    
-    public init(model: Model){
+        
+    public init(model: Model, root: Binding<Bool>){
         self._model = ObservedObject(wrappedValue: model)
+        self._rootIsPresented = root
     }
     
     var body: some View {
@@ -40,8 +40,9 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
             .padding(.top, 20)
             Spacer()
             VStack(spacing: 16) {
-                ProgressView(value: progress)
+                ProgressView(value: 0)
                     .padding(.horizontal, 20)
+                    .tint(Color(.accent))
                     .scaleEffect(x: 1, y: 3, anchor: .center)
                 button
             }
@@ -73,7 +74,7 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
     }
     
     var back: some View {
-        BackButton()
+        BackButton(onTap: {})
     }
     
     func countSteps() {
@@ -88,17 +89,19 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
             specArray.append(.project)
         }
         model.updateSpecs(specs: specArray)
+        model.stepsCount = Double(model.specs.count + 2)
+        model.step = 0
     }
     
     var button: some View {
         MainButton(action: {
             if isAnal || isProd || isProj {
                 present = true
+                countSteps()
             }
-            countSteps()
         }, label: "Дальше")
             .navigationDestination(isPresented: $present) {
-                FillProfileExpView(steps: Double(model.specs.count + 2), spec: model.specs, step: 1)
+                FillProfileExpView(model: model, root: $rootIsPresented)
                     .navigationBarBackButtonHidden()
             }
     }

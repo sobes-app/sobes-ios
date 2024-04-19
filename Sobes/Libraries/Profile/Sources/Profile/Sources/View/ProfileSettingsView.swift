@@ -49,7 +49,8 @@ public struct ProfileSettingsView: View {
                 .font(Font.custom("CoFoSans-Regular", size: 13))
         }
         .navigationDestination(isPresented: $presentCode) {
-            RegCodeView(from: .recreatePassword)
+            //TODO: переделать нахуй
+//            RegCodeView(from: .recreatePassword)
         }
     }
     
@@ -60,7 +61,7 @@ public struct ProfileSettingsView: View {
     }
     
     var back: some View {
-        BackButton()
+        BackButton(onTap: {})
     }
 }
 

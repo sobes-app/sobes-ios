@@ -1,7 +1,9 @@
 import SwiftUI
 import UIComponents
 
-struct RegFinalView: View {
+struct RegFinalView<Model: RegistrationViewModel>: View {
+    @ObservedObject private var model: Model
+    
     @State private var inputName: String = ""
     @State private var inputNameState: TextFieldView.InputState = .correct
     
@@ -12,6 +14,10 @@ struct RegFinalView: View {
     @State private var inputRepState: TextFieldView.InputState = .correct
     
     @State private var presentProfile: Bool = false
+    
+    public init(model: Model) {
+        self._model = ObservedObject(wrappedValue: model)
+    }
         
     public var body: some View {
         VStack(alignment: .leading) {
@@ -33,17 +39,13 @@ struct RegFinalView: View {
     }
     
     var button: some View {
-        MainButton(action: {presentProfile = true}, label: "Зарегистрироваться")
-            .navigationDestination(isPresented: $presentProfile) {
-                
-            }
+        MainButton(action: {
+            model.onRegisterTap()
+        }, label: "Зарегистрироваться")
     }
     
     var back: some View {
-        BackButton()
+        BackButton(onTap: {})
     }
 }
 
-#Preview {
-    RegFinalView()
-}
