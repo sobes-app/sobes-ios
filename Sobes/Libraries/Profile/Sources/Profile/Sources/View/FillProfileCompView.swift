@@ -12,13 +12,12 @@ struct FillProfileCompView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
     @State private var isOn: Bool = false
     @Binding private var rootIsPresented: Bool
+    private let step: Double
     
-    public init(model: Model, root: Binding<Bool>) {
+    public init(model: Model, root: Binding<Bool>, step: Double) {
         self._model = ObservedObject(wrappedValue: model)
         self._rootIsPresented = root
-        DispatchQueue.main.async {
-            model.step += 1
-        }
+        self.step = step
     }
     
     public var body: some View {
@@ -38,7 +37,7 @@ struct FillProfileCompView<Model: ProfileViewModel>: View {
             .padding(.top, 20)
             Spacer()
             VStack(spacing: 16) {
-                ProgressView(value: model.step/model.stepsCount)
+                ProgressView(value: step/model.stepsCount)
                     .padding(.horizontal, 20)
                     .tint(Color(.accent))
                     .scaleEffect(x: 1, y: 3, anchor: .center)
@@ -77,13 +76,14 @@ struct FillProfileCompView<Model: ProfileViewModel>: View {
     }
     
     var back: some View {
-        BackButton(onTap: {model.step -= 1})
+        BackButton(onTap: {})
     }
     
     var button: some View {
         MainButton(action: {
             if isOn {
                 model.saveInfo()
+                model.step = step
                 //TODO: как-то вернуться к корню
                 rootIsPresented = false
             } else {

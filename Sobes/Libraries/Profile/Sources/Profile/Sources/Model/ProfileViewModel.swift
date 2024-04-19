@@ -18,6 +18,8 @@ public protocol ProfileViewModel: ObservableObject {
     func setSpecLevel(spec: Spec, level: Int)
     func onLogoutTap()
     func saveInfo()
+    func saveNewName(newName: String)
+    func getCurrentSpec(ind: Double) -> String
 }
 
 @MainActor
@@ -27,7 +29,7 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     @Published public var stepsCount: Double = 0.0
     
     private let onLogoutAction: () -> Void
-//    let profileProvider: ProfileProvider
+    //    let profileProvider: ProfileProvider
     
     public init(onLogoutAction: @escaping () -> Void) {
         self.onLogoutAction = onLogoutAction
@@ -54,7 +56,19 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         
     }
     
-//    public func getProfile() -> Types.Profile {
-//        profileProvider.getProfiles()[0]
-//    }
+    public func saveNewName(newName: String) {
+        
+    }
+    
+    public func getCurrentSpec(ind: Double) -> String {
+        if ind - 1 < 0 {
+            return "Hello"
+        } else {
+            return specs[Int(ind)-1].rawValue
+        }
+    }
+    
+    //    public func getProfile() -> Types.Profile {
+    //        profileProvider.getProfiles()[0]
+    //    }
 }

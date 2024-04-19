@@ -22,6 +22,7 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
     @Binding private var rootIsPresented: Bool
     
     @ObservedObject private var model: Model
+    private var step: Double = 0
         
     public init(model: Model, root: Binding<Bool>){
         self._model = ObservedObject(wrappedValue: model)
@@ -90,18 +91,18 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
         }
         model.updateSpecs(specs: specArray)
         model.stepsCount = Double(model.specs.count + 2)
-        model.step = 0
     }
     
     var button: some View {
         MainButton(action: {
             if isAnal || isProd || isProj {
                 present = true
+                model.step = step
                 countSteps()
             }
         }, label: "Дальше")
             .navigationDestination(isPresented: $present) {
-                FillProfileExpView(model: model, root: $rootIsPresented)
+                FillProfileExpView(model: model, root: $rootIsPresented, step: step+1)
                     .navigationBarBackButtonHidden()
             }
     }

@@ -13,13 +13,12 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
     @State private var present: Bool = false
     @State private var isOn: Bool = false
     @Binding private var rootIsPresented: Bool
+    private let step: Double
     
-    public init(model: Model, root: Binding<Bool>) {
+    public init(model: Model, root: Binding<Bool>, step: Double) {
         self._model = ObservedObject(wrappedValue: model)
         self._rootIsPresented = root
-        DispatchQueue.main.async {
-            model.step += 1
-        }
+        self.step = step
     }
     
     public var body: some View {
@@ -39,7 +38,7 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
             .padding(.top, 20)
             Spacer()
             VStack(spacing: 16) {
-                ProgressView(value: model.step/model.stepsCount)
+                ProgressView(value: step/model.stepsCount)
                     .padding(.horizontal, 20)
                     .tint(Color(.accent))
                     .scaleEffect(x: 1, y: 3, anchor: .center)
@@ -84,13 +83,14 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
     var button: some View {
         MainButton(action: {
             if isOn {
+                model.step = step
                 present = true
             } else {
                 
             }
         }, label: "Дальше")
             .navigationDestination(isPresented: $present) {
-                FillProfileCompView(model: model, root: $rootIsPresented)
+                FillProfileCompView(model: model, root: $rootIsPresented, step: step+1)
                     .navigationBarBackButtonHidden()
             }
     }

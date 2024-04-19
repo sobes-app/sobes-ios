@@ -75,7 +75,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         }
         .navigationDestination(isPresented: $presentSettings) {
             //TODO: почему боттом бар остается при переключении?
-            ProfileSettingsView()
+            ProfileSettingsView(model: model)
                 .navigationBarBackButtonHidden()
         }
     }
