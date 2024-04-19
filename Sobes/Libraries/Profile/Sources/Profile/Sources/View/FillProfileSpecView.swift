@@ -14,13 +14,19 @@ public enum Spec: String {
     case analyst = "Бизнес аналитик"
 }
 
-struct FillProfileSpecView: View {
+struct FillProfileSpecView<Model: ProfileViewModel>: View {
     @State private var present: Bool = false
     @State private var isProd: Bool = false
     @State private var isProj: Bool = false
     @State private var isAnal: Bool = false
-    @State private var specArray: [Spec] = []
+    
+    @ObservedObject private var model: Model
+    
     private let progress = 0.0
+    
+    public init(model: Model){
+        self._model = ObservedObject(wrappedValue: model)
+    }
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -30,7 +36,6 @@ struct FillProfileSpecView: View {
                     .font(Font.custom("CoFoSans-Bold", size: 23))
                     .foregroundColor(.black)
                 specListView
-                
             }
             .padding(.top, 20)
             Spacer()
@@ -71,8 +76,8 @@ struct FillProfileSpecView: View {
         BackButton()
     }
     
-    //TODO: перенести во вью модель
     func countSteps() {
+        var specArray: [Spec] = []
         if isAnal {
             specArray.append(.analyst)
         }
@@ -82,7 +87,7 @@ struct FillProfileSpecView: View {
         if isProj {
             specArray.append(.project)
         }
-        print(specArray)
+        model.updateSpecs(specs: specArray)
     }
     
     var button: some View {
@@ -93,12 +98,8 @@ struct FillProfileSpecView: View {
             countSteps()
         }, label: "Дальше")
             .navigationDestination(isPresented: $present) {
-                FillProfileExpView(steps: Double(specArray.count + 2), spec: specArray, step: 1)
+                FillProfileExpView(steps: Double(model.specs.count + 2), spec: model.specs, step: 1)
                     .navigationBarBackButtonHidden()
             }
     }
-}
-
-#Preview {
-    FillProfileSpecView()
 }

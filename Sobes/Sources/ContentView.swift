@@ -4,7 +4,7 @@ import Authorization
 struct ContentView: View {
     
     init() {
-        self._isAuthorized = State(initialValue: true)
+        self._isAuthorized = State(initialValue: false)
     }
     
     var body: some View {

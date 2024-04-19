@@ -1,12 +1,15 @@
 import SwiftUI
 import UIComponents
 
-public struct ProfileView: View {
+public struct ProfileView<Model: ProfileViewModel>: View {
     private let name: String = "Алиса Вышегородцева"
     @State private var presentSettings: Bool = false
     @State private var presentFill: Bool = false
+    @ObservedObject private var model: Model
     
-    public init() {}
+    public init(model: Model) {
+        self._model = ObservedObject(wrappedValue: model)
+    }
     
     public var body: some View {
         NavigationStack{
@@ -19,7 +22,8 @@ public struct ProfileView: View {
                 Spacer()
                 emptyView
                 Spacer()
-                button        }
+                button
+            }
             .padding(.horizontal, 31)
             .padding(.bottom, 31)
         }
@@ -27,7 +31,7 @@ public struct ProfileView: View {
     var button: some View {
         MainButton(action: {presentFill=true}, label: "Рассказать о себе")
             .navigationDestination(isPresented: $presentFill) {
-                FillProfileSpecView()
+                FillProfileSpecView(model: model)
                     .navigationBarBackButtonHidden()
             }
     }
@@ -73,8 +77,19 @@ public struct ProfileView: View {
                 .navigationBarBackButtonHidden()
         }
     }
+    
+    var logoutView: some View {
+        Button(action: {
+            model.onLogoutTap()
+        }) {
+            Image(systemName: "rectangle.portrait.and.arrow.right.fill")
+                .foregroundColor(.black)
+                .padding(15)
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundColor(Color(.light))
+                }
+        }
+    }
 }
 
-#Preview {
-    ProfileView()
-}

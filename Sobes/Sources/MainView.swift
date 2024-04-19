@@ -30,7 +30,9 @@ public struct MainView: View {
                     Text("Buy")
                 }
             case .profile:
-                ProfileView()
+                ProfileView(model: ProfileViewModelImpl(onLogoutAction: {
+                    isAuthorized = false
+                }))
             }
 
             Spacer()
