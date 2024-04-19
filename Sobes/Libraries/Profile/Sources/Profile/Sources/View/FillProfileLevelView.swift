@@ -77,13 +77,12 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
     }
     
     var back: some View {
-        BackButton(onTap: {model.step -= 1})
+        BackButton(onTap: {})
     }
     
     var button: some View {
         MainButton(action: {
             if isOn {
-                model.step = step
                 present = true
             } else {
                 

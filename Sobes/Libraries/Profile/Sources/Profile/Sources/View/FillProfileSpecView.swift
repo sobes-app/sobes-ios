@@ -97,7 +97,6 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
         MainButton(action: {
             if isAnal || isProd || isProj {
                 present = true
-                model.step = step
                 countSteps()
             }
         }, label: "Дальше")

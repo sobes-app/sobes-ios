@@ -78,14 +78,13 @@ public struct FillProfileExpView<Model: ProfileViewModel>: View {
     var button: some View {
         MainButton(action: {
             if isOn {
-                model.step = step
                 present = true
             } else {
                 
             }
         }, label: "Дальше")
             .navigationDestination(isPresented: $present) {
-                if model.step == model.stepsCount - 2 {
+                if step == model.stepsCount - 2 {
                     FillProfileLevelView(model: model, root: $rootIsPresented, step: step+1)
                         .navigationBarBackButtonHidden()
                 } else {

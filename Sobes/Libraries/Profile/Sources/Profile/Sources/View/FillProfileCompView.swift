@@ -83,7 +83,6 @@ struct FillProfileCompView<Model: ProfileViewModel>: View {
         MainButton(action: {
             if isOn {
                 model.saveInfo()
-                model.step = step
                 //TODO: как-то вернуться к корню
                 rootIsPresented = false
             } else {

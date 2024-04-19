@@ -11,7 +11,6 @@ import Foundation
 public protocol ProfileViewModel: ObservableObject {
     var specs: [Spec] {get}
     var stepsCount: Double {get set}
-    var step: Double {get set}
     
     func onViewAppear()
     func updateSpecs(specs: [Spec])
@@ -25,7 +24,6 @@ public protocol ProfileViewModel: ObservableObject {
 @MainActor
 public final class ProfileViewModelImpl: ProfileViewModel {
     @Published private(set) public var specs: [Spec] = []
-    @Published public var step: Double = 1.0
     @Published public var stepsCount: Double = 0.0
     
     private let onLogoutAction: () -> Void
