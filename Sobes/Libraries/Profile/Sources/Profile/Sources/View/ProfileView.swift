@@ -34,7 +34,7 @@ public struct ProfileView: View {
                 .foregroundColor(Color("grey", bundle: .module))
             Text("Расскажите о себе, чтобы подготовка стала продуктивнее")
                 .multilineTextAlignment(.center)
-                .font(Font.custom("CoFoSans-Bold", size: 17))
+                .font(Font.custom("CoFoSans-Regular", size: 17))
                 .foregroundColor(Color("grey", bundle: .module))
         }
         .frame(maxWidth: .infinity)
@@ -63,6 +63,7 @@ public struct ProfileView: View {
                 }
         }
         .navigationDestination(isPresented: $presentSettings) {
+            //TODO: почему боттом бар остается при переключении?
             ProfileSettingsView()
                 .navigationBarBackButtonHidden()
         }

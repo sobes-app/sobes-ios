@@ -5,8 +5,8 @@ let project = Project(
     organizationName: "FCS",
     packages: [
         .local(path: "Sobes/Libraries/Authorization"),
-        .local(path: "Sobes/Libraries/UIComponents")
-//        .local(path: "Sobes/Libraries/Profile")
+        .local(path: "Sobes/Libraries/UIComponents"),
+        .local(path: "Sobes/Libraries/Profile")
     ],
     targets: [
         .target(
@@ -20,8 +20,8 @@ let project = Project(
             resources: ["Sobes/Resources/**"],
             dependencies: [
                 .package(product: "Authorization"),
-                .package(product: "UIComponents")
-//                .package(product: "Profile")
+                .package(product: "UIComponents"),
+                .package(product: "Profile")
             ]
         ),
     ]

@@ -7,8 +7,9 @@
 
 import SwiftUI
 import UIComponents
+import Authorization
 
-struct ProfileSettingsView: View {
+public struct ProfileSettingsView: View {
     @State private var input: String = ""
     @State private var inputState: TextFieldView.InputState = .correct
     

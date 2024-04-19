@@ -1,6 +1,7 @@
 import SwiftUI
 import UIComponents
 import Authorization
+import Profile
 
 public struct MainView: View {
 
