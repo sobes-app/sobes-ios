@@ -38,7 +38,7 @@ struct AuthNewPasswordView: View {
     var button: some View {
         MainButton(action: {presentProfile = true}, label: "Войти")
             .navigationDestination(isPresented: $presentProfile) {
-                //TODO: на главную
+                //TODO: авторизировался, надо перейти на главную
             }
     }
     

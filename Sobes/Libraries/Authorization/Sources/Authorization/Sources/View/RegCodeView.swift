@@ -6,7 +6,7 @@ public enum Source {
     case register
 }
 
-struct RegCodeView: View {
+public struct RegCodeView: View {
     
     @State private var input: String = ""
     @State private var inputState: TextFieldView.InputState = .correct

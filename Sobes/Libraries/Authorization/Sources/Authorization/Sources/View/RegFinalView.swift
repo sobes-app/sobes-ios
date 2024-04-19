@@ -35,7 +35,7 @@ struct RegFinalView: View {
     var button: some View {
         MainButton(action: {presentProfile = true}, label: "Зарегистрироваться")
             .navigationDestination(isPresented: $presentProfile) {
-                //TODO: презент
+                
             }
     }
     

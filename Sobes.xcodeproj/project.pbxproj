@@ -20,6 +20,7 @@
 		EB4AED876C10F1C8BC74AF85 /* CoFoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E36B1149009CD8990E2E31E /* CoFoSans-Bold.ttf */; };
 		F39C8251D0D1F1D4110F9E58 /* Authorization in Frameworks */ = {isa = PBXBuildFile; productRef = FC26DF8BBF38D7FC04EF7C17 /* Authorization */; };
 		F5EAFD9CBDA1B3243CE71DC1 /* TuistBundle+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB50BB33AB3D2F382AAFAC22 /* TuistBundle+Sobes.swift */; };
+		FB77BAA07FFC1F8076EE81F5 /* Profile in Frameworks */ = {isa = PBXBuildFile; productRef = 824023B102ED7ECF050CD92B /* Profile */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -36,6 +37,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		074EDA10E4BF2CAEF11FAF81 /* Profile */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Profile; path = Sobes/Libraries/Profile; sourceTree = "<group>"; };
 		269350B98311A6A45C9FF539 /* TuistFonts+Sobes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistFonts+Sobes.swift"; sourceTree = "<group>"; };
 		28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */ = {isa = PBXFileReference; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		308FAA419A3AF3827A2BFDF9 /* Sobes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobes.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,6 +62,7 @@
 			files = (
 				F39C8251D0D1F1D4110F9E58 /* Authorization in Frameworks */,
 				C750B8A7C4B8618BD8B92759 /* UIComponents in Frameworks */,
+				FB77BAA07FFC1F8076EE81F5 /* Profile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +135,7 @@
 			children = (
 				E436B704D2E1609F0162A2DB /* Authorization */,
 				7E0310729F3C4675FCE9D6BB /* UIComponents */,
+				074EDA10E4BF2CAEF11FAF81 /* Profile */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -195,6 +199,7 @@
 			packageProductDependencies = (
 				FC26DF8BBF38D7FC04EF7C17 /* Authorization */,
 				AD0D56FF7E78D6CD4946A15F /* UIComponents */,
+				824023B102ED7ECF050CD92B /* Profile */,
 			);
 			productName = Sobes;
 			productReference = 308FAA419A3AF3827A2BFDF9 /* Sobes.app */;
@@ -451,6 +456,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		824023B102ED7ECF050CD92B /* Profile */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Profile;
+		};
 		AD0D56FF7E78D6CD4946A15F /* UIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = UIComponents;

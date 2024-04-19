@@ -9,14 +9,14 @@ public struct TabBar: View {
     }
 
     public var body: some View {
-        HStack(spacing: 47) {
+        HStack(spacing: 55) {
             Button {
                 selectedTab = .materials
             } label : {
                 Image(systemName: TabItem.materials.iconName)
                     .renderingMode(.template)
-                    .resizable()
-                    .frame(width: 17, height: 27)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 24)
                     .foregroundStyle(selectedTab == .materials ? .white : Color(.light))
             }
 
@@ -25,8 +25,8 @@ public struct TabBar: View {
             } label : {
                 Image(systemName: TabItem.interview.iconName)
                     .renderingMode(.template)
-                    .resizable()
-                    .frame(width: 28, height: 28)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 24)
                     .foregroundStyle(selectedTab == .interview ? .white : Color(.light))
             }
 
@@ -35,8 +35,8 @@ public struct TabBar: View {
             } label : {
                 Image(systemName: TabItem.chat.iconName)
                     .renderingMode(.template)
-                    .resizable()
-                    .frame(width: 28, height: 28)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 24)
                     .foregroundStyle(selectedTab == .chat ? .white : Color(.light))
             }
 
@@ -45,13 +45,13 @@ public struct TabBar: View {
             } label : {
                 Image(systemName: TabItem.profile.iconName)
                     .renderingMode(.template)
-                    .resizable()
-                    .frame(width: 28, height: 28)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 24)
                     .foregroundStyle(selectedTab == .profile ? .white : Color(.light))
             }
         }
         .ignoresSafeArea(.keyboard)
-        .frame(height: 80)
+        .frame(height: 60)
         .frame(maxWidth: .infinity)
         .background(Color("grey",bundle: .module))
     }
