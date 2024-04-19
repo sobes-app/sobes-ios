@@ -71,7 +71,7 @@ struct FillProfileCompView: View {
     }
     
     var button: some View {
-        MainButton(action: {present = true}, label: "Дальше")
+        MainButton(action: {present = true}, label: "Закончили!")
             .navigationDestination(isPresented: $present) {
 
             }
