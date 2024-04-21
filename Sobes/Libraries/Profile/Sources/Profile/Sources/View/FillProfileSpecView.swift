@@ -19,28 +19,30 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
     @State private var isProd: Bool = false
     @State private var isProj: Bool = false
     @State private var isAnal: Bool = false
-    @Binding private var rootIsPresented: Bool
+    @Binding private var path: NavigationPath
+    @Binding private var showTabBar: Bool
     
     @ObservedObject private var model: Model
     private var step: Double = 0
         
-    public init(model: Model, root: Binding<Bool>){
+    public init(model: Model, path: Binding<NavigationPath>, showTabBar: Binding<Bool>){
         self._model = ObservedObject(wrappedValue: model)
-        self._rootIsPresented = root
+        self._path = path
+        self._showTabBar = showTabBar
     }
     
     var body: some View {
         VStack(alignment: .leading) {
             back
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 Text("Какие профессии тебя интересуют?")
-                    .font(Font.custom("CoFoSans-Bold", size: 23))
+                    .font(Fonts.heading)
                     .foregroundColor(.black)
                 specListView
             }
-            .padding(.top, 20)
+            .padding(.top, Constants.topPadding)
             Spacer()
-            VStack(spacing: 16) {
+            VStack(spacing: Constants.defSpacing) {
                 ProgressView(value: 0)
                     .padding(.horizontal, 20)
                     .tint(Color(.accent))
@@ -49,33 +51,40 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
             }
             
         }
-        .padding(.horizontal, 31)
-        .padding(.bottom, 53)
+        .padding(.horizontal, Constants.horizontal)
+        .padding(.bottom, Constants.bottom)
+        .onAppear {
+            showTabBar = false
+        }
     }
 
     
     var specListView: some View {
-        VStack (alignment: .leading, spacing: 16) {
-            HStack(spacing: 10) {
+        VStack (alignment: .leading, spacing: Constants.defSpacing) {
+            HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isProj)
                 Text("Менеджер проекта")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
+            HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isProd)
                 Text("Менеджер продукта")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
+            HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isAnal)
                 Text("Бизнес аналитик")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
         }
     }
     
     var back: some View {
-        BackButton(onTap: {})
+        BackButton(onTap: {
+            if step == 0 {
+                showTabBar = true
+            }
+        })
     }
     
     func countSteps() {
@@ -96,12 +105,12 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
     var button: some View {
         MainButton(action: {
             if isAnal || isProd || isProj {
-                present = true
                 countSteps()
+                present = true
             }
         }, label: "Дальше")
             .navigationDestination(isPresented: $present) {
-                FillProfileExpView(model: model, root: $rootIsPresented, step: step+1)
+                FillProfileExpView(model: model, path: $path, step: step+1, showTabBar: $showTabBar)
                     .navigationBarBackButtonHidden()
             }
     }

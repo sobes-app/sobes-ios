@@ -16,10 +16,10 @@ public struct BackButton: View {
             Image(systemName: "chevron.backward")
                 .frame(width: 28, height: 28)
                 .foregroundColor(.black)
-                .padding(15)
+                .padding(Constants.elementPadding)
         }
         .background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: Constants.corner)
                 .foregroundColor(Color(.light))
         }
     }

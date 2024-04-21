@@ -10,33 +10,40 @@ import UIComponents
 
 struct FillProfileCompView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
-    @State private var isOn: Bool = false
-    @Binding private var rootIsPresented: Bool
+    
+    @State private var yandex: Bool = false
+    @State private var tinkoff: Bool = false
+    @State private var other: Bool = false
+    
+    @Binding private var path: NavigationPath
+    @Binding private var showTabBar: Bool
+
     private let step: Double
     
-    public init(model: Model, root: Binding<Bool>, step: Double) {
+    public init(model: Model, path: Binding<NavigationPath>, step: Double, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
-        self._rootIsPresented = root
+        self._path = path
         self.step = step
+        self._showTabBar = showTabBar
     }
     
     public var body: some View {
         VStack(alignment: .leading) {
             back
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 VStack (alignment: .leading) {
                     Text("Последний рывок")
-                        .font(Font.custom("CoFoSans-Regular", size: 13))
+                        .font(Fonts.small)
                         .foregroundColor(.black)
                     Text("В каких компаниях ты хочешь работать?")
-                        .font(Font.custom("CoFoSans-Bold", size: 23))
+                        .font(Fonts.heading)
                         .foregroundColor(.black)
                 }
                 specListView
             }
-            .padding(.top, 20)
+            .padding(.top, Constants.topPadding)
             Spacer()
-            VStack(spacing: 16) {
+            VStack(spacing: Constants.defSpacing) {
                 ProgressView(value: step/model.stepsCount)
                     .padding(.horizontal, 20)
                     .tint(Color(.accent))
@@ -45,32 +52,27 @@ struct FillProfileCompView<Model: ProfileViewModel>: View {
             }
             
         }
-        .padding(.horizontal, 31)
-        .padding(.bottom, 53)
+        .padding(.horizontal, Constants.horizontal)
+        .padding(.bottom, Constants.bottom)
     }
     
     
     var specListView: some View {
-        VStack (alignment: .leading, spacing: 16) {
-            HStack(spacing: 10) {
-                CheckboxView(isOn: $isOn)
+        VStack (alignment: .leading, spacing: Constants.defSpacing) {
+            HStack(spacing: Constants.smallStack) {
+                CheckboxView(isOn: $tinkoff)
                 Text("Тинькофф")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
-                CheckboxView(isOn: $isOn)
-                Text("Сбер")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
-            }
-            HStack(spacing: 10) {
-                CheckboxView(isOn: $isOn)
+            HStack(spacing: Constants.smallStack) {
+                CheckboxView(isOn: $yandex)
                 Text("Яндекс")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
-                CheckboxView(isOn: $isOn)
+            HStack(spacing: Constants.smallStack) {
+                CheckboxView(isOn: $other)
                 Text("Другое")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
         }
     }
@@ -81,10 +83,10 @@ struct FillProfileCompView<Model: ProfileViewModel>: View {
     
     var button: some View {
         MainButton(action: {
-            if isOn {
+            if yandex || tinkoff || other {
                 model.saveInfo()
                 //TODO: как-то вернуться к корню
-                rootIsPresented = false
+                path = NavigationPath()
             } else {
                 
             }

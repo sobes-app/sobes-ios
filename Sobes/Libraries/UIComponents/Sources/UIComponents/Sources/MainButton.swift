@@ -11,13 +11,13 @@ public struct MainButton: View {
         Button (action: action) {
             Text(label)
                 .bold()
-                .font(Font.custom("CoFoSans-Bold", size: 17))
+                .font(Fonts.mainBold)
                 .foregroundColor(.white)
-                .padding(.vertical, 15)
+                .padding(.vertical, Constants.elementPadding)
                 .frame(maxWidth: .infinity)
             
         }.background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: Constants.corner)
                 .foregroundColor(Color(.accent))
         }
         .padding(.horizontal, 20)

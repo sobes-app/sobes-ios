@@ -11,33 +11,41 @@ import UIComponents
 struct FillProfileLevelView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
     @State private var present: Bool = false
-    @State private var isOn: Bool = false
-    @Binding private var rootIsPresented: Bool
+    
+    @State private var inter: Bool = false
+    @State private var jun: Bool = false
+    @State private var mid: Bool = false
+    @State private var sen: Bool = false
+
+    @Binding private var path: NavigationPath
+    @Binding private var showTabBar: Bool
+
     private let step: Double
     
-    public init(model: Model, root: Binding<Bool>, step: Double) {
+    public init(model: Model, path: Binding<NavigationPath>, step: Double, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
-        self._rootIsPresented = root
+        self._path = path
         self.step = step
+        self._showTabBar = showTabBar
     }
     
     public var body: some View {
         VStack(alignment: .leading) {
             back
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 VStack (alignment: .leading) {
                     Text("Почти всё!")
-                        .font(Font.custom("CoFoSans-Regular", size: 13))
+                        .font(Fonts.small)
                         .foregroundColor(.black)
                     Text("К какому уровню ты стремишься?")
-                        .font(Font.custom("CoFoSans-Bold", size: 23))
+                        .font(Fonts.heading)
                         .foregroundColor(.black)
                 }
                 specListView
             }
-            .padding(.top, 20)
+            .padding(.top, Constants.topPadding)
             Spacer()
-            VStack(spacing: 16) {
+            VStack(spacing: Constants.defSpacing) {
                 ProgressView(value: step/model.stepsCount)
                     .padding(.horizontal, 20)
                     .tint(Color(.accent))
@@ -46,32 +54,48 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
             }
             
         }
-        .padding(.horizontal, 31)
-        .padding(.bottom, 53)
+        .padding(.horizontal, Constants.horizontal)
+        .padding(.bottom, Constants.bottom)
     }
 
     
     var specListView: some View {
-        VStack (alignment: .leading, spacing: 16) {
-            HStack(spacing: 10) {
-                CheckboxView(isOn: $isOn)
+        VStack (alignment: .leading, spacing: Constants.defSpacing) {
+            HStack(spacing: Constants.smallStack) {
+                CheckboxView(isOn: $inter, onTap: {
+                    jun = false
+                    mid = false
+                    sen = false
+                })
                 Text("Хочу попасть на стажировку")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
-                CheckboxView(isOn: $isOn)
+            HStack(spacing: Constants.smallStack) {
+                CheckboxView(isOn: $jun, onTap: {
+                    inter = false
+                    mid = false
+                    sen = false
+                })
                 Text("Уже готов на Jun/Jun+")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
-                CheckboxView(isOn: $isOn)
+            HStack(spacing: Constants.smallStack) {
+                CheckboxView(isOn: $mid, onTap: {
+                    inter = false
+                    jun = false
+                    sen = false
+                })
                 Text("Иду на позицию Middle/Middle+")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
-                CheckboxView(isOn: $isOn)
+            HStack(spacing: Constants.smallStack) {
+                CheckboxView(isOn: $sen, onTap: {
+                    inter = false
+                    jun = false
+                    mid = false
+                })
                 Text("Я уже космолёт (Senior и выше)")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
         }
     }
@@ -82,14 +106,14 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
     
     var button: some View {
         MainButton(action: {
-            if isOn {
+            if inter || jun || mid || sen {
                 present = true
             } else {
                 
             }
         }, label: "Дальше")
             .navigationDestination(isPresented: $present) {
-                FillProfileCompView(model: model, root: $rootIsPresented, step: step+1)
+                FillProfileCompView(model: model, path: $path, step: step+1, showTabBar: $showTabBar)
                     .navigationBarBackButtonHidden()
             }
     }

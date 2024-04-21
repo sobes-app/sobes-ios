@@ -1,12 +1,14 @@
 import SwiftUI
 import Authorization
 import Profile
+import Chats
 import UIComponents
 import Materials
 
 public struct MainView: View {
 
     @State var selectedTab: TabItem = .profile
+    @State private var showTabBar = true
     @Binding var isAuthorized: Bool
 
     public var body: some View {
@@ -23,19 +25,17 @@ public struct MainView: View {
                     Text("a")
                 }
             case .chat:
-                VStack {
-                    Text("Hi guys")
-                    Spacer()
-                    Text("Buy")
-                }
+                ChatsView(showTabBar: $showTabBar)
             case .profile:
                 ProfileView(model: ProfileViewModelImpl(onLogoutAction: {
                     isAuthorized = false
-                }))
+                }), showTabBar: $showTabBar)
             }
 
             Spacer()
-            TabBar(selectedTab: $selectedTab)
+            if showTabBar {
+                TabBar(selectedTab: $selectedTab)
+            }
         }
     }
 
