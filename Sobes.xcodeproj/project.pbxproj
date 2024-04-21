@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7FF03488FC3A5564B68E6E /* Media.xcassets */; };
 		1FC97C4ED085CE1BD6FD9E28 /* EntryPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5451022752FC90FD51F87803 /* EntryPointView.swift */; };
 		323FF5DB2C45B16EBB0002CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF46344658ABC2FD254BED77 /* ContentView.swift */; };
+		5F05D0FC47369E6E742D0DF6 /* Types in Frameworks */ = {isa = PBXBuildFile; productRef = 9C380053BDEB33F32B55201D /* Types */; };
 		6F382E0557D9704D1522BB20 /* SobesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BC15B7AEE733B31130AE65 /* SobesApp.swift */; };
 		874BB4D94C5F74F9B8F49EF5 /* TuistFonts+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 269350B98311A6A45C9FF539 /* TuistFonts+Sobes.swift */; };
 		9EC70BF7D942830F831516E0 /* TuistAssets+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9CD791A8619AA6C2F195BA /* TuistAssets+Sobes.swift */; };
@@ -41,9 +42,10 @@
 		1EBB81CE7895D83631574242 /* Materials */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Materials; path = Sobes/Libraries/Materials; sourceTree = "<group>"; };
 		074EDA10E4BF2CAEF11FAF81 /* Profile */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Profile; path = Sobes/Libraries/Profile; sourceTree = "<group>"; };
 		269350B98311A6A45C9FF539 /* TuistFonts+Sobes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistFonts+Sobes.swift"; sourceTree = "<group>"; };
-		28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */ = {isa = PBXFileReference; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		308FAA419A3AF3827A2BFDF9 /* Sobes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5451022752FC90FD51F87803 /* EntryPointView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryPointView.swift; sourceTree = "<group>"; };
+		575A14500DDE9C80C9DDBDCB /* Types */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Types; path = Sobes/Libraries/Types; sourceTree = "<group>"; };
 		6E36B1149009CD8990E2E31E /* CoFoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CoFoSans-Bold.ttf"; sourceTree = "<group>"; };
 		73BC15B7AEE733B31130AE65 /* SobesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SobesApp.swift; sourceTree = "<group>"; };
 		7C1900FB9699F2CAFB7B8056 /* Sobes-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Sobes-Info.plist"; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 				F39C8251D0D1F1D4110F9E58 /* Authorization in Frameworks */,
 				C750B8A7C4B8618BD8B92759 /* UIComponents in Frameworks */,
 				FB77BAA07FFC1F8076EE81F5 /* Materials in Frameworks */,
+				5F05D0FC47369E6E742D0DF6 /* Types in Frameworks */,
 				FB77BAA07FFC1F8076EE81F5 /* Profile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -138,6 +141,7 @@
 			children = (
 				E436B704D2E1609F0162A2DB /* Authorization */,
 				1EBB81CE7895D83631574242 /* Materials */,
+				575A14500DDE9C80C9DDBDCB /* Types */,
 				7E0310729F3C4675FCE9D6BB /* UIComponents */,
 				074EDA10E4BF2CAEF11FAF81 /* Profile */,
 			);
@@ -204,6 +208,7 @@
 				FC26DF8BBF38D7FC04EF7C17 /* Authorization */,
 				AD0D56FF7E78D6CD4946A15F /* UIComponents */,
 				33318F6D74D3038758FE1634 /* Materials */,
+				9C380053BDEB33F32B55201D /* Types */,
 				824023B102ED7ECF050CD92B /* Profile */,
 			);
 			productName = Sobes;
@@ -218,15 +223,16 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				ORGANIZATIONNAME = FCS;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 1AD83AFD799ED8F09B299CBE /* Build configuration list for PBXProject "Sobes" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = ru;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
 				en,
-				ru,
 			);
 			mainGroup = 720B1E35ED662266430FCE19;
 			productRefGroup = CAEAB2C2BF0DD83C38196ECF /* Products */;
@@ -341,7 +347,10 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+					"$(inherited)",
+					DEBUG,
+				);
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -460,6 +469,10 @@
 		33318F6D74D3038758FE1634 /* Materials */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Materials;
+		};
+		9C380053BDEB33F32B55201D /* Types */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Types;
 		};
 		824023B102ED7ECF050CD92B /* Profile */ = {
 			isa = XCSwiftPackageProductDependency;

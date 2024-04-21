@@ -14,11 +14,15 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "Sobes/Sources/Libraries/UIComponents"),
+        .package(path: "Sobes/Sources/Libraries/Types")
     ],
     targets: [
         .target(
             name: "Materials",
-            dependencies: ["UIComponents"],
+            dependencies: [
+                "UIComponents",
+                "Types"
+            ],
             sources: ["Sources"],
             resources: [.process("Resources")]
         ),

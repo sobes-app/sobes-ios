@@ -14,6 +14,8 @@ public struct MainView: View {
             switch selectedTab {
             case .materials:
                 MaterialsView(model: MaterialsViewModelImpl())
+                    .ignoresSafeArea()
+                    .background(.white)
             case .interview:
                 VStack {
                     Text("o guys")

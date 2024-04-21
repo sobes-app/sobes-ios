@@ -12,9 +12,13 @@ let package = Package(
             name: "UIComponents",
             targets: ["UIComponents"]),
     ],
+    dependencies: [
+        .package(path: "Sobes/Sources/Libraries/Types"),
+    ],
     targets: [
         .target(
             name: "UIComponents",
+            dependencies: ["Types"],
             sources: ["Sources"],
             resources: [.process("Resources")]
         ),
