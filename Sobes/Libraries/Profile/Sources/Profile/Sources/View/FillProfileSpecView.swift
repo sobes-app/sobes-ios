@@ -23,8 +23,8 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
     @Binding private var showTabBar: Bool
     
     @ObservedObject private var model: Model
-    private var step: Double = 0
-        
+    private var step: Double = 1
+    
     public init(model: Model, path: Binding<NavigationPath>, showTabBar: Binding<Bool>){
         self._model = ObservedObject(wrappedValue: model)
         self._path = path
@@ -43,7 +43,7 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
             .padding(.top, Constants.topPadding)
             Spacer()
             VStack(spacing: Constants.defSpacing) {
-                ProgressView(value: 0)
+                ProgressView(value: step/model.stepsCount)
                     .padding(.horizontal, 20)
                     .tint(Color(.accent))
                     .scaleEffect(x: 1, y: 3, anchor: .center)
@@ -57,7 +57,7 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
             showTabBar = false
         }
     }
-
+    
     
     var specListView: some View {
         VStack (alignment: .leading, spacing: Constants.defSpacing) {
@@ -81,13 +81,11 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
     
     var back: some View {
         BackButton(onTap: {
-            if step == 0 {
-                showTabBar = true
-            }
+            showTabBar = true
         })
     }
     
-    func countSteps() {
+    func updateSpecs() {
         var specArray: [Spec] = []
         if isAnal {
             specArray.append(.analyst)
@@ -99,19 +97,18 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
             specArray.append(.project)
         }
         model.updateSpecs(specs: specArray)
-        model.stepsCount = Double(model.specs.count + 2)
     }
     
     var button: some View {
         MainButton(action: {
             if isAnal || isProd || isProj {
-                countSteps()
+                updateSpecs()
                 present = true
             }
         }, label: "Дальше")
-            .navigationDestination(isPresented: $present) {
-                FillProfileExpView(model: model, path: $path, step: step+1, showTabBar: $showTabBar)
-                    .navigationBarBackButtonHidden()
-            }
+        .navigationDestination(isPresented: $present) {
+            FillProfileLevelView(model: model, path: $path, step: step+1, showTabBar: $showTabBar)
+                .navigationBarBackButtonHidden()
+        }
     }
 }

@@ -1,7 +1,11 @@
 import SwiftUI
 import UIComponents
 
-public struct ChatsView: View {
+
+
+public struct ChatsView<Model: ChatViewModel>: View {
+    @StateObject private var model: Model
+    
     @State private var presentSearch: Bool = false
     @State private var presentChats: Bool = true
     
@@ -9,8 +13,9 @@ public struct ChatsView: View {
     
     @Binding private var showTabBar: Bool
     
-    public init(showTabBar: Binding<Bool>) {
+    public init(showTabBar: Binding<Bool>, model: Model) {
         self._showTabBar = showTabBar
+        self._model = StateObject(wrappedValue: model)
     }
     
     public var body: some View {
@@ -21,20 +26,52 @@ public struct ChatsView: View {
                     .foregroundColor(.black)
                 select
                 if presentChats {
-                    chatItem
-                        .navigationDestination(isPresented: $detailIsPresented) {
-                            ChatDetailView(showTabBar: $showTabBar)
-                                .navigationBarBackButtonHidden()
-                        }
+                    chats
                 } else {
                     
                 }
                 Spacer()
                 
             }
+            .onAppear {
+                model.onViewAppear()
+            }
             .padding(.horizontal, Constants.horizontal)
             .padding(.bottom, Constants.horizontal)
         }
+    }
+    
+    var chats: some View {
+        ScrollView {
+            ForEach(model.chats) { chat in
+                NavigationLink(destination: ChatDetailView(showTabBar: $showTabBar,
+                                                           chat: chat,
+                                                           model: model)) {
+                    VStack(spacing: Constants.defSpacing) {
+                        HStack(spacing: Constants.defSpacing) {
+                            Circle()
+                                .stroke(Color(.accent))
+                                .frame(width: 45, height: 45)
+                                .foregroundColor(Color(.light))
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(model.getResponder(chat: chat).name)
+                                    .font(Fonts.small.bold())
+                                    .foregroundColor(.black)
+                                Text(model.getLastMessage(chat: chat))
+                                    .font(Fonts.small)
+                                    .foregroundColor(.black)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        Rectangle()
+                            .foregroundColor(Color(.light))
+                            .frame(height: 1)
+                    }
+                }
+            }
+        }
+        .scrollClipDisabled()
     }
     
     var select: some View {
@@ -63,32 +100,5 @@ public struct ChatsView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-    
-    var chatItem: some View {
-        VStack(spacing: Constants.defSpacing) {
-            HStack(spacing: Constants.defSpacing) {
-                Circle()
-                    .stroke(Color(.accent))
-                    .frame(width: 45, height: 45)
-                    .foregroundColor(Color(.light))
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Яна Барбашина")
-                        .font(Fonts.small.bold())
-                        .foregroundColor(.black)
-                    Text("Привет, как дела, чд? Как твое настроение сегодня?")
-                        .font(Fonts.small)
-                        .foregroundColor(.black)
-                        .lineLimit(1)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            Rectangle()
-                .foregroundColor(Color(.light))
-                .frame(height: 1)
-        }
-        .onTapGesture {
-            detailIsPresented = true
-        }
     }
 }

@@ -81,9 +81,24 @@ struct FillProfileCompView<Model: ProfileViewModel>: View {
         BackButton(onTap: {})
     }
     
+    func updateComp() {
+        var array: [String] = []
+        if yandex {
+            array.append("Яндекс")
+        }
+        if tinkoff {
+            array.append("Тинькофф")
+        }
+        if other {
+            array.append("Другое")
+        }
+        model.updateCompanies(comps: array)
+    }
+    
     var button: some View {
         MainButton(action: {
             if yandex || tinkoff || other {
+                updateComp()
                 model.saveInfo()
                 //TODO: как-то вернуться к корню
                 path = NavigationPath()

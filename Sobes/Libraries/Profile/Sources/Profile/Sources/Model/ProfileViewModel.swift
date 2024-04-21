@@ -6,12 +6,14 @@
 //
 
 import Foundation
+import Types
 
 @MainActor
 public protocol ProfileViewModel: ObservableObject {
     var specs: [Spec] {get}
-    var savedSpecs: [Spec] {get}
+    var level: String {get set}
     var stepsCount: Double {get set}
+    var profile: Types.Profile {get}
     
     func onViewAppear()
     func updateSpecs(specs: [Spec])
@@ -19,21 +21,27 @@ public protocol ProfileViewModel: ObservableObject {
     func onLogoutTap()
     func saveInfo()
     func saveNewName(newName: String)
-    func getCurrentSpec(ind: Double) -> String
-    func createString() -> String
+    func createString(array: [String]) -> String
+    func updateCompanies(comps: [String])
 }
 
 @MainActor
 public final class ProfileViewModelImpl: ProfileViewModel {
+    
+    @Published private(set) public var profile: Types.Profile
+    
     @Published private(set) public var specs: [Spec] = []
-    @Published private(set) public var savedSpecs: [Spec] = []
-    @Published public var stepsCount: Double = 0.0
+    @Published private(set) public var companies: [String] = []
+    @Published public var level: String = ""
+    
+    @Published public var stepsCount: Double = 3
     
     private let onLogoutAction: () -> Void
     //    let profileProvider: ProfileProvider
     
     public init(onLogoutAction: @escaping () -> Void) {
         self.onLogoutAction = onLogoutAction
+        self.profile = Profile(id: 0, name: "Алиса Вышегородцева", desired: [], companies: [], experience: "")
     }
     
     
@@ -45,6 +53,10 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         self.specs = specs
     }
     
+    public func updateCompanies(comps: [String]) {
+        self.companies = comps
+    }
+    
     public func setSpecLevel(spec: Spec, level: Int) {
         
     }
@@ -54,25 +66,27 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     }
     
     public func saveInfo() {
-        savedSpecs = specs
+        profile.companies = companies
+        profile.desired = getArrayOfSpecs()
+        profile.experience = level
+    }
+    
+    func getArrayOfSpecs() -> [String] {
+        var array: [String] = []
+        for i in specs {
+            array.append(i.rawValue)
+        }
+        return array
     }
     
     public func saveNewName(newName: String) {
         
     }
     
-    public func getCurrentSpec(ind: Double) -> String {
-        if ind - 1 < 0 {
-            return "Hello"
-        } else {
-            return specs[Int(ind)-1].rawValue
-        }
-    }
-    
-    public func createString() -> String {
+    public func createString(array: [String]) -> String {
         var st = ""
-        for ind in savedSpecs {
-            st += ind.rawValue
+        for ind in array {
+            st += ind
             st += ", "
         }
         st.removeLast()

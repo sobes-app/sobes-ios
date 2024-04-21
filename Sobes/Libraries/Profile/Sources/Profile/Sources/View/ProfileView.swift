@@ -2,7 +2,6 @@ import SwiftUI
 import UIComponents
 
 public struct ProfileView<Model: ProfileViewModel>: View {
-    private let name: String = "Алиса Вышегородцева"
     @State private var presentSettings: Bool = false
     @State private var presentFill: Bool = false
     @State private var path = NavigationPath()
@@ -23,7 +22,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                     settingsView
                     logoutView
                 }
-                if model.savedSpecs != [] {
+                if model.profile.desired != [] {
                     statsView
                     Spacer()
                 } else {
@@ -48,10 +47,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     var statsView: some View {
         VStack(alignment: .leading, spacing: Constants.defSpacing) {
             specsView
-            HStack(spacing: Constants.defSpacing) {
-                expView
-                levelView
-            }
+            levelView
             companiesView
             Text("Для изменения данных нажмите на нужную ячейку")
                 .font(Fonts.small)
@@ -64,7 +60,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Хочет работать в:")
                 .font(Fonts.mainBold)
-            Text("пупупу пук пук пупупу")
+            Text(model.createString(array: model.profile.companies))
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
@@ -76,31 +72,13 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         }
     }
     
-    var expView: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text("Опыт")
-                .font(Fonts.mainBold)
-                .multilineTextAlignment(.leading)
-                .foregroundColor(Color(.accent))
-            Text("пук пук")
-                .font(Fonts.main)
-                .multilineTextAlignment(.leading)
-                .foregroundColor(Color(.accent))
-        }
-        .padding(Constants.elementPadding)
-        .background{
-            RoundedRectangle(cornerRadius: Constants.corner)
-                .stroke(Color(.accent))
-        }
-    }
-    
     var levelView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Желаемая позиция")
                 .font(Fonts.mainBold)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
-            Text("пук пук пук пук")
+            Text(model.profile.experience)
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
@@ -117,7 +95,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Желаемые должности:")
                 .font(Fonts.mainBold)
-            Text(model.createString())
+            Text(model.createString(array: model.profile.desired))
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
@@ -146,7 +124,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         Text("Привет, ")
             .font(Fonts.heading)
             .foregroundColor(.black)
-        + Text(name)
+        + Text(model.profile.name)
             .font(Fonts.heading)
             .foregroundColor(Color(.accent))
         + Text("!")

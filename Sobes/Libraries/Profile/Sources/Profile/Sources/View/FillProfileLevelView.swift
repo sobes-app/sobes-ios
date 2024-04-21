@@ -8,6 +8,13 @@
 import SwiftUI
 import UIComponents
 
+public enum Levels: String {
+    case inter = "Хочу попасть на стажировку"
+    case jun = "Уже готов на Jun/Jun+"
+    case mid = "Иду на позицию Middle/Middle+"
+    case sen = "Я уже космолёт (Senior и выше)"
+}
+
 struct FillProfileLevelView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
     @State private var present: Bool = false
@@ -66,8 +73,9 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
                     jun = false
                     mid = false
                     sen = false
+                    model.level = "Стажировка"
                 })
-                Text("Хочу попасть на стажировку")
+                Text(Levels.inter.rawValue)
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
@@ -75,8 +83,9 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
                     inter = false
                     mid = false
                     sen = false
+                    model.level = "Jun/Jun+"
                 })
-                Text("Уже готов на Jun/Jun+")
+                Text(Levels.jun.rawValue)
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
@@ -84,8 +93,9 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
                     inter = false
                     jun = false
                     sen = false
+                    model.level = "Middle/Middle+"
                 })
-                Text("Иду на позицию Middle/Middle+")
+                Text(Levels.mid.rawValue)
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
@@ -93,8 +103,9 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
                     inter = false
                     jun = false
                     mid = false
+                    model.level = "Senior"
                 })
-                Text("Я уже космолёт (Senior и выше)")
+                Text(Levels.sen.rawValue)
                     .font(Fonts.main)
             }
         }

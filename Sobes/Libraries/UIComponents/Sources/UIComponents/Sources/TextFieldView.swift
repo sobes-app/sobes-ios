@@ -19,17 +19,20 @@ public struct TextFieldView: View {
     @Binding var input: String
     @Binding var inputState: InputState
     var isSendButtonAvailable: Bool
+    var onSend: (()-> Void)?
     
     public init(
         model: Model,
         input: Binding<String>,
         inputState: Binding<InputState>,
-        isSendButtonAvailable: Bool = true
+        isSendButtonAvailable: Bool = true,
+        onSend: (() -> Void)? = nil
     ) {
         self.model = model
         self._input = input
         self._inputState = inputState
         self.isSendButtonAvailable = isSendButtonAvailable
+        self.onSend = onSend
     }
     
     public var body: some View {
@@ -130,18 +133,31 @@ public struct TextFieldView: View {
         }
     }
     var chat: some View {
-        HStack(spacing: Constants.smallStack) {
-            TextField("сообщение...", text: $input)
+        HStack(spacing: 5) {
+            TextField("сообщение...", text: $input, axis: .vertical)
                 .foregroundColor(Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
+                .onSubmit {
+                    onSend?()
+                }
+                .padding(Constants.elementPadding)
+                .background {
+                    roundedRec
+                }
             Spacer()
-            Image(systemName: "chevron.forward")
-                .foregroundColor(input.count == 0 ? Static.Colors.grey : .black)
-        }
-        .padding(Constants.elementPadding)
-        .background {
-            roundedRec
+            Button(action: {onSend?()}) {
+                Image(systemName: "arrow.up")
+                    .foregroundColor(input.count == 0 ? Static.Colors.grey : .white)
+                    .onTapGesture {
+                        onSend?()
+                    }
+                    .background {
+                        Circle()
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(input.count == 0 ? Color(.light) : Color(.accent))
+                    }
+            }
         }
     }
     
