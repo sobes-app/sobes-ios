@@ -11,14 +11,22 @@ import UIComponents
 struct FillProfileLevelView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
     @State private var present: Bool = false
-    @State private var isOn: Bool = false
-    @Binding private var rootIsPresented: Bool
+    
+    @State private var inter: Bool = false
+    @State private var jun: Bool = false
+    @State private var mid: Bool = false
+    @State private var sen: Bool = false
+
+    @Binding private var path: NavigationPath
+    @Binding private var showTabBar: Bool
+
     private let step: Double
     
-    public init(model: Model, root: Binding<Bool>, step: Double) {
+    public init(model: Model, path: Binding<NavigationPath>, step: Double, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
-        self._rootIsPresented = root
+        self._path = path
         self.step = step
+        self._showTabBar = showTabBar
     }
     
     public var body: some View {
@@ -54,22 +62,38 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
     var specListView: some View {
         VStack (alignment: .leading, spacing: Constants.defSpacing) {
             HStack(spacing: Constants.smallStack) {
-                CheckboxView(isOn: $isOn)
+                CheckboxView(isOn: $inter, onTap: {
+                    jun = false
+                    mid = false
+                    sen = false
+                })
                 Text("Хочу попасть на стажировку")
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
-                CheckboxView(isOn: $isOn)
+                CheckboxView(isOn: $jun, onTap: {
+                    inter = false
+                    mid = false
+                    sen = false
+                })
                 Text("Уже готов на Jun/Jun+")
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
-                CheckboxView(isOn: $isOn)
+                CheckboxView(isOn: $mid, onTap: {
+                    inter = false
+                    jun = false
+                    sen = false
+                })
                 Text("Иду на позицию Middle/Middle+")
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
-                CheckboxView(isOn: $isOn)
+                CheckboxView(isOn: $sen, onTap: {
+                    inter = false
+                    jun = false
+                    mid = false
+                })
                 Text("Я уже космолёт (Senior и выше)")
                     .font(Fonts.main)
             }
@@ -82,14 +106,14 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
     
     var button: some View {
         MainButton(action: {
-            if isOn {
+            if inter || jun || mid || sen {
                 present = true
             } else {
                 
             }
         }, label: "Дальше")
             .navigationDestination(isPresented: $present) {
-                FillProfileCompView(model: model, root: $rootIsPresented, step: step+1)
+                FillProfileCompView(model: model, path: $path, step: step+1, showTabBar: $showTabBar)
                     .navigationBarBackButtonHidden()
             }
     }

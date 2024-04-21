@@ -137,7 +137,7 @@ public struct TextFieldView: View {
                 .disableAutocorrection(true)
             Spacer()
             Image(systemName: "chevron.forward")
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(input.count == 0 ? Static.Colors.grey : .black)
         }
         .padding(Constants.elementPadding)
         .background {

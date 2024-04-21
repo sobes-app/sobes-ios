@@ -5,15 +5,17 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     private let name: String = "Алиса Вышегородцева"
     @State private var presentSettings: Bool = false
     @State private var presentFill: Bool = false
-    @State private var rootIsPresented: Bool = true
-    @ObservedObject private var model: Model
+    @State private var path = NavigationPath()
+    @StateObject private var model: Model
+    @Binding private var showTabBar: Bool
     
-    public init(model: Model) {
-        self._model = ObservedObject(wrappedValue: model)
+    public init(model: Model, showTabBar: Binding<Bool>) {
+        self._model = StateObject(wrappedValue: model)
+        self._showTabBar = showTabBar
     }
     
     public var body: some View {
-        NavigationStack{
+        NavigationStack(path: $path) {
             VStack(alignment: .leading) {
                 HStack(spacing: Constants.smallStack) {
                     nameView
@@ -38,7 +40,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     var button: some View {
         MainButton(action: {presentFill=true}, label: "Рассказать о себе")
             .navigationDestination(isPresented: $presentFill) {
-                FillProfileSpecView(model: model, root: $rootIsPresented)
+                FillProfileSpecView(model: model, path: $path, showTabBar: $showTabBar)
                     .navigationBarBackButtonHidden()
             }
     }
@@ -163,8 +165,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                 }
         }
         .navigationDestination(isPresented: $presentSettings) {
-            //TODO: почему боттом бар остается при переключении?
-            ProfileSettingsView(model: model)
+            ProfileSettingsView(model: model, showTabBar: $showTabBar)
                 .navigationBarBackButtonHidden()
         }
     }

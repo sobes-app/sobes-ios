@@ -20,7 +20,7 @@ struct EntryPointView: View {
                 HStack {
                     Text("уже есть аккаунт?")
                         .font(Fonts.small)
-                        .foregroundColor(Color(.accent))
+                        .foregroundColor(.black)
                     authButton
                 }
             }
@@ -54,7 +54,3 @@ struct EntryPointView: View {
             }
     }
 }
-
-//#Preview {
-////    EntryPointView()
-//}

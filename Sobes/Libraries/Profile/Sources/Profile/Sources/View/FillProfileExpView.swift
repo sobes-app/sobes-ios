@@ -11,21 +11,25 @@ import UIComponents
 public struct FillProfileExpView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
     @State private var present: Bool = false
-    @State private var isOn: Bool = false
-    @Binding private var rootIsPresented: Bool
+    @State private var noExp: Bool = false
+    @State private var lessYear: Bool = false
+    @State private var moreYear: Bool = false
+    @Binding private var path: NavigationPath
+    @Binding private var showTabBar: Bool
+
     private var step: Double
     
-    public init(model: Model, root: Binding<Bool>, step: Double) {
-        self._rootIsPresented = root
+    public init(model: Model, path: Binding<NavigationPath>, step: Double, showTabBar: Binding<Bool>) {
+        self._path = path
         self._model = ObservedObject(wrappedValue: model)
         self.step = step
+        self._showTabBar = showTabBar
     }
     
     public var body: some View {
         VStack(alignment: .leading) {
             back
             VStack(alignment: .leading, spacing: Constants.defSpacing) {
-                //TODO: починить дисмисс
                 Text("Выбери свой уровень для профессии “\(model.getCurrentSpec(ind: step))”")
                     .font(Fonts.heading)
                     .foregroundColor(.black)
@@ -54,17 +58,26 @@ public struct FillProfileExpView<Model: ProfileViewModel>: View {
     var specListView: some View {
         VStack (alignment: .leading, spacing: Constants.defSpacing) {
             HStack(spacing: Constants.smallStack) {
-                CheckboxView(isOn: $isOn)
+                CheckboxView(isOn: $noExp, onTap: {
+                    lessYear = false
+                    moreYear = false
+                })
                 Text("Не было опыта")
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
-                CheckboxView(isOn: $isOn)
+                CheckboxView(isOn: $lessYear, onTap: {
+                    noExp = false
+                    moreYear = false
+                })
                 Text("Был релевантный опыт до года")
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
-                CheckboxView(isOn: $isOn)
+                CheckboxView(isOn: $moreYear, onTap: {
+                    noExp = false
+                    lessYear = false
+                })
                 Text("Бал релевантный опыт более года")
                     .font(Fonts.main)
             }
@@ -77,7 +90,7 @@ public struct FillProfileExpView<Model: ProfileViewModel>: View {
     
     var button: some View {
         MainButton(action: {
-            if isOn {
+            if noExp || lessYear || moreYear {
                 present = true
             } else {
                 
@@ -85,10 +98,10 @@ public struct FillProfileExpView<Model: ProfileViewModel>: View {
         }, label: "Дальше")
             .navigationDestination(isPresented: $present) {
                 if step == model.stepsCount - 2 {
-                    FillProfileLevelView(model: model, root: $rootIsPresented, step: step+1)
+                    FillProfileLevelView(model: model, path: $path, step: step+1, showTabBar: $showTabBar)
                         .navigationBarBackButtonHidden()
                 } else {
-                    FillProfileExpView(model: model, root: $rootIsPresented, step: step+1)
+                    FillProfileExpView(model: model, path: $path, step: step+1, showTabBar: $showTabBar)
                         .navigationBarBackButtonHidden()
                 }
             }

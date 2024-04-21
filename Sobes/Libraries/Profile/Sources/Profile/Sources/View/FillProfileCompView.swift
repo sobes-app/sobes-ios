@@ -10,14 +10,21 @@ import UIComponents
 
 struct FillProfileCompView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
-    @State private var isOn: Bool = false
-    @Binding private var rootIsPresented: Bool
+    
+    @State private var yandex: Bool = false
+    @State private var tinkoff: Bool = false
+    @State private var other: Bool = false
+    
+    @Binding private var path: NavigationPath
+    @Binding private var showTabBar: Bool
+
     private let step: Double
     
-    public init(model: Model, root: Binding<Bool>, step: Double) {
+    public init(model: Model, path: Binding<NavigationPath>, step: Double, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
-        self._rootIsPresented = root
+        self._path = path
         self.step = step
+        self._showTabBar = showTabBar
     }
     
     public var body: some View {
@@ -53,22 +60,17 @@ struct FillProfileCompView<Model: ProfileViewModel>: View {
     var specListView: some View {
         VStack (alignment: .leading, spacing: Constants.defSpacing) {
             HStack(spacing: Constants.smallStack) {
-                CheckboxView(isOn: $isOn)
+                CheckboxView(isOn: $tinkoff)
                 Text("Тинькофф")
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
-                CheckboxView(isOn: $isOn)
-                Text("Сбер")
-                    .font(Fonts.main)
-            }
-            HStack(spacing: Constants.smallStack) {
-                CheckboxView(isOn: $isOn)
+                CheckboxView(isOn: $yandex)
                 Text("Яндекс")
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
-                CheckboxView(isOn: $isOn)
+                CheckboxView(isOn: $other)
                 Text("Другое")
                     .font(Fonts.main)
             }
@@ -81,10 +83,10 @@ struct FillProfileCompView<Model: ProfileViewModel>: View {
     
     var button: some View {
         MainButton(action: {
-            if isOn {
+            if yandex || tinkoff || other {
                 model.saveInfo()
                 //TODO: как-то вернуться к корню
-                rootIsPresented = false
+                path = NavigationPath()
             } else {
                 
             }

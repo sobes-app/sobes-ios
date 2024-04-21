@@ -20,9 +20,11 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
     @State private var inputPassState: TextFieldView.InputState = .correct
     
     @State private var presentCode: Bool = false
+    @Binding private var showTabBar: Bool
     
-    public init(model: Model) {
+    public init(model: Model, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
+        self._showTabBar = showTabBar
     }
     
     public var body: some View {
@@ -45,6 +47,12 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
         }
         .padding(.horizontal, Constants.horizontal)
         .padding(.bottom, Constants.bottom)
+        .onAppear {
+            showTabBar = false
+        }
+        .onDisappear {
+            showTabBar = true
+        }
     }
     
     var changePassword: some View {
