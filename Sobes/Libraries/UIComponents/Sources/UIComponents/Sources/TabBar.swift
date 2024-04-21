@@ -2,8 +2,6 @@ import SwiftUI
 
 public struct TabBar: View {
 
-    @Binding var selectedTab: TabItem
-
     public init(selectedTab: Binding<TabItem>) {
         self._selectedTab = selectedTab
     }
@@ -53,8 +51,10 @@ public struct TabBar: View {
         .ignoresSafeArea(.keyboard)
         .frame(height: 60)
         .frame(maxWidth: .infinity)
-        .background(Color("grey",bundle: .module))
+        .background(Color("grey", bundle: .module))
     }
+
+    @Binding private var selectedTab: TabItem
 
 }
 

@@ -1,8 +1,9 @@
 import SwiftUI
-import UIComponents
 import Authorization
 import Profile
 import Chats
+import UIComponents
+import Materials
 
 public struct MainView: View {
 
@@ -14,11 +15,9 @@ public struct MainView: View {
         VStack {
             switch selectedTab {
             case .materials:
-                VStack {
-                    Text("Hi guys")
-                    Spacer()
-                    Text("Buy")
-                }
+                MaterialsView(model: MaterialsViewModelImpl())
+                    .ignoresSafeArea()
+                    .background(.white)
             case .interview:
                 VStack {
                     Text("o guys")

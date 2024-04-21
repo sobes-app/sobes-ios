@@ -8,6 +8,8 @@ let project = Project(
         .local(path: "Sobes/Libraries/UIComponents"),
         .local(path: "Sobes/Libraries/Profile"),
         .local(path: "Sobes/Libraries/Chats")
+        .local(path: "Sobes/Libraries/Materials"),
+        .local(path: "Sobes/Libraries/Types"),
     ],
     targets: [
         .target(
@@ -22,8 +24,10 @@ let project = Project(
             dependencies: [
                 .package(product: "Authorization"),
                 .package(product: "UIComponents"),
-                .package(product: "Profile"),
                 .package(product: "Chats")
+                .package(product: "Materials"),
+                .package(product: "Types"),
+                .package(product: "Profile")
             ]
         ),
     ]

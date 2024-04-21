@@ -1,0 +1,26 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Материалы для\nподготовки" : {
+
+    },
+    "Материалы для подготовки" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparation materials"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Материалы для подготовки"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "Authorization",
+    defaultLocalization: "ru",
     platforms: [.iOS(.v16)],
     products: [
         .library(
