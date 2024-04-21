@@ -16,6 +16,8 @@ public struct MaterialBubble: View {
         }
     }
 
+    private let model: Types.Material
+
     private func tip(model: Tip) -> some View {
         VStack(spacing: 10) {
             tipHeader(logo: model.logo, author: model.author, role: model.role)
@@ -40,7 +42,7 @@ public struct MaterialBubble: View {
                     .font(Font.custom("CoFoSans-Regular", size: 13))
                 Text(role)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundStyle(Color(.secondary))
+                    .foregroundStyle(Color(.grey))
                     .font(Font.custom("CoFoSans-Regular", size: 13))
             }
         }
@@ -79,6 +81,4 @@ public struct MaterialBubble: View {
                 .stroke(.black, lineWidth: 1)
         }
     }
-
-    private let model: Types.Material
 }

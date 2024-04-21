@@ -1,10 +1,3 @@
-//
-//  SwiftUIView.swift
-//
-//
-//  Created by Алиса Вышегородцева on 18.04.2024.
-//
-
 import SwiftUI
 
 public struct TextFieldView: View {
