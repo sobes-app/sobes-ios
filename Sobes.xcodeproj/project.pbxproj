@@ -10,6 +10,7 @@
 		09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7FF03488FC3A5564B68E6E /* Media.xcassets */; };
 		1FC97C4ED085CE1BD6FD9E28 /* EntryPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5451022752FC90FD51F87803 /* EntryPointView.swift */; };
 		323FF5DB2C45B16EBB0002CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF46344658ABC2FD254BED77 /* ContentView.swift */; };
+		5F05D0FC47369E6E742D0DF6 /* Types in Frameworks */ = {isa = PBXBuildFile; productRef = 9C380053BDEB33F32B55201D /* Types */; };
 		6F382E0557D9704D1522BB20 /* SobesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BC15B7AEE733B31130AE65 /* SobesApp.swift */; };
 		874BB4D94C5F74F9B8F49EF5 /* TuistFonts+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 269350B98311A6A45C9FF539 /* TuistFonts+Sobes.swift */; };
 		9EC70BF7D942830F831516E0 /* TuistAssets+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9CD791A8619AA6C2F195BA /* TuistAssets+Sobes.swift */; };
@@ -17,10 +18,11 @@
 		D2AE393E024D2BB821D87B5B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */; };
 		E0335E5F0BBE4B33662B35EF /* CoFoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8E4FF843CEDBD8A6C1BFA80E /* CoFoSans-Regular.ttf */; };
 		E2902F17E40C40ACD1C4D72C /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8616FA434A30D796D659E061 /* MainView.swift */; };
+		E86019111AA5A2F416A9CC6A /* Profile in Frameworks */ = {isa = PBXBuildFile; productRef = 824023B102ED7ECF050CD92B /* Profile */; };
 		EB4AED876C10F1C8BC74AF85 /* CoFoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E36B1149009CD8990E2E31E /* CoFoSans-Bold.ttf */; };
 		F39C8251D0D1F1D4110F9E58 /* Authorization in Frameworks */ = {isa = PBXBuildFile; productRef = FC26DF8BBF38D7FC04EF7C17 /* Authorization */; };
 		F5EAFD9CBDA1B3243CE71DC1 /* TuistBundle+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB50BB33AB3D2F382AAFAC22 /* TuistBundle+Sobes.swift */; };
-		FB77BAA07FFC1F8076EE81F5 /* Profile in Frameworks */ = {isa = PBXBuildFile; productRef = 824023B102ED7ECF050CD92B /* Profile */; };
+		FB77BAA07FFC1F8076EE81F5 /* Materials in Frameworks */ = {isa = PBXBuildFile; productRef = 33318F6D74D3038758FE1634 /* Materials */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,10 +40,12 @@
 
 /* Begin PBXFileReference section */
 		074EDA10E4BF2CAEF11FAF81 /* Profile */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Profile; path = Sobes/Libraries/Profile; sourceTree = "<group>"; };
+		1EBB81CE7895D83631574242 /* Materials */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Materials; path = Sobes/Libraries/Materials; sourceTree = "<group>"; };
 		269350B98311A6A45C9FF539 /* TuistFonts+Sobes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistFonts+Sobes.swift"; sourceTree = "<group>"; };
 		28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */ = {isa = PBXFileReference; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		308FAA419A3AF3827A2BFDF9 /* Sobes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5451022752FC90FD51F87803 /* EntryPointView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryPointView.swift; sourceTree = "<group>"; };
+		575A14500DDE9C80C9DDBDCB /* Types */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Types; path = Sobes/Libraries/Types; sourceTree = "<group>"; };
 		6E36B1149009CD8990E2E31E /* CoFoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CoFoSans-Bold.ttf"; sourceTree = "<group>"; };
 		73BC15B7AEE733B31130AE65 /* SobesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SobesApp.swift; sourceTree = "<group>"; };
 		7C1900FB9699F2CAFB7B8056 /* Sobes-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Sobes-Info.plist"; sourceTree = "<group>"; };
@@ -62,7 +66,9 @@
 			files = (
 				F39C8251D0D1F1D4110F9E58 /* Authorization in Frameworks */,
 				C750B8A7C4B8618BD8B92759 /* UIComponents in Frameworks */,
-				FB77BAA07FFC1F8076EE81F5 /* Profile in Frameworks */,
+				FB77BAA07FFC1F8076EE81F5 /* Materials in Frameworks */,
+				5F05D0FC47369E6E742D0DF6 /* Types in Frameworks */,
+				E86019111AA5A2F416A9CC6A /* Profile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,13 +82,6 @@
 				8E4FF843CEDBD8A6C1BFA80E /* CoFoSans-Regular.ttf */,
 			);
 			path = Fonts;
-			sourceTree = "<group>";
-		};
-		617D91222A1F96274994A73F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		633E0B5AD19666F57FF3254D /* Sobes */ = {
@@ -108,18 +107,9 @@
 			isa = PBXGroup;
 			children = (
 				DE64F142281DCAA9CB37CA9E /* Project */,
-				617D91222A1F96274994A73F /* Frameworks */,
-				85A194BA7C2EC45672C8F3EA /* Cache */,
 				CAEAB2C2BF0DD83C38196ECF /* Products */,
 				B71E3A24B7FA6386E95EC181 /* Packages */,
 			);
-			sourceTree = "<group>";
-		};
-		85A194BA7C2EC45672C8F3EA /* Cache */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Cache;
 			sourceTree = "<group>";
 		};
 		A3B3AED4B4450A81D4F7FA1B /* Derived */ = {
@@ -134,8 +124,10 @@
 			isa = PBXGroup;
 			children = (
 				E436B704D2E1609F0162A2DB /* Authorization */,
-				7E0310729F3C4675FCE9D6BB /* UIComponents */,
+				1EBB81CE7895D83631574242 /* Materials */,
 				074EDA10E4BF2CAEF11FAF81 /* Profile */,
+				575A14500DDE9C80C9DDBDCB /* Types */,
+				7E0310729F3C4675FCE9D6BB /* UIComponents */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -199,6 +191,8 @@
 			packageProductDependencies = (
 				FC26DF8BBF38D7FC04EF7C17 /* Authorization */,
 				AD0D56FF7E78D6CD4946A15F /* UIComponents */,
+				33318F6D74D3038758FE1634 /* Materials */,
+				9C380053BDEB33F32B55201D /* Types */,
 				824023B102ED7ECF050CD92B /* Profile */,
 			);
 			productName = Sobes;
@@ -456,9 +450,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		33318F6D74D3038758FE1634 /* Materials */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Materials;
+		};
 		824023B102ED7ECF050CD92B /* Profile */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Profile;
+		};
+		9C380053BDEB33F32B55201D /* Types */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Types;
 		};
 		AD0D56FF7E78D6CD4946A15F /* UIComponents */ = {
 			isa = XCSwiftPackageProductDependency;

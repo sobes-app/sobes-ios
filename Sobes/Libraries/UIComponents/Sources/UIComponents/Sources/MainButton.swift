@@ -1,8 +1,6 @@
 import SwiftUI
 
 public struct MainButton: View {
-    private let action: @MainActor () -> Void
-    private let label: String
 
     public init(action: @escaping @MainActor () -> Void, label: String) {
         self.action = action
@@ -24,5 +22,8 @@ public struct MainButton: View {
         }
         .padding(.horizontal, 20)
     }
+
+    private let action: @MainActor () -> Void
+    private let label: String
 
 }
