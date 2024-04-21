@@ -8,16 +8,16 @@
 import SwiftUI
 import UIComponents
 
-public struct FillProfileExpView: View {
+public struct FillProfileExpView<Model: ProfileViewModel>: View {
+    @ObservedObject private var model: Model
     @State private var present: Bool = false
     @State private var isOn: Bool = false
-    private let steps: Double
-    private let step: Double
-    private let spec: [Spec]
+    @Binding private var rootIsPresented: Bool
+    private var step: Double
     
-    public init(steps: Double = 0.0, spec: [Spec], step: Double = 0.0) {
-        self.steps = steps
-        self.spec = spec
+    public init(model: Model, root: Binding<Bool>, step: Double) {
+        self._rootIsPresented = root
+        self._model = ObservedObject(wrappedValue: model)
         self.step = step
     }
     
@@ -25,7 +25,8 @@ public struct FillProfileExpView: View {
         VStack(alignment: .leading) {
             back
             VStack(alignment: .leading, spacing: 16) {
-                Text("Выбери свой уровень для профессии “\(spec[Int(step)-1].rawValue)”")
+                //TODO: починить дисмисс
+                Text("Выбери свой уровень для профессии “\(model.getCurrentSpec(ind: step))”")
                     .font(Font.custom("CoFoSans-Bold", size: 23))
                     .foregroundColor(.black)
                 specListView
@@ -37,8 +38,9 @@ public struct FillProfileExpView: View {
             .padding(.top, 20)
             Spacer()
             VStack(spacing: 16) {
-                ProgressView(value: step/steps)
+                ProgressView(value: step/model.stepsCount)
                     .padding(.horizontal, 20)
+                    .tint(Color(.accent))
                     .scaleEffect(x: 1, y: 3, anchor: .center)
                 button
             }
@@ -70,17 +72,23 @@ public struct FillProfileExpView: View {
     }
     
     var back: some View {
-        BackButton()
+        BackButton(onTap: {})
     }
     
     var button: some View {
-        MainButton(action: {present = true}, label: "Дальше")
+        MainButton(action: {
+            if isOn {
+                present = true
+            } else {
+                
+            }
+        }, label: "Дальше")
             .navigationDestination(isPresented: $present) {
-                if step == steps - 2 {
-                    FillProfileLevelView(steps: steps, step: step+1)
+                if step == model.stepsCount - 2 {
+                    FillProfileLevelView(model: model, root: $rootIsPresented, step: step+1)
                         .navigationBarBackButtonHidden()
                 } else {
-                    FillProfileExpView(steps: steps, spec: spec, step: step+1)
+                    FillProfileExpView(model: model, root: $rootIsPresented, step: step+1)
                         .navigationBarBackButtonHidden()
                 }
             }

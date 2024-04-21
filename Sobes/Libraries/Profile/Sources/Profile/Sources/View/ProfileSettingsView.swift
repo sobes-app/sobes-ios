@@ -9,7 +9,10 @@ import SwiftUI
 import UIComponents
 import Authorization
 
-public struct ProfileSettingsView: View {
+public struct ProfileSettingsView<Model: ProfileViewModel>: View {
+    @ObservedObject private var model: Model
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
     @State private var input: String = ""
     @State private var inputState: TextFieldView.InputState = .correct
     
@@ -18,7 +21,9 @@ public struct ProfileSettingsView: View {
     
     @State private var presentCode: Bool = false
     
-    public init() { }
+    public init(model: Model) {
+        self._model = ObservedObject(wrappedValue: model)
+    }
     
     public var body: some View {
         VStack(alignment: .leading) {
@@ -49,21 +54,19 @@ public struct ProfileSettingsView: View {
                 .font(Font.custom("CoFoSans-Regular", size: 13))
         }
         .navigationDestination(isPresented: $presentCode) {
-            RegCodeView(from: .recreatePassword)
+            //TODO: переделать нахуй
+//            RegCodeView(from: .recreatePassword)
         }
     }
     
     var button: some View {
         MainButton(action: {
-            //TODO: сохранить данные 
+            model.saveNewName(newName: input)
+            presentationMode.wrappedValue.dismiss()
         }, label: "Сохранить")
     }
     
     var back: some View {
-        BackButton()
+        BackButton(onTap: {})
     }
-}
-
-#Preview {
-    ProfileSettingsView()
 }

@@ -8,14 +8,16 @@
 import SwiftUI
 import UIComponents
 
-struct FillProfileLevelView: View {
+struct FillProfileLevelView<Model: ProfileViewModel>: View {
+    @ObservedObject private var model: Model
     @State private var present: Bool = false
     @State private var isOn: Bool = false
-    private let steps: Double
+    @Binding private var rootIsPresented: Bool
     private let step: Double
     
-    public init(steps: Double = 0.0, step: Double = 0.0) {
-        self.steps = steps
+    public init(model: Model, root: Binding<Bool>, step: Double) {
+        self._model = ObservedObject(wrappedValue: model)
+        self._rootIsPresented = root
         self.step = step
     }
     
@@ -23,7 +25,7 @@ struct FillProfileLevelView: View {
         VStack(alignment: .leading) {
             back
             VStack(alignment: .leading, spacing: 16) {
-                VStack {
+                VStack (alignment: .leading) {
                     Text("Почти всё!")
                         .font(Font.custom("CoFoSans-Regular", size: 13))
                         .foregroundColor(.black)
@@ -36,8 +38,9 @@ struct FillProfileLevelView: View {
             .padding(.top, 20)
             Spacer()
             VStack(spacing: 16) {
-                ProgressView(value: step/steps)
+                ProgressView(value: step/model.stepsCount)
                     .padding(.horizontal, 20)
+                    .tint(Color(.accent))
                     .scaleEffect(x: 1, y: 3, anchor: .center)
                 button
             }
@@ -74,18 +77,21 @@ struct FillProfileLevelView: View {
     }
     
     var back: some View {
-        BackButton()
+        BackButton(onTap: {})
     }
     
     var button: some View {
-        MainButton(action: {present = true}, label: "Дальше")
+        MainButton(action: {
+            if isOn {
+                present = true
+            } else {
+                
+            }
+        }, label: "Дальше")
             .navigationDestination(isPresented: $present) {
-                FillProfileCompView()
+                FillProfileCompView(model: model, root: $rootIsPresented, step: step+1)
                     .navigationBarBackButtonHidden()
             }
     }
 }
 
-#Preview {
-    FillProfileLevelView(steps: 2)
-}

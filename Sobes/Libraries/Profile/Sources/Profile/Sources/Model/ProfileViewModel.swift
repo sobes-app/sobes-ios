@@ -10,18 +10,27 @@ import Foundation
 @MainActor
 public protocol ProfileViewModel: ObservableObject {
     var specs: [Spec] {get}
+    var savedSpecs: [Spec] {get}
+    var stepsCount: Double {get set}
     
     func onViewAppear()
     func updateSpecs(specs: [Spec])
     func setSpecLevel(spec: Spec, level: Int)
     func onLogoutTap()
+    func saveInfo()
+    func saveNewName(newName: String)
+    func getCurrentSpec(ind: Double) -> String
+    func createString() -> String
 }
 
 @MainActor
 public final class ProfileViewModelImpl: ProfileViewModel {
     @Published private(set) public var specs: [Spec] = []
+    @Published private(set) public var savedSpecs: [Spec] = []
+    @Published public var stepsCount: Double = 0.0
+    
     private let onLogoutAction: () -> Void
-//    let profileProvider: ProfileProvider
+    //    let profileProvider: ProfileProvider
     
     public init(onLogoutAction: @escaping () -> Void) {
         self.onLogoutAction = onLogoutAction
@@ -44,7 +53,34 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         onLogoutAction()
     }
     
-//    public func getProfile() -> Types.Profile {
-//        profileProvider.getProfiles()[0]
-//    }
+    public func saveInfo() {
+        savedSpecs = specs
+    }
+    
+    public func saveNewName(newName: String) {
+        
+    }
+    
+    public func getCurrentSpec(ind: Double) -> String {
+        if ind - 1 < 0 {
+            return "Hello"
+        } else {
+            return specs[Int(ind)-1].rawValue
+        }
+    }
+    
+    public func createString() -> String {
+        var st = ""
+        for ind in savedSpecs {
+            st += ind.rawValue
+            st += ", "
+        }
+        st.removeLast()
+        st.removeLast()
+        return st
+    }
+    
+    //    public func getProfile() -> Types.Profile {
+    //        profileProvider.getProfiles()[0]
+    //    }
 }

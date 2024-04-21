@@ -2,6 +2,7 @@ import SwiftUI
 import UIComponents
 import Authorization
 
+@MainActor
 struct EntryPointView: View {
     @State private var presentRegistration: Bool = false
     @State private var presentAuth: Bool = false
@@ -36,7 +37,9 @@ struct EntryPointView: View {
                 .foregroundColor(Color("accent", bundle: .main))
         }
         .navigationDestination(isPresented: $presentAuth) {
-            AuthEntyPointView()
+            AuthEntyPointView(model: LoginViewModelImpl(onLoginComplete: {
+                isAuthorized = true
+            }))
                 .navigationBarBackButtonHidden()
         }
     }
@@ -44,7 +47,9 @@ struct EntryPointView: View {
     var button: some View {
         MainButton(action: {presentRegistration = true}, label: "Регистрация")
             .navigationDestination(isPresented: $presentRegistration) {
-                RegEmailView()
+                RegEmailView(model: RegistrationViewModelImpl(onRegistrationComplete: {
+                    isAuthorized = true
+                }))
                     .navigationBarBackButtonHidden()
             }
     }

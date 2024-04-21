@@ -1,12 +1,16 @@
 import SwiftUI
 import UIComponents
 
-public struct RegEmailView: View {
+public struct RegEmailView<Model: RegistrationViewModel>: View {
+    @ObservedObject private var model: Model
+    
     @State private var input: String = ""
     @State private var inputState: TextFieldView.InputState = .correct
     @State private var presentCode: Bool = false
     
-    public init() { }
+    public init(model: Model) {
+        self._model = ObservedObject(wrappedValue: model)
+    }
     
     public var body: some View {
         VStack(alignment: .leading) {
@@ -26,18 +30,17 @@ public struct RegEmailView: View {
     }
     
     var button: some View {
-        MainButton(action: {presentCode = true}, label: "Дальше")
+        MainButton(action: {
+            presentCode = true
+            model.sendCodetoEmail(email: input)
+        }, label: "Дальше")
             .navigationDestination(isPresented: $presentCode) {
-                RegCodeView(from: .register)
+                RegCodeView(model: model)
                     .navigationBarBackButtonHidden()
             }
     }
     
     var back: some View {
-        BackButton()
+        BackButton(onTap: {})
     }
-}
-
-#Preview {
-    RegEmailView()
 }

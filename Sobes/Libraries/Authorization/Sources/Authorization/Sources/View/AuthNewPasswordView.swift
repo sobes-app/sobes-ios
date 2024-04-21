@@ -8,15 +8,19 @@
 import SwiftUI
 import UIComponents
 
-struct AuthNewPasswordView: View {
+struct AuthNewPasswordView<Model: LoginViewModel>: View {
+    @ObservedObject private var model: Model
+    
     @State private var inputPassword: String = ""
     @State private var inputPasswordState: TextFieldView.InputState = .correct
     
     @State private var inputRep: String = ""
     @State private var inputRepState: TextFieldView.InputState = .correct
     
-    @State private var presentProfile: Bool = false
-        
+    public init(model: Model) {
+        self._model = ObservedObject(wrappedValue: model)
+    }
+            
     public var body: some View {
         VStack(alignment: .leading) {
             back
@@ -36,17 +40,14 @@ struct AuthNewPasswordView: View {
     }
     
     var button: some View {
-        MainButton(action: {presentProfile = true}, label: "Войти")
-            .navigationDestination(isPresented: $presentProfile) {
-                //TODO: авторизировался, надо перейти на главную
+        MainButton(action: {
+            if !model.updatePassword(newPassword: inputPassword, repeatPassword: inputRep) {
+                //TODO: обработка некорректности
             }
+        }, label: "Войти")
     }
     
     var back: some View {
-        BackButton()
+        BackButton(onTap: {})
     }
-}
-
-#Preview {
-    AuthNewPasswordView()
 }

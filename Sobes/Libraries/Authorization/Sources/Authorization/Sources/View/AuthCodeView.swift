@@ -1,15 +1,23 @@
+//
+//  SwiftUIView.swift
+//  
+//
+//  Created by Алиса Вышегородцева on 19.04.2024.
+//
+
 import SwiftUI
 import UIComponents
 
-public struct RegCodeView<Model: RegistrationViewModel>: View {
+struct AuthCodeView<Model:LoginViewModel>: View {
     @ObservedObject private var model: Model
     @State private var input: String = ""
     @State private var inputState: TextFieldView.InputState = .correct
     @State private var present: Bool = false
-    
+
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)
     }
+    
     
     public var body: some View {
         VStack(alignment: .leading) {
@@ -44,10 +52,10 @@ public struct RegCodeView<Model: RegistrationViewModel>: View {
                 //TODO: прописать некорректный данный блять короче вы поняли
             }
         }, label: "Дальше")
-        .navigationDestination(isPresented: $present) {
-            RegFinalView(model: model)
-                .navigationBarBackButtonHidden()
-        }
+            .navigationDestination(isPresented: $present) {
+                    AuthNewPasswordView(model: model)
+                        .navigationBarBackButtonHidden()
+            }
     }
     
     var back: some View {
@@ -56,7 +64,7 @@ public struct RegCodeView<Model: RegistrationViewModel>: View {
     
     var repeatCode: some View {
         Button(action: {
-            model.sendCodetoEmail(email: input)
+            model.sendCodeToEmail(email: input)
         }) {
             Text("отправить повторно")
                 .foregroundColor(Color(.accent))
@@ -64,3 +72,4 @@ public struct RegCodeView<Model: RegistrationViewModel>: View {
         }
     }
 }
+
