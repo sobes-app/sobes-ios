@@ -15,7 +15,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     public var body: some View {
         NavigationStack{
             VStack(alignment: .leading) {
-                HStack(spacing: 10) {
+                HStack(spacing: Constants.smallStack) {
                     nameView
                     Spacer()
                     settingsView
@@ -31,8 +31,8 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                     button
                 }
             }
-            .padding(.horizontal, 31)
-            .padding(.bottom, 31)
+            .padding(.horizontal, Constants.horizontal)
+            .padding(.bottom, Constants.horizontal)
         }
     }
     var button: some View {
@@ -44,16 +44,16 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     }
     
     var statsView: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: Constants.defSpacing) {
             specsView
-            HStack(spacing: 16) {
+            HStack(spacing: Constants.defSpacing) {
                 expView
                 levelView
             }
             companiesView
             Text("Для изменения данных нажмите на нужную ячейку")
-                .font(Font.custom("CoFoSans-Regular", size: 13))
-                .foregroundColor(Color("grey", bundle: .module))
+                .font(Fonts.small)
+                .foregroundColor(Static.Colors.grey)
                 .multilineTextAlignment(.leading)
         }
     }
@@ -61,15 +61,15 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     var companiesView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Хочет работать в:")
-                .font(Font.custom("CoFoSans-Bold", size: 17))
+                .font(Fonts.mainBold)
             Text("пупупу пук пук пупупу")
-                .font(Font.custom("CoFoSans-Regular", size: 17))
+                .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: Constants.corner)
                 .foregroundColor(Color(.light))
         }
     }
@@ -77,17 +77,17 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     var expView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Опыт")
-                .font(Font.custom("CoFoSans-Bold", size: 17))
+                .font(Fonts.mainBold)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(Color(.accent))
             Text("пук пук")
-                .font(Font.custom("CoFoSans-Regular", size: 17))
+                .font(Fonts.main)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(Color(.accent))
         }
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background{
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: Constants.corner)
                 .stroke(Color(.accent))
         }
     }
@@ -95,18 +95,18 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     var levelView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Желаемая позиция")
-                .font(Font.custom("CoFoSans-Bold", size: 17))
+                .font(Fonts.mainBold)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
             Text("пук пук пук пук")
-                .font(Font.custom("CoFoSans-Regular", size: 17))
+                .font(Fonts.main)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
         }
-        .padding(15)
+        .padding(Constants.elementPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background{
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: Constants.corner)
                 .foregroundColor(Color(.accent))
         }
     }
@@ -114,15 +114,15 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     var specsView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Желаемые должности:")
-                .font(Font.custom("CoFoSans-Bold", size: 17))
+                .font(Fonts.mainBold)
             Text(model.createString())
-                .font(Font.custom("CoFoSans-Regular", size: 17))
+                .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: Constants.corner)
                 .foregroundColor(Color(.light))
         }
     }
@@ -130,25 +130,25 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     var emptyView: some View {
         VStack(alignment: .center) {
             Text("В вашем профиле пока пусто :(")
-                .font(Font.custom("CoFoSans-Bold", size: 17))
-                .foregroundColor(Color("grey", bundle: .module))
+                .font(Fonts.mainBold)
+                .foregroundColor(Static.Colors.grey)
             Text("Расскажите о себе, чтобы подготовка стала продуктивнее")
                 .multilineTextAlignment(.center)
-                .font(Font.custom("CoFoSans-Regular", size: 17))
-                .foregroundColor(Color("grey", bundle: .module))
+                .font(Fonts.main)
+                .foregroundColor(Static.Colors.grey)
         }
         .frame(maxWidth: .infinity)
     }
     
     var nameView: some View {
         Text("Привет, ")
-            .font(Font.custom("CoFoSans-Bold", size: 23))
+            .font(Fonts.heading)
             .foregroundColor(.black)
         + Text(name)
-            .font(Font.custom("CoFoSans-Bold", size: 23))
+            .font(Fonts.heading)
             .foregroundColor(Color(.accent))
         + Text("!")
-            .font(Font.custom("CoFoSans-Bold", size: 23))
+            .font(Fonts.heading)
             .foregroundColor(.black)
     }
     
@@ -156,9 +156,9 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         Button(action: {presentSettings = true}) {
             Image(systemName: "gearshape.fill")
                 .foregroundColor(.black)
-                .padding(15)
+                .padding(Constants.elementPadding)
                 .background {
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: Constants.corner)
                         .foregroundColor(Color(.light))
                 }
         }
@@ -175,12 +175,18 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         }) {
             Image(systemName: "rectangle.portrait.and.arrow.right.fill")
                 .foregroundColor(.black)
-                .padding(15)
+                .padding(Constants.elementPadding)
                 .background {
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: Constants.corner)
                         .foregroundColor(Color(.light))
                 }
         }
+    }
+}
+
+private enum Static {
+    enum Colors {
+        static let grey: Color = Color("grey", bundle: .main)
     }
 }
 

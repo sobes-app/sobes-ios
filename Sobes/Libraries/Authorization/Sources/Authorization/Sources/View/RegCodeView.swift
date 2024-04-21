@@ -14,12 +14,12 @@ public struct RegCodeView<Model: RegistrationViewModel>: View {
     public var body: some View {
         VStack(alignment: .leading) {
             back
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 Text("Код")
-                    .font(Font.custom("CoFoSans-Bold", size: 23))
+                    .font(Fonts.heading)
                     .foregroundColor(.black)
                 Text("На вашу электронную почту было отправлено письмо с кодом подтверждения")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
                     .foregroundColor(.black)
                 TextFieldView(model: .code, input: $input, inputState: $inputState)
                 HStack {
@@ -27,13 +27,13 @@ public struct RegCodeView<Model: RegistrationViewModel>: View {
                     repeatCode
                 }
             }
-            .padding(.top, 20)
+            .padding(.top, Constants.topPadding)
             Spacer()
             button
             
         }
-        .padding(.horizontal, 31)
-        .padding(.bottom, 53)
+        .padding(.horizontal, Constants.horizontal)
+        .padding(.bottom, Constants.bottom)
     }
     
     var button: some View {
@@ -60,7 +60,7 @@ public struct RegCodeView<Model: RegistrationViewModel>: View {
         }) {
             Text("отправить повторно")
                 .foregroundColor(Color(.accent))
-                .font(Font.custom("CoFoSans-Regular", size: 13))
+                .font(Fonts.small)
         }
     }
 }

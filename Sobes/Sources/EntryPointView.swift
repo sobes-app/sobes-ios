@@ -19,12 +19,12 @@ struct EntryPointView: View {
                 button
                 HStack {
                     Text("уже есть аккаунт?")
-                        .font(Font.custom("CoFoSans-Regular", size: 13))
-                        .foregroundColor(Color("grey",bundle: .main))
+                        .font(Fonts.small)
+                        .foregroundColor(Color(.accent))
                     authButton
                 }
             }
-            .padding(.horizontal, 31)
+            .padding(.horizontal, Constants.horizontal)
             .padding(.bottom, 89)
         }
     }
@@ -34,7 +34,7 @@ struct EntryPointView: View {
             Text("Войти")
                 .bold()
                 .font(Font.custom("CoFoSans-Bold", size: 13))
-                .foregroundColor(Color("accent", bundle: .main))
+                .foregroundColor(Color(.accent))
         }
         .navigationDestination(isPresented: $presentAuth) {
             AuthEntyPointView(model: LoginViewModelImpl(onLoginComplete: {

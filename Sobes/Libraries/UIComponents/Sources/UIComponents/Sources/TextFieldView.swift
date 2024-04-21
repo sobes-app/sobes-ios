@@ -1,10 +1,3 @@
-//
-//  SwiftUIView.swift
-//
-//
-//  Created by Алиса Вышегородцева on 18.04.2024.
-//
-
 import SwiftUI
 
 public struct TextFieldView: View {
@@ -57,96 +50,96 @@ public struct TextFieldView: View {
     }
     
     var roundedRec: some View {
-        RoundedRectangle(cornerRadius: 10)
+        RoundedRectangle(cornerRadius: Constants.corner)
             .stroke(
                 isFocused ? Color(.accent) : .clear,
                 lineWidth: 1
             )
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: Constants.corner)
                     .fill(Color(.light))
             )
     }
     
     var name: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Constants.smallStack) {
             Image(systemName: "person.fill")
-                .foregroundColor(Color("grey", bundle: .module))
+                .foregroundColor(Static.Colors.grey)
             TextField("введите фио...", text: $input)
-                .foregroundColor(Color("grey", bundle: .module))
+                .foregroundColor(Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
         }
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
             roundedRec
         }
     }
     var password: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Constants.smallStack) {
             Image(systemName: "lock")
-                .foregroundColor(Color("grey", bundle: .module))
+                .foregroundColor(Static.Colors.grey)
             SecureField("введите пароль...", text: $input)
-                .foregroundColor(Color("grey", bundle: .module))
+                .foregroundColor(Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
         }
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
             roundedRec
         }
     }
     var repPassword: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Constants.smallStack) {
             Image(systemName: "lock")
-                .foregroundColor(Color("grey", bundle: .module))
+                .foregroundColor(Static.Colors.grey)
             SecureField("повторите пароль...", text: $input)
-                .foregroundColor(Color("grey", bundle: .module))
+                .foregroundColor(Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
         }
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
             roundedRec
         }
     }
     var email: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Constants.smallStack) {
             Image(systemName: "envelope")
-                .foregroundColor(Color("grey", bundle: .module))
+                .foregroundColor(Static.Colors.grey)
             TextField("введите почту...", text: $input)
-                .foregroundColor(Color("grey", bundle: .module))
+                .foregroundColor(Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
         }
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
             roundedRec
         }
     }
     var code: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Constants.smallStack) {
             TextField("введите код...", text: $input)
-                .foregroundColor(Color("grey", bundle: .module))
+                .foregroundColor(Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
         }
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
             roundedRec
         }
     }
     var chat: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: Constants.smallStack) {
             TextField("сообщение...", text: $input)
-                .foregroundColor(Color("grey", bundle: .module))
+                .foregroundColor(Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
             Spacer()
             Image(systemName: "chevron.forward")
-                .foregroundColor(Color("grey", bundle: .module))
+                .foregroundColor(Static.Colors.grey)
         }
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
             roundedRec
         }
@@ -155,3 +148,10 @@ public struct TextFieldView: View {
     @FocusState private var isFocused: Bool
     private let model: Model
 }
+
+private enum Static {
+    enum Colors {
+        static let grey: Color = Color("grey", bundle: .main)
+    }
+}
+

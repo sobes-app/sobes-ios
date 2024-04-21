@@ -22,9 +22,9 @@ struct RegFinalView<Model: RegistrationViewModel>: View {
     public var body: some View {
         VStack(alignment: .leading) {
             back
-            VStack(alignment: .leading, spacing: 16){
+            VStack(alignment: .leading, spacing: Constants.defSpacing){
                 Text("Почти закончили!")
-                    .font(Font.custom("CoFoSans-Bold", size: 23))
+                    .font(Fonts.heading)
                     .foregroundColor(.black)
                 TextFieldView(model: .name, input: $inputName, inputState: $inputNameState)
                 TextFieldView(model: .password, input: $inputPassword, inputState: $inputPasswordState)
@@ -32,10 +32,10 @@ struct RegFinalView<Model: RegistrationViewModel>: View {
                 Spacer()
                 button
             }
-            .padding(.top, 20)
+            .padding(.top, Constants.topPadding)
         }
-        .padding(.horizontal, 31)
-        .padding(.bottom, 53)
+        .padding(.horizontal, Constants.horizontal)
+        .padding(.bottom, Constants.bottom)
     }
     
     var button: some View {

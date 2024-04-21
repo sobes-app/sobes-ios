@@ -24,20 +24,20 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
     public var body: some View {
         VStack(alignment: .leading) {
             back
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 VStack (alignment: .leading) {
                     Text("Почти всё!")
-                        .font(Font.custom("CoFoSans-Regular", size: 13))
+                        .font(Fonts.small)
                         .foregroundColor(.black)
                     Text("К какому уровню ты стремишься?")
-                        .font(Font.custom("CoFoSans-Bold", size: 23))
+                        .font(Fonts.heading)
                         .foregroundColor(.black)
                 }
                 specListView
             }
-            .padding(.top, 20)
+            .padding(.top, Constants.topPadding)
             Spacer()
-            VStack(spacing: 16) {
+            VStack(spacing: Constants.defSpacing) {
                 ProgressView(value: step/model.stepsCount)
                     .padding(.horizontal, 20)
                     .tint(Color(.accent))
@@ -46,32 +46,32 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
             }
             
         }
-        .padding(.horizontal, 31)
-        .padding(.bottom, 53)
+        .padding(.horizontal, Constants.horizontal)
+        .padding(.bottom, Constants.bottom)
     }
 
     
     var specListView: some View {
-        VStack (alignment: .leading, spacing: 16) {
-            HStack(spacing: 10) {
+        VStack (alignment: .leading, spacing: Constants.defSpacing) {
+            HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isOn)
                 Text("Хочу попасть на стажировку")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
+            HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isOn)
                 Text("Уже готов на Jun/Jun+")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
+            HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isOn)
                 Text("Иду на позицию Middle/Middle+")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
+            HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isOn)
                 Text("Я уже космолёт (Senior и выше)")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
         }
     }

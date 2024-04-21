@@ -28,9 +28,9 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
     public var body: some View {
         VStack(alignment: .leading) {
             back
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 Text("Настройки")
-                    .font(Font.custom("CoFoSans-Bold", size: 23))
+                    .font(Fonts.heading)
                     .foregroundColor(.black)
                 TextFieldView(model: .name, input: $input, inputState: $inputState)
                 TextFieldView(model: .password, input: $inputPass, inputState: $inputPassState)
@@ -41,17 +41,17 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
                 Spacer()
                 button
             }
-            .padding(.top, 20)
+            .padding(.top, Constants.topPadding)
         }
-        .padding(.horizontal, 31)
-        .padding(.bottom, 53)
+        .padding(.horizontal, Constants.horizontal)
+        .padding(.bottom, Constants.bottom)
     }
     
     var changePassword: some View {
         Button(action: {presentCode = true}) {
             Text("сменить пароль")
                 .foregroundColor(Color(.accent))
-                .font(Font.custom("CoFoSans-Regular", size: 13))
+                .font(Fonts.small)
         }
         .navigationDestination(isPresented: $presentCode) {
             //TODO: переделать нахуй

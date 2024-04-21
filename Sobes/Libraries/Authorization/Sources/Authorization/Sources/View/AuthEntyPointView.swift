@@ -27,9 +27,9 @@ public struct AuthEntyPointView<Model: LoginViewModel>: View {
     public var body: some View {
         VStack(alignment: .leading) {
             back
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 Text("Вход в аккаунт")
-                    .font(Font.custom("CoFoSans-Bold", size: 23))
+                    .font(Fonts.heading)
                     .foregroundColor(.black)
                 TextFieldView(model: .email, input: $inputEmail, inputState: $inputEmailState)
                 TextFieldView(model: .password, input: $inputPass, inputState: $inputPassState)
@@ -40,16 +40,16 @@ public struct AuthEntyPointView<Model: LoginViewModel>: View {
                 Spacer()
                 button
             }
-            .padding(.top, 20)
+            .padding(.top, Constants.topPadding)
         }
-        .padding(.horizontal, 31)
-        .padding(.bottom, 53)
+        .padding(.horizontal, Constants.horizontal)
+        .padding(.bottom, Constants.bottom)
     }
     
     var forgotPasswordButton: some View {
         Button(action: {presentPasswordRecreate = true}) {
             Text("забыл пароль")
-                .font(Font.custom("CoFoSans-Regular", size: 13))
+                .font(Fonts.small)
                 .foregroundColor(Color(.accent))
         }
         .navigationDestination(isPresented: $presentPasswordRecreate) {

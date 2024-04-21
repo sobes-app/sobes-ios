@@ -32,15 +32,15 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
     var body: some View {
         VStack(alignment: .leading) {
             back
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 Text("Какие профессии тебя интересуют?")
-                    .font(Font.custom("CoFoSans-Bold", size: 23))
+                    .font(Fonts.heading)
                     .foregroundColor(.black)
                 specListView
             }
-            .padding(.top, 20)
+            .padding(.top, Constants.topPadding)
             Spacer()
-            VStack(spacing: 16) {
+            VStack(spacing: Constants.defSpacing) {
                 ProgressView(value: 0)
                     .padding(.horizontal, 20)
                     .tint(Color(.accent))
@@ -49,27 +49,27 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
             }
             
         }
-        .padding(.horizontal, 31)
-        .padding(.bottom, 53)
+        .padding(.horizontal, Constants.horizontal)
+        .padding(.bottom, Constants.bottom)
     }
 
     
     var specListView: some View {
-        VStack (alignment: .leading, spacing: 16) {
-            HStack(spacing: 10) {
+        VStack (alignment: .leading, spacing: Constants.defSpacing) {
+            HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isProj)
                 Text("Менеджер проекта")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
+            HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isProd)
                 Text("Менеджер продукта")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
-            HStack(spacing: 10) {
+            HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isAnal)
                 Text("Бизнес аналитик")
-                    .font(Font.custom("CoFoSans-Regular", size: 17))
+                    .font(Fonts.main)
             }
         }
     }
