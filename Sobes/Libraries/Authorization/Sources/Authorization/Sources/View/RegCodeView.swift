@@ -2,18 +2,14 @@ import SwiftUI
 import UIComponents
 
 public struct RegCodeView<Model: RegistrationViewModel>: View {
-    @ObservedObject private var model: Model
-    @State private var input: String = ""
-    @State private var inputState: TextFieldView.InputState = .correct
-    @State private var present: Bool = false
-    
+
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)
     }
     
     public var body: some View {
         VStack(alignment: .leading) {
-            back
+            BackButton()
             VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 Text("Код")
                     .font(Fonts.heading)
@@ -36,7 +32,7 @@ public struct RegCodeView<Model: RegistrationViewModel>: View {
         .padding(.bottom, Constants.bottom)
     }
     
-    var button: some View {
+    private var button: some View {
         MainButton(action: {
             if model.validateCode(code: input) {
                 present = true
@@ -50,11 +46,7 @@ public struct RegCodeView<Model: RegistrationViewModel>: View {
         }
     }
     
-    var back: some View {
-        BackButton(onTap: {})
-    }
-    
-    var repeatCode: some View {
+    private var repeatCode: some View {
         Button(action: {
             model.sendCodetoEmail(email: input)
         }) {
@@ -63,4 +55,10 @@ public struct RegCodeView<Model: RegistrationViewModel>: View {
                 .font(Fonts.small)
         }
     }
+
+    @ObservedObject private var model: Model
+    @State private var input: String = ""
+    @State private var inputState: TextFieldView.InputState = .correct
+    @State private var present: Bool = false
+
 }

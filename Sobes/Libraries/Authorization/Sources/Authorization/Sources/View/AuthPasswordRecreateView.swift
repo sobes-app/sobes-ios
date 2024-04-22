@@ -1,28 +1,15 @@
-//
-//  SwiftUIView.swift
-//  
-//
-//  Created by Алиса Вышегородцева on 19.04.2024.
-//
-
 import SwiftUI
 import UIComponents
 
 struct AuthPasswordRecreateView<Model: LoginViewModel>: View {
-    @ObservedObject private var model: Model
-    
-    @State private var inputEmail: String = ""
-    @State private var inputEmailState: TextFieldView.InputState = .correct
-    
-    @State private var presentCode: Bool = false
-    
+
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)
     }
     
     public var body: some View {
         VStack(alignment: .leading) {
-            back
+            BackButton()
             VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 Text("Восстановление пароля")
                     .font(Fonts.heading)
@@ -37,7 +24,7 @@ struct AuthPasswordRecreateView<Model: LoginViewModel>: View {
         .padding(.bottom, Constants.bottom)
     }
     
-    var button: some View {
+    private var button: some View {
         MainButton(action: {
             model.sendCodeToEmail(email: inputEmail)
             presentCode = true
@@ -47,8 +34,13 @@ struct AuthPasswordRecreateView<Model: LoginViewModel>: View {
                     .navigationBarBackButtonHidden()
             }
     }
-    
-    var back: some View {
-        BackButton(onTap: {})
-    }
+
+    @ObservedObject private var model: Model
+
+    @State private var inputEmail: String = ""
+    @State private var inputEmailState: TextFieldView.InputState = .correct
+
+    @State private var presentCode: Bool = false
+
+
 }

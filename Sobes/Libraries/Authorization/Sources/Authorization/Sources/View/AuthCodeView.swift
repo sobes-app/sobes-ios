@@ -1,10 +1,3 @@
-//
-//  SwiftUIView.swift
-//  
-//
-//  Created by Алиса Вышегородцева on 19.04.2024.
-//
-
 import SwiftUI
 import UIComponents
 
@@ -21,7 +14,7 @@ struct AuthCodeView<Model:LoginViewModel>: View {
     
     public var body: some View {
         VStack(alignment: .leading) {
-            back
+            BackButton()
             VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 Text("Код")
                     .font(Fonts.heading)
@@ -56,10 +49,6 @@ struct AuthCodeView<Model:LoginViewModel>: View {
                     AuthNewPasswordView(model: model)
                         .navigationBarBackButtonHidden()
             }
-    }
-    
-    var back: some View {
-        BackButton(onTap: {})
     }
     
     var repeatCode: some View {

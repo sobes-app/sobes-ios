@@ -4,22 +4,23 @@
 import PackageDescription
 
 let package = Package(
-    name: "UIComponents",
+    name: "Interview",
     defaultLocalization: "ru",
     platforms: [.iOS(.v16)],
     products: [
         .library(
-            name: "UIComponents",
-            targets: ["UIComponents"]),
+            name: "Interview",
+            targets: ["Interview"]),
     ],
     dependencies: [
+        .package(path: "Sobes/Sources/Libraries/UIComponents"),
         .package(path: "Sobes/Sources/Libraries/Types"),
         .package(path: "Sobes/Sources/Libraries/Toolbox"),
     ],
     targets: [
         .target(
-            name: "UIComponents",
-            dependencies: ["Types", "Toolbox"],
+            name: "Interview",
+            dependencies: ["UIComponents", "Types", "Toolbox"],
             sources: ["Sources"],
             resources: [.process("Resources")]
         ),

@@ -1,8 +1,7 @@
 import SwiftUI
+import Toolbox
 
 public struct BackButton: View {
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    private let onTap: (() -> Void)?
     
     public init(onTap: (() -> Void)? = nil) {
         self.onTap = onTap
@@ -10,8 +9,10 @@ public struct BackButton: View {
     
     public var body: some View {
         Button(action: {
-            presentationMode.wrappedValue.dismiss()
-            onTap?()
+            withoutAnimation {
+                presentationMode.wrappedValue.dismiss()
+                onTap?()
+            }
         }) {
             Image(systemName: "chevron.backward")
                 .frame(width: 28, height: 28)
@@ -23,4 +24,8 @@ public struct BackButton: View {
                 .foregroundColor(Color(.light))
         }
     }
+
+	@Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    private let onTap: (() -> Void)?
+
 }

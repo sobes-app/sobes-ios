@@ -8,7 +8,8 @@ struct EntryPointView: View {
     @State private var presentRegistration: Bool = false
     @State private var presentAuth: Bool = false
     @Binding var isAuthorized: Bool
-    
+    @Binding var selectedTab: TabItem
+
     var body: some View {
         NavigationStack {
             VStack (spacing: 30){
@@ -40,8 +41,9 @@ struct EntryPointView: View {
         .navigationDestination(isPresented: $presentAuth) {
             AuthEntyPointView(model: LoginViewModelImpl(onLoginComplete: {
                 isAuthorized = true
+                selectedTab = .materials
             }))
-                .navigationBarBackButtonHidden()
+            .navigationBarBackButtonHidden()
         }
     }
     
@@ -50,8 +52,9 @@ struct EntryPointView: View {
             .navigationDestination(isPresented: $presentRegistration) {
                 RegEmailView(model: RegistrationViewModelImpl(onRegistrationComplete: {
                     isAuthorized = true
+                    selectedTab = .profile
                 }))
-                    .navigationBarBackButtonHidden()
+                .navigationBarBackButtonHidden()
             }
     }
 }

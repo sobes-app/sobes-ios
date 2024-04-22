@@ -4,7 +4,7 @@ import UIComponents
 public struct MaterialsView<Model: MaterialsViewModel>: View {
     
     public init(model: Model) {
-        self._model = ObservedObject(wrappedValue: model)
+        self._model = StateObject(wrappedValue: model)
     }
     
     public var body: some View {
@@ -48,7 +48,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
             }
         }
     }
-    
-    @ObservedObject private var model: Model
-    
+
+    @StateObject private var model: Model
+
 }

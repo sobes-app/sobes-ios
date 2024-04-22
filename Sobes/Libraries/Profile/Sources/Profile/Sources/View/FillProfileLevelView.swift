@@ -1,10 +1,3 @@
-//
-//  SwiftUIView.swift
-//  
-//
-//  Created by Алиса Вышегородцева on 19.04.2024.
-//
-
 import SwiftUI
 import UIComponents
 import Types
@@ -39,7 +32,7 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
     
     public var body: some View {
         VStack(alignment: .leading) {
-            back
+            BackButton()
             VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 VStack (alignment: .leading) {
                     Text("Почти всё!")
@@ -66,8 +59,13 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
         .padding(.bottom, Constants.bottom)
     }
 
+    @ObservedObject private var model: Model
+    @State private var present: Bool = false
+    @State private var isOn: Bool = false
+    @Binding private var rootIsPresented: Bool
+    private let step: Double
     
-    var specListView: some View {
+    private var specListView: some View {
         VStack (alignment: .leading, spacing: Constants.defSpacing) {
             HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $inter, onTap: {
@@ -112,11 +110,7 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
         }
     }
     
-    var back: some View {
-        BackButton(onTap: {})
-    }
-    
-    var button: some View {
+    private var button: some View {
         MainButton(action: {
             if inter || jun || mid || sen {
                 present = true
