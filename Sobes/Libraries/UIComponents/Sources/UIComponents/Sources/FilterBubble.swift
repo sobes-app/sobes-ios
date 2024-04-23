@@ -13,7 +13,7 @@ public struct FilterBubble: View {
             .foregroundStyle(filter.isActive ? .white : Color(.grey))
             .padding(10)
             .background {
-                RoundedRectangle(cornerRadius: 100)
+                RoundedRectangle(cornerRadius: Constants.corner)
                     .foregroundStyle(filter.isActive ? Color(.accent) : Color(.bubble))
             }
     }

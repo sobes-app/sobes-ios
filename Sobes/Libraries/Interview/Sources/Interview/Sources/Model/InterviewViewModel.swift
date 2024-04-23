@@ -8,6 +8,9 @@ public protocol InterviewViewModel: ObservableObject {
     func onViewAppear()
     func fetchQuestions()
     func shuffleQuestions()
+    func getQuestionsInProgress() -> String
+    func getQuestionsWithIdealResult() -> String
+    func getMeanQuestionsResult() -> String
     func onUserMessageSent(text: String)
     func startDialogueForQuestion(text: String)
 }
@@ -49,6 +52,18 @@ public final class InterviewViewModelImpl: InterviewViewModel {
     public func onUserMessageSent(text: String) {
         let messageId = (messages.last?.id ?? -1) + 1
         messages.append(InterviewMessage(id: messageId, text: text, sender: .user))
+    }
+
+    public func getQuestionsInProgress() -> String {
+        return "\(1)"
+    }
+
+    public func getQuestionsWithIdealResult() -> String {
+        return "\(8)"
+    }
+
+    public func getMeanQuestionsResult() -> String {
+        return "\(74.5)"
     }
 
 }

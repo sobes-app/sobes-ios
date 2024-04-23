@@ -32,21 +32,21 @@ public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
                 .font(Fonts.heading)
                 .foregroundStyle(.black)
 
-            Text("26")
+            Text(model.getQuestionsInProgress())
                 .foregroundColor(Color(.accent))
                 .font(Fonts.mainBold)
             +
             Text(" вопросов в проработке")
                 .font(Fonts.main)
 
-            Text("5")
+            Text(model.getQuestionsWithIdealResult())
                 .foregroundColor(Color(.accent))
                 .font(Fonts.mainBold)
             +
             Text(" вопросов с идеальным результатом")
                 .font(Fonts.main)
 
-            Text("87%")
+            Text(model.getMeanQuestionsResult())
                 .foregroundColor(Color(.accent))
                 .font(Fonts.mainBold)
             +
