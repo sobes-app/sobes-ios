@@ -3,12 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7FF03488FC3A5564B68E6E /* Media.xcassets */; };
-		1B4E37F3E7A2ED8226C687A1 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = D5E8F84EF157ADF85339B8F6 /* WrappingHStack */; };
+		1B4E37F3E7A2ED8226C687A1 /* SwiftUIGIF in Frameworks */ = {isa = PBXBuildFile; productRef = C38AE65860A9DE8EC2C7457F /* SwiftUIGIF */; };
 		1FC97C4ED085CE1BD6FD9E28 /* EntryPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5451022752FC90FD51F87803 /* EntryPointView.swift */; };
 		2BF0031E108AB9E39C98A56A /* Profile in Frameworks */ = {isa = PBXBuildFile; productRef = 824023B102ED7ECF050CD92B /* Profile */; };
 		323FF5DB2C45B16EBB0002CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF46344658ABC2FD254BED77 /* ContentView.swift */; };
@@ -16,6 +16,9 @@
 		6F382E0557D9704D1522BB20 /* SobesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BC15B7AEE733B31130AE65 /* SobesApp.swift */; };
 		874BB4D94C5F74F9B8F49EF5 /* TuistFonts+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 269350B98311A6A45C9FF539 /* TuistFonts+Sobes.swift */; };
 		9EC70BF7D942830F831516E0 /* TuistAssets+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9CD791A8619AA6C2F195BA /* TuistAssets+Sobes.swift */; };
+		A961DA05B277A70E5E607049 /* Providers in Frameworks */ = {isa = PBXBuildFile; productRef = E1EEE74F258AC4F4587915FE /* Providers */; };
+		AAB264A39AA3C720B9FA6F3D /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = D5E8F84EF157ADF85339B8F6 /* WrappingHStack */; };
+		BFBBDAC98182AB26F0B19F42 /* entryPointGif.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4F76209C57B104A3FEE04BD3 /* entryPointGif.gif */; };
 		A961DA05B277A70E5E607049 /* Interview in Frameworks */ = {isa = PBXBuildFile; productRef = 45D4EE3CE452A68C230C2889 /* Interview */; };
 		AAB264A39AA3C720B9FA6F3D /* Toolbox in Frameworks */ = {isa = PBXBuildFile; productRef = 04CB3256A8930B988C790464 /* Toolbox */; };
 		C750B8A7C4B8618BD8B92759 /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = AD0D56FF7E78D6CD4946A15F /* UIComponents */; };
@@ -46,8 +49,9 @@
 		074EDA10E4BF2CAEF11FAF81 /* Profile */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Profile; path = Sobes/Libraries/Profile; sourceTree = "<group>"; };
 		1EBB81CE7895D83631574242 /* Materials */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Materials; path = Sobes/Libraries/Materials; sourceTree = "<group>"; };
 		269350B98311A6A45C9FF539 /* TuistFonts+Sobes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistFonts+Sobes.swift"; sourceTree = "<group>"; };
-		28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */ = {isa = PBXFileReference; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		308FAA419A3AF3827A2BFDF9 /* Sobes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobes.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F76209C57B104A3FEE04BD3 /* entryPointGif.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = entryPointGif.gif; sourceTree = "<group>"; };
 		5451022752FC90FD51F87803 /* EntryPointView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryPointView.swift; sourceTree = "<group>"; };
 		575A14500DDE9C80C9DDBDCB /* Types */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Types; path = Sobes/Libraries/Types; sourceTree = "<group>"; };
 		6E36B1149009CD8990E2E31E /* CoFoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CoFoSans-Bold.ttf"; sourceTree = "<group>"; };
@@ -64,6 +68,7 @@
 		CB7FF03488FC3A5564B68E6E /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		CC9CD791A8619AA6C2F195BA /* TuistAssets+Sobes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistAssets+Sobes.swift"; sourceTree = "<group>"; };
 		E436B704D2E1609F0162A2DB /* Authorization */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Authorization; path = Sobes/Libraries/Authorization; sourceTree = "<group>"; };
+		FE39A994F4CD75769344D4F5 /* Providers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Providers; path = Sobes/Libraries/Providers; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,9 +82,11 @@
 				5F05D0FC47369E6E742D0DF6 /* Materials in Frameworks */,
 				E86019111AA5A2F416A9CC6A /* Types in Frameworks */,
 				2BF0031E108AB9E39C98A56A /* Profile in Frameworks */,
+				A961DA05B277A70E5E607049 /* Providers in Frameworks */,
+				AAB264A39AA3C720B9FA6F3D /* WrappingHStack in Frameworks */,
+				1B4E37F3E7A2ED8226C687A1 /* SwiftUIGIF in Frameworks */,
 				A961DA05B277A70E5E607049 /* Interview in Frameworks */,
 				AAB264A39AA3C720B9FA6F3D /* Toolbox in Frameworks */,
-				1B4E37F3E7A2ED8226C687A1 /* WrappingHStack in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				4BA8D8ABC83C9F76480A4B8D /* Fonts */,
+				4F76209C57B104A3FEE04BD3 /* entryPointGif.gif */,
 				28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */,
 				CB7FF03488FC3A5564B68E6E /* Media.xcassets */,
 			);
@@ -141,6 +149,7 @@
 				074EDA10E4BF2CAEF11FAF81 /* Profile */,
 				C1A5B72100A8F109499EB87F /* Toolbox */,
 				575A14500DDE9C80C9DDBDCB /* Types */,
+				FE39A994F4CD75769344D4F5 /* Providers */,
 				7E0310729F3C4675FCE9D6BB /* UIComponents */,
 			);
 			name = Packages;
@@ -211,7 +220,9 @@
 				824023B102ED7ECF050CD92B /* Profile */,
 				45D4EE3CE452A68C230C2889 /* Interview */,
 				04CB3256A8930B988C790464 /* Toolbox */,
+				E1EEE74F258AC4F4587915FE /* Providers */,
 				D5E8F84EF157ADF85339B8F6 /* WrappingHStack */,
+				C38AE65860A9DE8EC2C7457F /* SwiftUIGIF */,
 			);
 			productName = Sobes;
 			productReference = 308FAA419A3AF3827A2BFDF9 /* Sobes.app */;
@@ -225,6 +236,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				ORGANIZATIONNAME = FCS;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 1AD83AFD799ED8F09B299CBE /* Build configuration list for PBXProject "Sobes" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -237,6 +250,7 @@
 			mainGroup = 720B1E35ED662266430FCE19;
 			packageReferences = (
 				60678069E0FEAA07CB34239C /* XCRemoteSwiftPackageReference "WrappingHStack" */,
+				48565CE09132DCFA28CF00C4 /* XCRemoteSwiftPackageReference "swiftui-gif" */,
 			);
 			productRefGroup = CAEAB2C2BF0DD83C38196ECF /* Products */;
 			projectDirPath = "";
@@ -256,6 +270,7 @@
 				E0335E5F0BBE4B33662B35EF /* CoFoSans-Regular.ttf in Resources */,
 				D2AE393E024D2BB821D87B5B /* Localizable.xcstrings in Resources */,
 				09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */,
+				BFBBDAC98182AB26F0B19F42 /* entryPointGif.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,7 +354,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Sobes/Sources/Sobes-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -350,7 +365,10 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+					"$(inherited)",
+					DEBUG,
+				);
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -424,7 +442,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Sobes/Sources/Sobes-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -466,6 +484,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		48565CE09132DCFA28CF00C4 /* XCRemoteSwiftPackageReference "swiftui-gif" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/globulus/swiftui-gif";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
 		60678069E0FEAA07CB34239C /* XCRemoteSwiftPackageReference "WrappingHStack" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/dkk/WrappingHStack";
@@ -501,6 +527,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = UIComponents;
 		};
+		C38AE65860A9DE8EC2C7457F /* SwiftUIGIF */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftUIGIF;
+		};
 		D0DA8C488BB7287BC5F2E17E /* Chats */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Chats;
@@ -508,6 +538,10 @@
 		D5E8F84EF157ADF85339B8F6 /* WrappingHStack */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WrappingHStack;
+		};
+		E1EEE74F258AC4F4587915FE /* Providers */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Providers;
 		};
 		FC26DF8BBF38D7FC04EF7C17 /* Authorization */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -1,5 +1,6 @@
 import SwiftUI
 import Types
+import Providers
 
 public enum FilterType {
     case company
@@ -30,6 +31,7 @@ public protocol ChatViewModel: ObservableObject {
 
 @MainActor
 public final class ChatViewModelImpl: ChatViewModel {
+    let profilesProvider: ProfileProvider
     
     @Published public var chats: [Chat]
     @Published public var profiles: [Profile]
@@ -41,9 +43,10 @@ public final class ChatViewModelImpl: ChatViewModel {
     @Published public var desFilter: [Filter]
     @Published public var comFilter: [Filter]
     
-    public init(profileId: Int) {
+    
+    public init(profileProvider: ProfileProvider) {
         self.chats = []
-        self.profileId = profileId
+        self.profileId = profileProvider.getCurrentUser().id
         self.profiles = []
         self.filters = []
         
@@ -51,7 +54,9 @@ public final class ChatViewModelImpl: ChatViewModel {
         self.expFilter = []
         self.desFilter = []
         
-        profiles = getDefaultProfiles()
+        self.profilesProvider = profileProvider
+        
+        profiles = profileProvider.getProfiles()
         chats = getDefaultChats()
         initFilters()
     }
@@ -83,7 +88,7 @@ public final class ChatViewModelImpl: ChatViewModel {
         filters[id].isActive.toggle()
         toggleProfileFilter(type: type, id: id)
         if filtersNotActive() {
-            profiles = getDefaultProfiles()
+            profiles = profilesProvider.getProfiles()
         } else {
             var filteredProfiles: [Types.Profile] = []
             for profile in profiles {
@@ -109,7 +114,7 @@ public final class ChatViewModelImpl: ChatViewModel {
                 filters[i].isActive.toggle()
             }
         }
-        profiles = getDefaultProfiles()
+        profiles = profilesProvider.getProfiles()
     }
     
     public func filtersNotActive() -> Bool {
@@ -157,16 +162,6 @@ public final class ChatViewModelImpl: ChatViewModel {
         return chat.firstResponder
     }
     
-    func getDefaultProfiles() -> [Profile] {
-        let profile1 = Profile(id: 1, name: "Яна Барбашина", professions: [.product], companies: [.tinkoff], level: .inter)
-        let profile2 = Profile(id: 2, name: "Даяна Тасбауова", professions: [.project, .analyst], companies: [.yandex, .other], level: .jun)
-        let profile3 = Profile(id: 0, name: "Алиса Вышегородцева", professions: [], companies: [], level: .no)
-        let profile4 = Profile(id: 3, name: "Колобок", professions: [.product, .project, .analyst], companies: [], level: .sen)
-        let profile5 = Profile(id: 4, name: "Лисица", professions: [.product, .project], companies: [.tinkoff,.other], level: .mid)
-        
-        return [profile1, profile2, profile3, profile4, profile5]
-    }
-    
     func getDefaultChats() -> [Chat] {
         let chat1 = Chat(id: 0, firstResponder: profiles[0], secordResponder: profiles[2], messages: [Message(id: 0, author: 1, text: "Привет, привет!"), Message(id: 1, author: 0, text: "Привет, как у тебя дела?")])
         let chat2 = Chat(id: 1, firstResponder: profiles[1], secordResponder: profiles[2], messages: [Message(id: 2, author: 0, text: "Привет, привет!"), Message(id: 3, author: 2, text: "Давай на неделе созвонимся и обсудим, как мы готовимся к собеседованиям")])
@@ -187,6 +182,10 @@ public final class ChatViewModelImpl: ChatViewModel {
         return profiles[0]
     }
     
+    func createNewChat() {
+        
+    }
+    
     public func getChatByResponderOrCreateNew(responder: Profile) -> Chat {
         for chat in chats {
             if chat.firstResponder.id == responder.id || chat.secondResponder.id == responder.id {
@@ -194,6 +193,8 @@ public final class ChatViewModelImpl: ChatViewModel {
             }
         }
         let newChat = Chat(id: Int.random(in: 100...10000), firstResponder: getProfileById(id: profileId), secordResponder: responder, messages: [])
+        chats.append(newChat)
+
         return newChat
     }
 }

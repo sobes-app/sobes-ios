@@ -4,6 +4,7 @@ import Profile
 import Chats
 import UIComponents
 import Materials
+import Providers
 import Interview
 
 public struct MainView: View {
@@ -20,16 +21,11 @@ public struct MainView: View {
             case .interview:
                 InterviewEntryPointView(model: InterviewViewModelImpl())
             case .chat:
-                ChatsView(showTabBar: $showTabBar, model: ChatViewModelImpl(profileId: 0))
+                ChatsView(showTabBar: $showTabBar, model: ChatViewModelImpl(profileProvider: profileProvider))
             case .profile:
-                ProfileView(
-                    model: ProfileViewModelImpl(
-                        onLogoutAction: {
-                            isAuthorized = false
-                        }
-                    ),
-                    showTabBar: $showTabBar
-                )
+                ProfileView(model: ProfileViewModelImpl(onLogoutAction: {
+                    isAuthorized = false
+                }, profileProvider: profileProvider), showTabBar: $showTabBar)
             }
             Spacer()
             if showTabBar {
@@ -37,5 +33,7 @@ public struct MainView: View {
             }
         }
     }
+    
+    let profileProvider: ProfileProvider = ProfileProviderImpl()
 
 }

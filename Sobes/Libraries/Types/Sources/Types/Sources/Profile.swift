@@ -11,7 +11,7 @@ public enum Professions: String, CaseIterable {
     case no = ""
     case product = "Менеджер продукта"
     case project = "Менеджер проекта"
-    case analyst = "Бизнес аналитик"
+    case analyst = "Бизнес-аналитик"
 }
 
 public enum Levels: String, CaseIterable {

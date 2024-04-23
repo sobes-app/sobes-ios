@@ -70,14 +70,14 @@ public struct ChatsView<Model: ChatViewModel>: View {
                                 presentDetailChat = true
                             })
                             .navigationDestination(isPresented: $presentDetailChat, destination: {
-                                ChatDetailView(showTabBar: $showTabBar, chat: model.getChatByResponderOrCreateNew(responder: profile), model: model)
+                                    ChatDetailView(showTabBar: $showTabBar, chat: model.getChatByResponderOrCreateNew(responder: profile), model: model)
+                                        .navigationBarBackButtonHidden()
                             })
                         }
                     }
                 }
             }
             .refreshable {}
-            .scrollClipDisabled()
             .scrollDismissesKeyboard(.immediately)
             .scrollIndicators(.hidden)
         }
@@ -125,7 +125,6 @@ public struct ChatsView<Model: ChatViewModel>: View {
         }
         .transition(.move(edge: .leading))
         .refreshable {}
-        .scrollClipDisabled()
     }
     
     var select: some View {

@@ -1,6 +1,7 @@
 import SwiftUI
 import UIComponents
 import Authorization
+import SwiftUIGIF
 
 @MainActor
 struct EntryPointView: View {
@@ -12,6 +13,8 @@ struct EntryPointView: View {
         NavigationStack {
             VStack (spacing: 30) {
                 Spacer()
+                GIFImage(name: "entryPointGif")
+                    .frame(width: 700)
                 Text("Готовься продуктивно")
                     .font(Font.custom("CoFoSans-Bold", size: 35))
                     .multilineTextAlignment(.center)
@@ -19,7 +22,7 @@ struct EntryPointView: View {
                 button
                 HStack {
                     Text("уже есть аккаунт?")
-                        .font(Fonts.small)
+                        .font(Fonts.main)
                         .foregroundColor(.black)
                     authButton
                 }
