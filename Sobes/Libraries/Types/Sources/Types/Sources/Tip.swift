@@ -21,5 +21,5 @@ public struct Tip: Identifiable, Equatable, Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
-    
+
 }
