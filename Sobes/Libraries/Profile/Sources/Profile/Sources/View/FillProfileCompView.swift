@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIComponents
+import Types
 
 struct FillProfileCompView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
@@ -81,9 +82,24 @@ struct FillProfileCompView<Model: ProfileViewModel>: View {
         BackButton(onTap: {})
     }
     
+    func updateComp() {
+        var array: [Companies] = []
+        if yandex {
+            array.append(.yandex)
+        }
+        if tinkoff {
+            array.append(.tinkoff)
+        }
+        if other {
+            array.append(.other)
+        }
+        model.updateCompanies(comps: array)
+    }
+    
     var button: some View {
         MainButton(action: {
             if yandex || tinkoff || other {
+                updateComp()
                 model.saveInfo()
                 //TODO: как-то вернуться к корню
                 path = NavigationPath()

@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct Filter: Identifiable {
+public struct Filter: Identifiable, Hashable {
 
     public let id: Int
     public let name: String
@@ -11,5 +11,4 @@ public struct Filter: Identifiable {
         self.name = name
         self.isActive = isActive
     }
-
 }

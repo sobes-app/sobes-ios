@@ -16,7 +16,6 @@ public struct MainView: View {
             switch selectedTab {
             case .materials:
                 MaterialsView(model: MaterialsViewModelImpl())
-                    .ignoresSafeArea()
                     .background(.white)
             case .interview:
                 VStack {
@@ -25,7 +24,7 @@ public struct MainView: View {
                     Text("a")
                 }
             case .chat:
-                ChatsView(showTabBar: $showTabBar)
+                ChatsView(showTabBar: $showTabBar, model: ChatViewModelImpl(profileId: 0))
             case .profile:
                 ProfileView(model: ProfileViewModelImpl(onLogoutAction: {
                     isAuthorized = false

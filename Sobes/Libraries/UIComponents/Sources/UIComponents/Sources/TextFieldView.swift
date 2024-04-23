@@ -8,6 +8,7 @@ public struct TextFieldView: View {
         case email
         case code
         case chat
+        case search
     }
     
     public enum InputState {
@@ -19,17 +20,21 @@ public struct TextFieldView: View {
     @Binding var input: String
     @Binding var inputState: InputState
     var isSendButtonAvailable: Bool
+    var onSend: (()-> Void)?
+    var onFilter: (()-> Void)?
     
     public init(
         model: Model,
         input: Binding<String>,
         inputState: Binding<InputState>,
-        isSendButtonAvailable: Bool = true
+        isSendButtonAvailable: Bool = true,
+        onSend: (() -> Void)? = nil
     ) {
         self.model = model
         self._input = input
         self._inputState = inputState
         self.isSendButtonAvailable = isSendButtonAvailable
+        self.onSend = onSend
     }
     
     public var body: some View {
@@ -46,6 +51,8 @@ public struct TextFieldView: View {
             code
         case .chat:
             chat
+        case .search:
+            search
         }
     }
     
@@ -129,19 +136,59 @@ public struct TextFieldView: View {
             roundedRec
         }
     }
-    var chat: some View {
-        HStack(spacing: Constants.smallStack) {
-            TextField("сообщение...", text: $input)
+    
+    var search: some View {
+        HStack(spacing: 5) {
+            TextField("поиск...", text: $input, axis: .vertical)
                 .foregroundColor(Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
+                .onSubmit {
+                    onSend?()
+                }
+                .padding(5)
+                .background {
+                    roundedRec
+                }
             Spacer()
-            Image(systemName: "chevron.forward")
-                .foregroundColor(input.count == 0 ? Static.Colors.grey : .black)
+            Button(action: {onSend?()}) {
+                Image(systemName: "arrow.up")
+                    .foregroundColor(input.count == 0 ? Static.Colors.grey : .white)
+                    .onTapGesture {
+                        onFilter?()
+                    }
+                    .background {
+                        Circle()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(input.count == 0 ? Color(.light) : Color(.accent))
+                    }
+            }
         }
-        .padding(Constants.elementPadding)
-        .background {
-            roundedRec
+    }
+    
+    var chat: some View {
+        HStack(spacing: 5) {
+            TextField("сообщение...", text: $input, axis: .vertical)
+                .foregroundColor(Static.Colors.grey)
+                .focused($isFocused)
+                .disableAutocorrection(true)
+                .onSubmit {
+                    onSend?()
+                }
+                .padding(Constants.elementPadding)
+                .background {
+                    roundedRec
+                }
+            Spacer()
+            Button(action: {onSend?()}) {
+                Image(systemName: "arrow.up")
+                    .foregroundColor(input.count == 0 ? Static.Colors.grey : .white)
+                    .background {
+                        Circle()
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(input.count == 0 ? Color(.light) : Color(.accent))
+                    }
+            }
         }
     }
     

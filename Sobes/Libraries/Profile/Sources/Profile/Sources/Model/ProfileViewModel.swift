@@ -6,34 +6,43 @@
 //
 
 import Foundation
+import Types
 
 @MainActor
 public protocol ProfileViewModel: ObservableObject {
-    var specs: [Spec] {get}
-    var savedSpecs: [Spec] {get}
+    var specs: [Professions] {get}
+    var level: Types.Levels {get set}
     var stepsCount: Double {get set}
+    var profile: Types.Profile {get}
     
     func onViewAppear()
-    func updateSpecs(specs: [Spec])
-    func setSpecLevel(spec: Spec, level: Int)
+    func updateSpecs(specs: [Professions])
+    func setSpecLevel(spec: Professions, level: Int)
     func onLogoutTap()
     func saveInfo()
     func saveNewName(newName: String)
-    func getCurrentSpec(ind: Double) -> String
-    func createString() -> String
+    func createStringProf(array: [Professions]) -> String
+    func createStringComp(array: [Companies]) -> String
+    func updateCompanies(comps: [Companies])
 }
 
 @MainActor
 public final class ProfileViewModelImpl: ProfileViewModel {
-    @Published private(set) public var specs: [Spec] = []
-    @Published private(set) public var savedSpecs: [Spec] = []
-    @Published public var stepsCount: Double = 0.0
+    
+    @Published private(set) public var profile: Types.Profile
+    
+    @Published private(set) public var specs: [Professions] = []
+    @Published private(set) public var companies: [Companies] = []
+    @Published public var level: Types.Levels = .no
+    
+    @Published public var stepsCount: Double = 3
     
     private let onLogoutAction: () -> Void
     //    let profileProvider: ProfileProvider
     
     public init(onLogoutAction: @escaping () -> Void) {
         self.onLogoutAction = onLogoutAction
+        self.profile = Profile(id: 0, name: "Алиса Вышегородцева", professions: [], companies: [], level: .no)
     }
     
     
@@ -41,11 +50,15 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         specs.removeAll()
     }
     
-    public func updateSpecs(specs: [Spec]) {
+    public func updateSpecs(specs: [Professions]) {
         self.specs = specs
     }
     
-    public func setSpecLevel(spec: Spec, level: Int) {
+    public func updateCompanies(comps: [Companies]) {
+        self.companies = comps
+    }
+    
+    public func setSpecLevel(spec: Professions, level: Int) {
         
     }
     
@@ -54,30 +67,29 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     }
     
     public func saveInfo() {
-        savedSpecs = specs
+        profile.companies = companies
+        profile.professions = specs
+        profile.level = level
     }
     
     public func saveNewName(newName: String) {
         
     }
     
-    public func getCurrentSpec(ind: Double) -> String {
-        if ind - 1 < 0 {
-            return "Hello"
-        } else {
-            return specs[Int(ind)-1].rawValue
+    public func createStringProf(array: [Professions]) -> String {
+        var a: [String] = []
+        for i in array {
+            a.append(i.rawValue)
         }
+        return a.joined(separator: ", ")
     }
     
-    public func createString() -> String {
-        var st = ""
-        for ind in savedSpecs {
-            st += ind.rawValue
-            st += ", "
+    public func createStringComp(array: [Companies]) -> String {
+        var a: [String] = []
+        for i in array {
+            a.append(i.rawValue)
         }
-        st.removeLast()
-        st.removeLast()
-        return st
+        return a.joined(separator: ", ")
     }
     
     //    public func getProfile() -> Types.Profile {
