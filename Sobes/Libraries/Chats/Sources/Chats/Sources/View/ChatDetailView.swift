@@ -33,7 +33,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
                 .frame(height: 1)
             ScrollViewReader { proxy in
                 messages
-                    .onChange(of: chat.messages) {
+                    .onChange(of: chat.messages) { message in
                         withAnimation {
                             proxy.scrollTo("bottom")
                         }

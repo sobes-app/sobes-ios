@@ -22,7 +22,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                     settingsView
                     logoutView
                 }
-                if model.profile.professions != [] {
+                if model.getProfile().professions != [] {
                     statsView
                     Spacer()
                 } else {
@@ -39,7 +39,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     var button: some View {
         MainButton(action: {presentFill=true}, label: "Рассказать о себе")
             .navigationDestination(isPresented: $presentFill) {
-                FillProfileSpecView(model: model, path: $path, showTabBar: $showTabBar)
+                SetupProfileDataView(model: model, showTabBar: $showTabBar)
                     .navigationBarBackButtonHidden()
             }
     }
@@ -60,7 +60,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Хочет работать в:")
                 .font(Fonts.mainBold)
-            Text(model.createStringComp(array: model.profile.companies))
+            Text(model.createStringComp(array: model.getProfile().companies))
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
@@ -78,7 +78,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                 .font(Fonts.mainBold)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
-            Text(model.profile.level.rawValue)
+            Text(model.getProfile().level.rawValue)
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
@@ -95,7 +95,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Желаемые должности:")
                 .font(Fonts.mainBold)
-            Text(model.createStringProf(array: model.profile.professions))
+            Text(model.createStringProf(array: model.getProfile().professions))
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
@@ -124,7 +124,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         Text("Привет, ")
             .font(Fonts.heading)
             .foregroundColor(.black)
-        + Text(model.profile.name)
+        + Text(model.getProfile().name)
             .font(Fonts.heading)
             .foregroundColor(Color(.accent))
         + Text("!")
