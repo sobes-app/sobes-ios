@@ -24,8 +24,7 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
         materials = getDefaultMaterials()
         filters = [
             Filter(id: 0, name: "Тинькофф"),
-            Filter(id: 1, name: "Яндекс"),
-            Filter(id: 2, name: "Другое"),
+            Filter(id: 1, name: "Яндекс")
         ]
 
     }

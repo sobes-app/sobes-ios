@@ -14,11 +14,13 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "Sobes/Sources/Libraries/Types"),
+        .package(path: "Sobes/Sources/Libraries/Toolbox"),
+        .package(url: "https://github.com/dkk/WrappingHStack", from: "2.0.0")
     ],
     targets: [
         .target(
             name: "UIComponents",
-            dependencies: ["Types"],
+            dependencies: ["Types", "Toolbox", "WrappingHStack"],
             sources: ["Sources"],
             resources: [.process("Resources")]
         ),

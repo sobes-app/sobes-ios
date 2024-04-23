@@ -4,7 +4,7 @@ import UIComponents
 public struct MaterialsView<Model: MaterialsViewModel>: View {
     
     public init(model: Model) {
-        self._model = ObservedObject(wrappedValue: model)
+        self._model = StateObject(wrappedValue: model)
     }
     
     public var body: some View {
@@ -23,7 +23,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
     private var headline: some View {
         Text("Материалы для подготовки")
             .frame(maxWidth: .infinity, alignment: .leading)
-            .font(Font.custom("CoFoSans-Bold", size: 23))
+            .font(Fonts.heading)
             .foregroundStyle(.black)
     }
     
@@ -48,7 +48,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
             }
         }
     }
-    
-    @ObservedObject private var model: Model
-    
+
+    @StateObject private var model: Model
+
 }

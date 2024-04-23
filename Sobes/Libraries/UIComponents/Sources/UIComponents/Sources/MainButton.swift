@@ -16,7 +16,8 @@ public struct MainButton: View {
                 .padding(.vertical, Constants.elementPadding)
                 .frame(maxWidth: .infinity)
             
-        }.background {
+        }
+		.background {
             RoundedRectangle(cornerRadius: Constants.corner)
                 .foregroundColor(Color(.accent))
         }

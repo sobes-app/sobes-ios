@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Алиса Вышегородцева on 19.04.2024.
-//
-
 import Foundation
 import Types
 

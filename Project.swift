@@ -10,6 +10,8 @@ let project = Project(
         .local(path: "Sobes/Libraries/Chats"),
         .local(path: "Sobes/Libraries/Materials"),
         .local(path: "Sobes/Libraries/Types"),
+        .local(path: "Sobes/Libraries/Interview"),
+        .local(path: "Sobes/Libraries/Toolbox"),
         .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0"))
     ],
     targets: [
@@ -29,8 +31,9 @@ let project = Project(
                 .package(product: "Materials"),
                 .package(product: "Types"),
                 .package(product: "Profile"),
+                .package(product: "Interview"),
+                .package(product: "Toolbox"),
                 .package(product: "WrappingHStack", type: .runtime)
-                
             ]
         ),
     ]

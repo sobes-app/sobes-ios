@@ -1,10 +1,3 @@
-//
-//  SwiftUIView.swift
-//
-//
-//  Created by Алиса Вышегородцева on 22.04.2024.
-//
-
 import SwiftUI
 import Types
 import WrappingHStack
@@ -84,7 +77,7 @@ public struct ProfileElementView: View {
                 .padding(5)
                 .background {
                     RoundedRectangle(cornerRadius: Constants.corner)
-                        .stroke(.black, lineWidth: 1)
+                        .stroke(.black, lineWidth: Constants.strokeWidth)
                 }
         }
     }

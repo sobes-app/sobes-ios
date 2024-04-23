@@ -1,10 +1,3 @@
-//
-//  SwiftUIView.swift
-//  
-//
-//  Created by Алиса Вышегородцева on 19.04.2024.
-//
-
 import SwiftUI
 import UIComponents
 import Types
@@ -17,19 +10,7 @@ public enum Levels: String {
 }
 
 struct FillProfileLevelView<Model: ProfileViewModel>: View {
-    @ObservedObject private var model: Model
-    @State private var present: Bool = false
-    
-    @State private var inter: Bool = false
-    @State private var jun: Bool = false
-    @State private var mid: Bool = false
-    @State private var sen: Bool = false
 
-    @Binding private var path: NavigationPath
-    @Binding private var showTabBar: Bool
-
-    private let step: Double
-    
     public init(model: Model, path: Binding<NavigationPath>, step: Double, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
         self._path = path
@@ -39,7 +20,7 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
     
     public var body: some View {
         VStack(alignment: .leading) {
-            back
+            BackButton()
             VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 VStack (alignment: .leading) {
                     Text("Почти всё!")
@@ -66,8 +47,20 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
         .padding(.bottom, Constants.bottom)
     }
 
-    
-    var specListView: some View {
+    @ObservedObject private var model: Model
+    @State private var present: Bool = false
+
+    @State private var inter: Bool = false
+    @State private var jun: Bool = false
+    @State private var mid: Bool = false
+    @State private var sen: Bool = false
+
+    @Binding private var path: NavigationPath
+    @Binding private var showTabBar: Bool
+
+    private let step: Double
+
+    private var specListView: some View {
         VStack (alignment: .leading, spacing: Constants.defSpacing) {
             HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $inter, onTap: {
@@ -112,11 +105,7 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
         }
     }
     
-    var back: some View {
-        BackButton(onTap: {})
-    }
-    
-    var button: some View {
+    private var button: some View {
         MainButton(action: {
             if inter || jun || mid || sen {
                 present = true

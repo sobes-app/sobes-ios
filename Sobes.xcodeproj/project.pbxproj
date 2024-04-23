@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7FF03488FC3A5564B68E6E /* Media.xcassets */; };
+		1B4E37F3E7A2ED8226C687A1 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = D5E8F84EF157ADF85339B8F6 /* WrappingHStack */; };
 		1FC97C4ED085CE1BD6FD9E28 /* EntryPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5451022752FC90FD51F87803 /* EntryPointView.swift */; };
 		2BF0031E108AB9E39C98A56A /* Profile in Frameworks */ = {isa = PBXBuildFile; productRef = 824023B102ED7ECF050CD92B /* Profile */; };
 		323FF5DB2C45B16EBB0002CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF46344658ABC2FD254BED77 /* ContentView.swift */; };
@@ -15,7 +16,8 @@
 		6F382E0557D9704D1522BB20 /* SobesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BC15B7AEE733B31130AE65 /* SobesApp.swift */; };
 		874BB4D94C5F74F9B8F49EF5 /* TuistFonts+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 269350B98311A6A45C9FF539 /* TuistFonts+Sobes.swift */; };
 		9EC70BF7D942830F831516E0 /* TuistAssets+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9CD791A8619AA6C2F195BA /* TuistAssets+Sobes.swift */; };
-		A961DA05B277A70E5E607049 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = D5E8F84EF157ADF85339B8F6 /* WrappingHStack */; };
+		A961DA05B277A70E5E607049 /* Interview in Frameworks */ = {isa = PBXBuildFile; productRef = 45D4EE3CE452A68C230C2889 /* Interview */; };
+		AAB264A39AA3C720B9FA6F3D /* Toolbox in Frameworks */ = {isa = PBXBuildFile; productRef = 04CB3256A8930B988C790464 /* Toolbox */; };
 		C750B8A7C4B8618BD8B92759 /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = AD0D56FF7E78D6CD4946A15F /* UIComponents */; };
 		D2AE393E024D2BB821D87B5B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */; };
 		E0335E5F0BBE4B33662B35EF /* CoFoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8E4FF843CEDBD8A6C1BFA80E /* CoFoSans-Regular.ttf */; };
@@ -50,12 +52,14 @@
 		575A14500DDE9C80C9DDBDCB /* Types */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Types; path = Sobes/Libraries/Types; sourceTree = "<group>"; };
 		6E36B1149009CD8990E2E31E /* CoFoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CoFoSans-Bold.ttf"; sourceTree = "<group>"; };
 		73BC15B7AEE733B31130AE65 /* SobesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SobesApp.swift; sourceTree = "<group>"; };
+		746536782072B44421A82605 /* Interview */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Interview; path = Sobes/Libraries/Interview; sourceTree = "<group>"; };
 		7C1900FB9699F2CAFB7B8056 /* Sobes-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Sobes-Info.plist"; sourceTree = "<group>"; };
 		7E0310729F3C4675FCE9D6BB /* UIComponents */ = {isa = PBXFileReference; lastKnownFileType = folder; name = UIComponents; path = Sobes/Libraries/UIComponents; sourceTree = "<group>"; };
 		8616FA434A30D796D659E061 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		8E4FF843CEDBD8A6C1BFA80E /* CoFoSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "CoFoSans-Regular.ttf"; sourceTree = "<group>"; };
 		9008B7159A75AC35CCC62150 /* Chats */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Chats; path = Sobes/Libraries/Chats; sourceTree = "<group>"; };
 		BF46344658ABC2FD254BED77 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C1A5B72100A8F109499EB87F /* Toolbox */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Toolbox; path = Sobes/Libraries/Toolbox; sourceTree = "<group>"; };
 		CB50BB33AB3D2F382AAFAC22 /* TuistBundle+Sobes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistBundle+Sobes.swift"; sourceTree = "<group>"; };
 		CB7FF03488FC3A5564B68E6E /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		CC9CD791A8619AA6C2F195BA /* TuistAssets+Sobes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistAssets+Sobes.swift"; sourceTree = "<group>"; };
@@ -73,7 +77,9 @@
 				5F05D0FC47369E6E742D0DF6 /* Materials in Frameworks */,
 				E86019111AA5A2F416A9CC6A /* Types in Frameworks */,
 				2BF0031E108AB9E39C98A56A /* Profile in Frameworks */,
-				A961DA05B277A70E5E607049 /* WrappingHStack in Frameworks */,
+				A961DA05B277A70E5E607049 /* Interview in Frameworks */,
+				AAB264A39AA3C720B9FA6F3D /* Toolbox in Frameworks */,
+				1B4E37F3E7A2ED8226C687A1 /* WrappingHStack in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,13 +93,6 @@
 				8E4FF843CEDBD8A6C1BFA80E /* CoFoSans-Regular.ttf */,
 			);
 			path = Fonts;
-			sourceTree = "<group>";
-		};
-		617D91222A1F96274994A73F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		633E0B5AD19666F57FF3254D /* Sobes */ = {
@@ -119,18 +118,9 @@
 			isa = PBXGroup;
 			children = (
 				DE64F142281DCAA9CB37CA9E /* Project */,
-				617D91222A1F96274994A73F /* Frameworks */,
-				85A194BA7C2EC45672C8F3EA /* Cache */,
 				CAEAB2C2BF0DD83C38196ECF /* Products */,
 				B71E3A24B7FA6386E95EC181 /* Packages */,
 			);
-			sourceTree = "<group>";
-		};
-		85A194BA7C2EC45672C8F3EA /* Cache */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Cache;
 			sourceTree = "<group>";
 		};
 		A3B3AED4B4450A81D4F7FA1B /* Derived */ = {
@@ -145,11 +135,13 @@
 			isa = PBXGroup;
 			children = (
 				E436B704D2E1609F0162A2DB /* Authorization */,
-				7E0310729F3C4675FCE9D6BB /* UIComponents */,
-				074EDA10E4BF2CAEF11FAF81 /* Profile */,
 				9008B7159A75AC35CCC62150 /* Chats */,
+				746536782072B44421A82605 /* Interview */,
 				1EBB81CE7895D83631574242 /* Materials */,
+				074EDA10E4BF2CAEF11FAF81 /* Profile */,
+				C1A5B72100A8F109499EB87F /* Toolbox */,
 				575A14500DDE9C80C9DDBDCB /* Types */,
+				7E0310729F3C4675FCE9D6BB /* UIComponents */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -217,6 +209,8 @@
 				33318F6D74D3038758FE1634 /* Materials */,
 				9C380053BDEB33F32B55201D /* Types */,
 				824023B102ED7ECF050CD92B /* Profile */,
+				45D4EE3CE452A68C230C2889 /* Interview */,
+				04CB3256A8930B988C790464 /* Toolbox */,
 				D5E8F84EF157ADF85339B8F6 /* WrappingHStack */,
 			);
 			productName = Sobes;
@@ -483,9 +477,17 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		04CB3256A8930B988C790464 /* Toolbox */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Toolbox;
+		};
 		33318F6D74D3038758FE1634 /* Materials */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Materials;
+		};
+		45D4EE3CE452A68C230C2889 /* Interview */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Interview;
 		};
 		824023B102ED7ECF050CD92B /* Profile */ = {
 			isa = XCSwiftPackageProductDependency;

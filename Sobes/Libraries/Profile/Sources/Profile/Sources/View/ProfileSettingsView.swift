@@ -1,27 +1,9 @@
-//
-//  SwiftUIView.swift
-//
-//
-//  Created by Алиса Вышегородцева on 19.04.2024.
-//
-
 import SwiftUI
 import UIComponents
 import Authorization
 
 public struct ProfileSettingsView<Model: ProfileViewModel>: View {
-    @ObservedObject private var model: Model
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    
-    @State private var input: String = ""
-    @State private var inputState: TextFieldView.InputState = .correct
-    
-    @State private var inputPass: String = ""
-    @State private var inputPassState: TextFieldView.InputState = .correct
-    
-    @State private var presentCode: Bool = false
-    @Binding private var showTabBar: Bool
-    
+
     public init(model: Model, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
         self._showTabBar = showTabBar
@@ -29,7 +11,7 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
     
     public var body: some View {
         VStack(alignment: .leading) {
-            back
+            BackButton()
             VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 Text("Настройки")
                     .font(Fonts.heading)
@@ -55,7 +37,7 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
         }
     }
     
-    var changePassword: some View {
+    private var changePassword: some View {
         Button(action: {presentCode = true}) {
             Text("сменить пароль")
                 .foregroundColor(Color(.accent))
@@ -67,14 +49,26 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
         }
     }
     
-    var button: some View {
-        MainButton(action: {
-            model.saveNewName(newName: input)
-            presentationMode.wrappedValue.dismiss()
-        }, label: "Сохранить")
+    private var button: some View {
+        MainButton(
+            action: {
+                model.saveNewName(newName: input)
+                presentationMode.wrappedValue.dismiss()
+            },
+            label: "Сохранить"
+        )
     }
-    
-    var back: some View {
-        BackButton(onTap: {})
-    }
+
+    @ObservedObject private var model: Model
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
+    @State private var input: String = ""
+    @State private var inputState: TextFieldView.InputState = .correct
+
+    @State private var inputPass: String = ""
+    @State private var inputPassState: TextFieldView.InputState = .correct
+
+    @State private var presentCode: Bool = false
+    @Binding private var showTabBar: Bool
+
 }
