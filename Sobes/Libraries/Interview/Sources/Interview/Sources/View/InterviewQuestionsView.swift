@@ -25,20 +25,23 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
             }
             .padding(.horizontal, Constants.horizontal)
         }
+        .onAppear {
+            model.fetchQuestions()
+        }
     }
 
     private var navBar: some View {
         HStack(spacing: Constants.defSpacing) {
             BackButton()
             Text(type.rawValue)
-                .font(Font.custom("CoFoSans-Regular", size: 17))
+                .font(Fonts.main)
             Spacer()
         }
     }
 
     private var heading: some View {
         Text("Подготовили список вопросов на сегодня")
-            .font(Font.custom("CoFoSans-Bold", size: 23))
+            .font(Fonts.heading)
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -46,15 +49,11 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
     private var questions: some View {
         ScrollView {
             VStack(spacing: Constants.defSpacing) {
-                NavigationLink(destination: InterviewChatView(messages: [.init(id: 0, text: "Hi", sender: .gpt(isAssessment: false))])) {
-                    ChevronButton(model: .question(text: "Расскажите о случае, когда вам пришлось работать в команде, где возникли конфликты или разногласия между членами команды. Как вы управляли этой ситуацией?"))
+                ForEach(model.questions) { question in
+                    NavigationLink(destination: InterviewChatView(model: model, question: question)) {
+                        ChevronButton(model: .question(question))
+                    }
                 }
-//                NavigationLink(destination: InterviewChatView) {
-                    ChevronButton(model: .question(text: "Расскажите о случае, когда вам пришлось работать в команде, где возникли конфликты или разногласия между членами команды. Как вы управляли этой ситуацией?", result: 72.5))
-//                }
-
-
-                ChevronButton(model: .question(text: "Расскажите о случае, когда вам пришлось работать в команде, где возникли конфликты или разногласия между членами команды. Как вы управляли этой ситуацией?"))
             }
         }
     }

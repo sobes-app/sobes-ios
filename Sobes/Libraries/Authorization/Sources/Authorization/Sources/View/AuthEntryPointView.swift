@@ -1,29 +1,31 @@
 import SwiftUI
 import UIComponents
 
-public struct AuthEntyPointView<Model: LoginViewModel>: View {
+public struct AuthEntryPointView<Model: LoginViewModel>: View {
 
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)
     }
     
     public var body: some View {
-        VStack(alignment: .leading) {
-            BackButton()
-            VStack(alignment: .leading, spacing: Constants.defSpacing) {
-                Text("Вход в аккаунт")
-                    .font(Fonts.heading)
-                    .foregroundColor(.black)
-                TextFieldView(model: .email, input: $inputEmail, inputState: $inputEmailState)
-                TextFieldView(model: .password, input: $inputPass, inputState: $inputPassState)
-                HStack {
+        NavigationStack {
+            VStack(alignment: .leading) {
+                BackButton()
+                VStack(alignment: .leading, spacing: Constants.defSpacing) {
+                    Text("Вход в аккаунт")
+                        .font(Fonts.heading)
+                        .foregroundColor(.black)
+                    TextFieldView(model: .email, input: $inputEmail, inputState: $inputEmailState)
+                    TextFieldView(model: .password, input: $inputPass, inputState: $inputPassState)
+                    HStack {
+                        Spacer()
+                        forgotPasswordButton
+                    }
                     Spacer()
-                    forgotPasswordButton
+                    button
                 }
-                Spacer()
-                button
+                .padding(.top, Constants.topPadding)
             }
-            .padding(.top, Constants.topPadding)
         }
         .padding(.horizontal, Constants.horizontal)
         .padding(.bottom, Constants.bottom)

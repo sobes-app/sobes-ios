@@ -2,7 +2,6 @@ import SwiftUI
 import UIComponents
 import Authorization
 
-
 @MainActor
 struct EntryPointView: View {
 
@@ -41,11 +40,11 @@ struct EntryPointView: View {
         ) {
             Text("Войти")
                 .bold()
-                .font(Font.custom("CoFoSans-Bold", size: 13))
+                .font(Fonts.mainBold)
                 .foregroundColor(Color(.accent))
         }
         .navigationDestination(isPresented: $presentAuth) {
-            AuthEntyPointView(model: LoginViewModelImpl(onLoginComplete: {
+            AuthEntryPointView(model: LoginViewModelImpl(onLoginComplete: {
                 isAuthorized = true
                 selectedTab = .materials
             }))

@@ -20,15 +20,15 @@ public struct InterviewMessageBubble: View {
         HStack {
             Spacer()
             Text(message.text)
-                .font(Font.custom("CoFoSans-Regular", size: 13))
+                .multilineTextAlignment(.trailing)
+                .font(Fonts.main)
                 .padding(Constants.smallStack)
                 .background {
                     RoundedRectangle(cornerRadius: Constants.corner)
-                        .stroke(.black, lineWidth: 1)
+                        .stroke(.black, lineWidth: Constants.strokeWidth)
                 }
-                .frame(maxWidth: Constants.messageMaxWidth)
+                .frame(maxWidth: Constants.messageMaxWidth, alignment: .trailing)
         }
-        .frame(maxWidth: .infinity, alignment: .trailing)
     }
 
     private func gptMessage(isAssessment: Bool) -> some View {
@@ -39,14 +39,14 @@ public struct InterviewMessageBubble: View {
                 .frame(height: 26)
                 .foregroundStyle(Color(.accent))
             Text(message.text)
-                .font(Font.custom("CoFoSans-Regular", size: 13))
+                .font(Fonts.main)
                 .multilineTextAlignment(.leading)
                 .padding(Constants.smallStack)
                 .background {
                     RoundedRectangle(cornerRadius: Constants.corner)
                         .foregroundStyle(Color(.bubble))
                 }
-                .frame(maxWidth: Constants.messageMaxWidth)
+                .frame(maxWidth: Constants.messageMaxWidth, alignment: .leading)
             if isAssessment {
                 Image(systemName: "chevron.right")
                     .resizable()

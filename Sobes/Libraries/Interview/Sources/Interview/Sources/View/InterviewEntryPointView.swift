@@ -45,7 +45,7 @@ public struct InterviewEntryPointView<Model: InterviewViewModel>: View {
         HStack {
             Text("Раздел\nподготовки")
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .font(Font.custom("CoFoSans-Bold", size: 23))
+                .font(Fonts.heading)
                 .foregroundStyle(.black)
             Spacer()
             statisticsButton

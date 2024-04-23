@@ -19,52 +19,63 @@ public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
         .navigationBarBackButtonHidden()
         .frame(maxWidth: .infinity)
         .padding(.horizontal, Constants.horizontal)
+        .onAppear {
+            model.fetchQuestions()
+        }
     }
+
+    @StateObject private var model: Model
 
     private var statisticsBubble: some View {
         VStack(alignment: .leading, spacing: Constants.smallStack) {
             Text("Твоя статистика")
-                .font(Font.custom("CoFoSans-Bold", size: 23))
+                .font(Fonts.heading)
                 .foregroundStyle(.black)
 
             Text("26")
                 .foregroundColor(Color(.accent))
-                .font(Font.custom("CoFoSans-Bold", size: 17))
+                .font(Fonts.mainBold)
             +
             Text(" вопросов в проработке")
-                .font(Font.custom("CoFoSans-Regular", size: 17))
+                .font(Fonts.main)
 
             Text("5")
                 .foregroundColor(Color(.accent))
-                .font(Font.custom("CoFoSans-Bold", size: 17))
+                .font(Fonts.mainBold)
             +
             Text(" вопросов с идеальным результатом")
-                .font(Font.custom("CoFoSans-Regular", size: 17))
+                .font(Fonts.main)
 
             Text("87%")
                 .foregroundColor(Color(.accent))
-                .font(Font.custom("CoFoSans-Bold", size: 17))
+                .font(Fonts.mainBold)
             +
             Text(" средний результат по вопросам")
-                .font(Font.custom("CoFoSans-Regular", size: 17))
+                .font(Fonts.main)
         }
         .multilineTextAlignment(.leading)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Constants.elementPadding)
         .background {
             RoundedRectangle(cornerRadius: Constants.corner)
-                .stroke(.black, lineWidth: 1)
+                .stroke(.black, lineWidth: Constants.strokeWidth)
         }
     }
 
     private var questions: some View {
         VStack(alignment: .leading, spacing: Constants.defSpacing) {
             Text("Твои вопросы")
-                .font(Font.custom("CoFoSans-Bold", size: 23))
-            ChevronButton(model: .question(text: "Расскажите о случае, когда вам пришлось работать в команде, где возникли конфликты или разногласия между членами команды. Как вы управляли этой ситуацией?", result: 72.5))
+                .font(Fonts.heading)
+            ScrollView {
+                VStack(spacing: Constants.defSpacing) {
+                    ForEach(model.questions) { question in
+                        NavigationLink(destination: InterviewChatView(model: model, question: question)) {
+                            ChevronButton(model: .question(question))
+                        }
+                    }
+                }
+            }
         }
     }
-
-    @StateObject private var model: Model
 
 }

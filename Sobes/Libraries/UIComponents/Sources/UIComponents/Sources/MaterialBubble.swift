@@ -19,31 +19,31 @@ public struct MaterialBubble: View {
     private let model: Types.Material
 
     private func tip(model: Tip) -> some View {
-        VStack(spacing: 10) {
+        VStack(spacing: Constants.smallStack) {
             tipHeader(logo: model.logo, author: model.author, role: model.role)
             tipText(model.text)
         }
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: Constants.corner)
                 .foregroundStyle(Color(.bubble))
         }
     }
 
     private func tipHeader(logo: Image, author: String, role: String) -> some View {
-        HStack(spacing: 15) {
+        HStack(spacing: Constants.elementPadding) {
             logo
                 .resizable()
                 .scaledToFit()
-            VStack(spacing: 0) {
+            VStack(spacing: Constants.zeroSpacing) {
                 Text(author)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(.black)
-                    .font(Font.custom("CoFoSans-Regular", size: 13))
+                    .font(Fonts.main)
                 Text(role)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(Color(.grey))
-                    .font(Font.custom("CoFoSans-Regular", size: 13))
+                    .font(Fonts.main)
             }
         }
         .frame(height: 32)
@@ -53,32 +53,32 @@ public struct MaterialBubble: View {
         Text(text)
             .frame(maxWidth: .infinity, alignment: .leading)
             .foregroundStyle(.black)
-            .font(Font.custom("CoFoSans-Regular", size: 13))
             .multilineTextAlignment(.leading)
+            .font(Fonts.main)
     }
 
     private func article(model: Article) -> some View {
-        HStack(alignment: .center, spacing: 10) {
+        HStack(alignment: .center, spacing: Constants.smallStack) {
             model.logo
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 43)
-            VStack(spacing: 10) {
+            VStack(spacing: Constants.smallStack) {
                 Text(model.author)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(Color(.black))
-                    .font(Font.custom("CoFoSans-Bold", size: 13))
+                    .font(Fonts.mainBold)
 
                 Text(model.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(Color(.black))
-                    .font(Font.custom("CoFoSans-Regular", size: 13))
+                    .font(Fonts.main)
             }
         }
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(.black, lineWidth: 1)
+            RoundedRectangle(cornerRadius: Constants.corner)
+                .stroke(.black, lineWidth: Constants.strokeWidth)
         }
     }
 }

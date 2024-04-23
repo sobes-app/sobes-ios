@@ -1,6 +1,7 @@
 import SwiftUI
 
 public struct TextFieldView: View {
+
     public enum Model {
         case name
         case password
@@ -17,24 +18,18 @@ public struct TextFieldView: View {
         case passwords
     }
     
-    @Binding var input: String
-    @Binding var inputState: InputState
-    var isSendButtonAvailable: Bool
-    var onSend: (()-> Void)?
-    var onFilter: (()-> Void)?
-    
     public init(
         model: Model,
         input: Binding<String>,
         inputState: Binding<InputState>,
-        isSendButtonAvailable: Bool = true,
-        onSend: (() -> Void)? = nil
+        onSend: (() -> Void)? = nil,
+        onFilter: (() -> Void)? = nil
     ) {
         self.model = model
         self._input = input
         self._inputState = inputState
-        self.isSendButtonAvailable = isSendButtonAvailable
         self.onSend = onSend
+        self.onFilter = onFilter
     }
     
     public var body: some View {
@@ -60,7 +55,7 @@ public struct TextFieldView: View {
         RoundedRectangle(cornerRadius: Constants.corner)
             .stroke(
                 isFocused ? Color(.accent) : .clear,
-                lineWidth: 1
+                lineWidth: Constants.strokeWidth
             )
             .background(
                 RoundedRectangle(cornerRadius: Constants.corner)
@@ -151,7 +146,11 @@ public struct TextFieldView: View {
                     roundedRec
                 }
             Spacer()
-            Button(action: {onSend?()}) {
+            Button(
+                action: {
+                    onSend?()
+                }
+            ) {
                 Image(systemName: "arrow.up")
                     .foregroundColor(input.count == 0 ? Static.Colors.grey : .white)
                     .onTapGesture {
@@ -160,7 +159,7 @@ public struct TextFieldView: View {
                     .background {
                         Circle()
                             .frame(width: 30, height: 30)
-                            .foregroundColor(input.count == 0 ? Color(.light) : Color(.accent))
+                            .foregroundColor(input.isEmpty ? Color(.light) : Color(.accent))
                     }
             }
         }
@@ -169,31 +168,42 @@ public struct TextFieldView: View {
     var chat: some View {
         HStack(spacing: 5) {
             TextField("сообщение...", text: $input, axis: .vertical)
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(.black)
                 .focused($isFocused)
                 .disableAutocorrection(true)
                 .onSubmit {
                     onSend?()
+                    input = ""
                 }
                 .padding(Constants.elementPadding)
                 .background {
                     roundedRec
                 }
             Spacer()
-            Button(action: {onSend?()}) {
+            Button(
+                action: {
+                    onSend?()
+                    input = ""
+                }
+            ) {
                 Image(systemName: "arrow.up")
                     .foregroundColor(input.count == 0 ? Static.Colors.grey : .white)
                     .background {
                         Circle()
                             .frame(width: 40, height: 40)
-                            .foregroundColor(input.count == 0 ? Color(.light) : Color(.accent))
+                            .foregroundColor(input.isEmpty ? Color(.light) : Color(.accent))
                     }
             }
+            .disabled(input.isEmpty)
         }
     }
     
     @FocusState private var isFocused: Bool
+    @Binding private var input: String
+    @Binding private var inputState: InputState
     private let model: Model
+    private let onSend: (()-> Void)?
+    private let onFilter: (()-> Void)?
 }
 
 private enum Static {

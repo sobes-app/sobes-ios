@@ -1,10 +1,11 @@
 import SwiftUI
+import Types
 
 public struct ChevronButton: View {
 
     public enum ComponentType {
         case button(text: String)
-        case question(text: String, result: Double? = nil)
+        case question(InterviewQuestion)
     }
 
     public init(model: ComponentType) {
@@ -16,13 +17,13 @@ public struct ChevronButton: View {
             switch model {
             case .button(let text):
                 button(text: text)
-            case .question(let text, let result):
-                question(text: text, result: result)
+            case .question(let model):
+                question(model)
             }
         }
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: Constants.corner)
                 .foregroundStyle(Color(.bubble))
         }
     }
@@ -30,28 +31,30 @@ public struct ChevronButton: View {
     private func button(text: String) -> some View {
         HStack {
             Text(text)
-                .font(Font.custom("CoFoSans-Regular", size: 17))
+                .font(Fonts.main)
                 .foregroundStyle(.black)
             Spacer()
             chevron
         }
     }
 
-    private func question(text: String, result: Double? = nil) -> some View {
+    private func question(_ question: InterviewQuestion) -> some View {
         HStack {
-            VStack(alignment: .leading, spacing: 10) {
-                Text(text)
-                    .font(Font.custom("CoFoSans-Regular", size: 13))
-                if let result {
+            VStack(alignment: .leading, spacing: Constants.smallStack) {
+                Text(question.text)
+                    .foregroundStyle(.black)
+                    .multilineTextAlignment(.leading)
+                    .font(Fonts.main)
+                if let result = question.result {
                     Group {
                         Text("результат ")
-                            .font(Font.custom("CoFoSans-Regular", size: 13))
+                            .font(Fonts.main)
                         +
                         Text(String(format: "%.1f", result))
-                            .font(Font.custom("CoFoSans-Bold", size: 13))
+                            .font(Fonts.mainBold)
                         +
                         Text("%")
-                            .font(Font.custom("CoFoSans-Bold", size: 13))
+                            .font(Fonts.mainBold)
                     }
                     .foregroundStyle(Color(.accent))
                 }

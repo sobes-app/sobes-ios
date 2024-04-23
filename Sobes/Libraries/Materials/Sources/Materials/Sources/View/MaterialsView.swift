@@ -23,7 +23,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
     private var headline: some View {
         Text("Материалы для подготовки")
             .frame(maxWidth: .infinity, alignment: .leading)
-            .font(Font.custom("CoFoSans-Bold", size: 23))
+            .font(Fonts.heading)
             .foregroundStyle(.black)
     }
     
