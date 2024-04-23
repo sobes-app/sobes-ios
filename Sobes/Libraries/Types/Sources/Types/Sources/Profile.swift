@@ -25,7 +25,7 @@ public enum Levels: String, CaseIterable {
 public struct Profile: Identifiable, Hashable {
 
     public let id: Int
-    public let name: String
+    public var name: String
     public var professions: [Professions]
     public var companies: [Companies]
     public var level: Levels

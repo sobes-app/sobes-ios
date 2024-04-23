@@ -1,6 +1,7 @@
 import SwiftUI
 import UIComponents
 import Types
+import SwiftUIGIF
 
 enum Page {
     case chats
@@ -65,13 +66,14 @@ public struct ChatsView<Model: ChatViewModel>: View {
             ScrollView {
                 VStack(spacing: Constants.defSpacing) {
                     ForEach(filteredItems) { profile in
-                        if profile.id != model.profileId {
+                        if profile != model.getCurrentUser() {
                             ProfileElementView(profile: profile, onChatTapped: {
-                                presentDetailChat = true
-                            })
-                            .navigationDestination(isPresented: $presentDetailChat, destination: {
-                                    ChatDetailView(showTabBar: $showTabBar, chat: model.getChatByResponderOrCreateNew(responder: profile), model: model)
-                                        .navigationBarBackButtonHidden()
+                                if !model.checkChatExistance(responder: profile) {
+                                    model.createNewChat(reponder: profile)
+                                }
+                                withAnimation {
+                                    page = .chats
+                                }
                             })
                         }
                     }
@@ -83,7 +85,6 @@ public struct ChatsView<Model: ChatViewModel>: View {
         }
         .transition(.move(edge: .trailing))
     }
-    
     
     var searchTextField: some View {
         SearchTextFieldView(onAppear: {
@@ -100,20 +101,14 @@ public struct ChatsView<Model: ChatViewModel>: View {
                                                            chat: chat,
                                                            model: model)) {
                     VStack(spacing: Constants.defSpacing) {
-                        HStack(spacing: Constants.defSpacing) {
-                            Circle()
-                                .stroke(Color(.accent))
-                                .frame(width: 45, height: 45)
-                                .foregroundColor(Color(.light))
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text(model.getResponder(chat: chat).name)
-                                    .font(Fonts.mainBold)
-                                    .foregroundColor(.black)
-                                Text(chat.messages.last?.text ?? "")
-                                    .font(Fonts.small)
-                                    .foregroundColor(.black)
-                                    .lineLimit(1)
-                            }
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(model.getResponder(chat: chat).name)
+                                .font(Fonts.mainBold)
+                                .foregroundColor(.black)
+                            Text(chat.messages.last?.text ?? "")
+                                .font(Fonts.small)
+                                .foregroundColor(.black)
+                                .lineLimit(1)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         Rectangle()

@@ -5,7 +5,7 @@ import UIComponents
 struct ContentView: View {
     
     init() {
-        self._isAuthorized = State(initialValue: false)
+        self._isAuthorized = State(initialValue: true)
         self.selectedTab = .materials
     }
     

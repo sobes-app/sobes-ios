@@ -6,6 +6,7 @@ struct AuthCodeView<Model:LoginViewModel>: View {
     @State private var input: String = ""
     @State private var inputState: TextFieldView.InputState = .correct
     @State private var present: Bool = false
+    @State private var incorrect: Bool = false
 
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)
@@ -30,7 +31,12 @@ struct AuthCodeView<Model:LoginViewModel>: View {
             }
             .padding(.top, Constants.topPadding)
             Spacer()
-            button
+            VStack {
+                if incorrect {
+                    IncorrectView(text: "неверный код")
+                }
+                button
+            }
             
         }
         .padding(.horizontal, Constants.horizontal)
@@ -39,10 +45,17 @@ struct AuthCodeView<Model:LoginViewModel>: View {
     
     var button: some View {
         MainButton(action: {
-            if model.validateCode(code: input) {
+            if TextFieldValidator.isInputValid(.restoreCode(input)) {
                 present = true
             } else {
-                //TODO: прописать некорректный данный блять короче вы поняли
+                withAnimation {
+                    incorrect = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                    withAnimation {
+                        incorrect = false
+                    }
+                })
             }
         }, label: "Дальше")
             .navigationDestination(isPresented: $present) {

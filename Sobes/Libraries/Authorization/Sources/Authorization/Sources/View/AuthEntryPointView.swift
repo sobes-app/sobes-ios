@@ -22,7 +22,12 @@ public struct AuthEntryPointView<Model: LoginViewModel>: View {
                         forgotPasswordButton
                     }
                     Spacer()
-                    button
+                    VStack {
+                        if incorrect {
+                            IncorrectView(text: "неверная почта или пароль")
+                        }
+                        button
+                    }
                 }
                 .padding(.top, Constants.topPadding)
             }
@@ -45,8 +50,19 @@ public struct AuthEntryPointView<Model: LoginViewModel>: View {
     
     private var button: some View {
         MainButton(action: {
-            presentMain = true
-            model.onLoginTap()
+            if TextFieldValidator.isInputValid(.email(inputEmail)) && TextFieldValidator.isInputValid(.password(inputPass)) {
+                presentMain = true
+                model.onLoginTap()
+            } else {
+                withAnimation {
+                    incorrect = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                    withAnimation {
+                        incorrect = false
+                    }
+                })
+            }
         }, label: "Войти")
     }
 
@@ -60,5 +76,7 @@ public struct AuthEntryPointView<Model: LoginViewModel>: View {
 
     @State private var presentMain: Bool = false
     @State private var presentPasswordRecreate: Bool = false
+    
+    @State private var incorrect: Bool = false
 
 }

@@ -24,22 +24,37 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
     @State private var currentQuestion: Question = .professions
     @State private var step: Double = 1
     @State private var label: String = "Дальше"
+    private var question: Question?
     
-    public init(model: Model, showTabBar: Binding<Bool>) {
+    public init(model: Model, showTabBar: Binding<Bool>, question: Question? = nil) {
         self._model = ObservedObject(wrappedValue: model)
         self._showTabBar = showTabBar
+        self.question = question
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: Constants.defSpacing) {
             back
-            switch currentQuestion {
-            case .professions:
-                professions
-            case .levels:
-                levels
-            case .companies:
-                companies
+            if question != nil {
+                switch question {
+                case .professions:
+                    professions
+                case .levels:
+                    levels
+                case .companies:
+                    companies
+                case nil:
+                    Text("")
+                }
+            } else {
+                switch currentQuestion {
+                case .professions:
+                    professions
+                case .levels:
+                    levels
+                case .companies:
+                    companies
+                }
             }
             Spacer()
             VStack(spacing: Constants.defSpacing) {

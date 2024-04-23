@@ -44,8 +44,7 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
                 .font(Fonts.small)
         }
         .navigationDestination(isPresented: $presentCode) {
-            //TODO: переделать нахуй
-//            RegCodeView(from: .recreatePassword)
+
         }
     }
     

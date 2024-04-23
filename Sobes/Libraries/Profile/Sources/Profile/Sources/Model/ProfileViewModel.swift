@@ -43,6 +43,7 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         professions.removeAll()
     }
     
+    
     public func onLogoutTap() {
         onLogoutAction()
     }
@@ -53,7 +54,7 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     }
     
     public func saveNewName(newName: String) {
-        
+        profileProvider.setNewName(name: newName)
     }
     
     public func createStringProf(array: [Professions]) -> String {

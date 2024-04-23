@@ -14,7 +14,7 @@ struct EntryPointView: View {
             VStack (spacing: 30) {
                 Spacer()
                 GIFImage(name: "entryPointGif")
-                    .frame(width: 700)
+                    .frame(width: 600)
                 Text("Готовься продуктивно")
                     .font(Font.custom("CoFoSans-Bold", size: 35))
                     .multilineTextAlignment(.center)

@@ -3,14 +3,14 @@ import SwiftUI
 public struct Chat: Identifiable {
 
     public let id: Int
-    public let firstResponder: Profile
-    public let secondResponder: Profile
+    public let firstResponderId: Int
+    public let secondResponderId: Int
     public var messages: [Message]
 
-    public init(id: Int, firstResponder: Profile, secordResponder: Profile, messages: [Message]) {
+    public init(id: Int, firstResponder: Int, secordResponder: Int, messages: [Message]) {
         self.id = id
-        self.firstResponder = firstResponder
-        self.secondResponder = secordResponder
+        self.firstResponderId = firstResponder
+        self.secondResponderId = secordResponder
         self.messages = messages
     }
 }
