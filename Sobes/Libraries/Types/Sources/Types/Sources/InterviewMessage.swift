@@ -1,8 +1,8 @@
 import Foundation
 
-public struct InterviewMessage: Identifiable {
+public struct InterviewMessage: Identifiable, Equatable {
 
-    public enum Sender {
+    public enum Sender: Equatable {
         case user
         case gpt(isAssessment: Bool)
     }

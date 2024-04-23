@@ -1,5 +1,6 @@
 import SwiftUI
 import UIComponents
+import Types
 
 public struct MaterialsView<Model: MaterialsViewModel>: View {
     
@@ -14,7 +15,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
             bubbles
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 31)
+        .padding(.horizontal, Constants.horizontal)
         .onAppear {
             model.onViewAppear()
         }
@@ -26,11 +27,27 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
             .font(Fonts.heading)
             .foregroundStyle(.black)
     }
-    
+
+    @ViewBuilder
     private var filters: some View {
         HStack {
-            ForEach(model.filters) { filter in
+            ForEach(model.materialsFilters) { filter in
                 FilterBubble(filter: filter)
+                    .onTapGesture {
+                        model.onMaterialsFilterTapped(id: filter.id)
+                    }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        if model.materialsFilters.isTipsFilterActive {
+            companyFilters
+        }
+    }
+
+    private var companyFilters: some View {
+        HStack {
+            ForEach(model.filters) { filter in
+                FilterBubble(filter: filter, type: .secondary)
                     .onTapGesture {
                         model.onFilterTapped(id: filter.id)
                     }
@@ -38,7 +55,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
+
     private var bubbles: some View {
         ScrollView {
             VStack(spacing: Constants.defSpacing) {
@@ -50,5 +67,13 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
     }
 
     @StateObject private var model: Model
+
+}
+
+extension Array where Array == [Types.Filter] {
+
+    public var isTipsFilterActive: Bool {
+        return self.firstIndex(where: { $0.isActive }) == 0
+    }
 
 }

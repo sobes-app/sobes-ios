@@ -1,61 +1,89 @@
 import SwiftUI
 import Types
+import Toolbox
 
 @MainActor
 public protocol MaterialsViewModel: ObservableObject {
     var materials: [Types.Material] { get }
     var filters: [Types.Filter] { get }
+    var materialsFilters: [Types.Filter] { get }
     func onViewAppear()
     func onFilterTapped(id: Int)
+    func onMaterialsFilterTapped(id: Int)
 }
 
 @MainActor
 public final class MaterialsViewModelImpl: MaterialsViewModel {
 
-    @Published public var materials: [Types.Material]
-    @Published public var filters: [Types.Filter]
+    @Published public var materials: [Types.Material] = []
+    @Published public var filters: [Types.Filter] = []
+    @Published public var materialsFilters: [Types.Filter] = []
 
-    public init() {
-        self.materials = []
-        self.filters = []
-    }
+    public init() { }
 
     public func onViewAppear() {
-        materials = getDefaultMaterials()
+        materials = getTips()
         filters = [
             Filter(id: 0, name: "Тинькофф"),
             Filter(id: 1, name: "Яндекс")
         ]
-
+        materialsFilters = [
+            Filter(id: 0, name: "Статьи", isActive: true),
+            Filter(id: 1, name: "Советы")
+        ]
     }
 
     public func onFilterTapped(id: Int) {
         filters[id].isActive.toggle()
         if filtersNotActive() {
-            materials = getDefaultMaterials()
+            if materialsFilters.isTipsFilterActive {
+                materials = getTips()
+            } else {
+                materials = getArticles()
+            }
         } else {
             var filteredMaterials: [Types.Material] = []
             for filter in filters {
                 if filter.isActive {
-                    filteredMaterials.append(contentsOf: getDefaultMaterials().filter { material in
-                        Material.getCompanyName(of: material).contains(filter.name)
-                    })
+                    if materialsFilters.isTipsFilterActive {
+                        filteredMaterials.append(contentsOf: getTips().filter { material in
+                            switch material {
+                            case .tip(let model):
+                                return model.companyName.contains(filter.name)
+                            case .article:
+                                return false
+                            }
+                        })
+                    } else {
+                        filteredMaterials = getArticles()
+                    }
                 }
             }
             materials = filteredMaterials
         }
     }
 
-    private func filtersNotActive() -> Bool {
-        for filter in filters {
-            if filter.isActive {
-                return false
-            }
+    public func onMaterialsFilterTapped(id: Int) {
+        for i in 0...materialsFilters.count - 1 {
+            materialsFilters[i].isActive = false
         }
-        return true
+        materialsFilters[id].isActive.toggle()
+        if id.isTipsFilter {
+            materials = getTips()
+        } else {
+            materials = getArticles()
+        }
     }
 
-    private func getDefaultMaterials() -> [Types.Material] {
+    private func filtersNotActive() -> Bool {
+        return !filters.contains { $0.isActive }
+    }
+
+    private func getMaterialsActiveFilter() -> Int {
+        return materialsFilters.firstIndex(where: { $0.isActive }) ?? 0
+    }
+
+    private func getTips() -> [Types.Material] {
         return [
             .tip(
                 model:
@@ -78,18 +106,31 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
                         role: "Менеджер продукта",
                         text: "Учитесь говорить о своих результатах в формате “Была такая проблема, я сделал это потому что..., это повлияло на целевую метрику вот так”"
                     )
-            ),
+            )
+        ]
+    }
+
+    private func getArticles() -> [Types.Material] {
+        return [
             .article(
                 model:
                     Article(
-                        id: 2,
-                        logo: Image("yandex", bundle: .module),
-                        companyName: "GO Practice",
+                        id: 0,
+                        logo: URL(string: "https://gopractice.ru/skills/product_manager_job_interview/")?.host(),
                         author: "GO PRACTICE",
-                        text: "Вопросы на собеседовании продакт-менеджера: шаблон и гайд для кандидатов и работодателей"
+                        text: "Вопросы на собеседовании продакт-менеджера: шаблон и гайд для кандидатов и работодателей", 
+                        url: "https://gopractice.ru/skills/product_manager_job_interview/"
                     )
             )
         ]
+    }
+
+}
+
+extension Int {
+
+    fileprivate var isTipsFilter: Bool {
+        return self == 0
     }
 
 }

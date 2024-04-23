@@ -31,13 +31,24 @@ public struct InterviewChatView<Model: InterviewViewModel>: View {
     private let question: InterviewQuestion
 
     private var messageBubbles: some View {
-        ScrollView {
-            VStack(spacing: Constants.smallStack) {
-                ForEach(model.messages) { message in
-                    InterviewMessageBubble(message: message)
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(spacing: Constants.smallStack) {
+                    ForEach(model.messages) { message in
+                        InterviewMessageBubble(message: message)
+                    }
+                }
+                Spacer()
+                    .frame(height: 0)
+                    .id("bottom")
+            }
+            .onChange(of: model.messages) { message in
+                withAnimation {
+                    proxy.scrollTo("bottom")
                 }
             }
         }
+        .scrollIndicators(.hidden)
     }
 
 }

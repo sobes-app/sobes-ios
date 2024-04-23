@@ -4,27 +4,28 @@ import UIComponents
 public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
 
     public init(model: Model) {
-        self._model = StateObject(wrappedValue: model)
+        self._model = ObservedObject(wrappedValue: model)
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 32) {
-            VStack(alignment: .leading, spacing: Constants.topPadding) {
-                BackButton()
-                statisticsBubble
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 32) {
+                VStack(alignment: .leading, spacing: Constants.topPadding) {
+                    BackButton()
+                    statisticsBubble
+                }
+                questions
+                Spacer()
             }
-            questions
-            Spacer()
+            .padding(.horizontal, Constants.horizontal)
         }
         .navigationBarBackButtonHidden()
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, Constants.horizontal)
         .onAppear {
             model.fetchQuestions()
         }
     }
 
-    @StateObject private var model: Model
+    @ObservedObject private var model: Model
 
     private var statisticsBubble: some View {
         VStack(alignment: .leading, spacing: Constants.smallStack) {
@@ -32,21 +33,21 @@ public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
                 .font(Fonts.heading)
                 .foregroundStyle(.black)
 
-            Text("26")
+            Text(model.getQuestionsInProgress())
                 .foregroundColor(Color(.accent))
                 .font(Fonts.mainBold)
             +
             Text(" вопросов в проработке")
                 .font(Fonts.main)
 
-            Text("5")
+            Text(model.getQuestionsWithIdealResult())
                 .foregroundColor(Color(.accent))
                 .font(Fonts.mainBold)
             +
             Text(" вопросов с идеальным результатом")
                 .font(Fonts.main)
 
-            Text("87%")
+            Text(model.getMeanQuestionsResult())
                 .foregroundColor(Color(.accent))
                 .font(Fonts.mainBold)
             +
