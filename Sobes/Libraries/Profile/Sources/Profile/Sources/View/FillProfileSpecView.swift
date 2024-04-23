@@ -7,12 +7,7 @@
 
 import SwiftUI
 import UIComponents
-
-public enum Spec: String {
-    case product = "Менеджер продукта"
-    case project = "Менеджер проекта"
-    case analyst = "Бизнес аналитик"
-}
+import Types
 
 struct FillProfileSpecView<Model: ProfileViewModel>: View {
     @State private var present: Bool = false
@@ -63,17 +58,17 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
         VStack (alignment: .leading, spacing: Constants.defSpacing) {
             HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isProj)
-                Text("Менеджер проекта")
+                Text(Professions.project.rawValue)
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isProd)
-                Text("Менеджер продукта")
+                Text(Professions.product.rawValue)
                     .font(Fonts.main)
             }
             HStack(spacing: Constants.smallStack) {
                 CheckboxView(isOn: $isAnal)
-                Text("Бизнес аналитик")
+                Text(Professions.analyst.rawValue)
                     .font(Fonts.main)
             }
         }
@@ -86,7 +81,7 @@ struct FillProfileSpecView<Model: ProfileViewModel>: View {
     }
     
     func updateSpecs() {
-        var specArray: [Spec] = []
+        var specArray: [Professions] = []
         if isAnal {
             specArray.append(.analyst)
         }

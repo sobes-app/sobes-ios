@@ -22,7 +22,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                     settingsView
                     logoutView
                 }
-                if model.profile.desired != [] {
+                if model.profile.professions != [] {
                     statsView
                     Spacer()
                 } else {
@@ -46,7 +46,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     
     var statsView: some View {
         VStack(alignment: .leading, spacing: Constants.defSpacing) {
-            specsView
+            professionsView
             levelView
             companiesView
             Text("Для изменения данных нажмите на нужную ячейку")
@@ -60,7 +60,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Хочет работать в:")
                 .font(Fonts.mainBold)
-            Text(model.createString(array: model.profile.companies))
+            Text(model.createStringComp(array: model.profile.companies))
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
@@ -78,7 +78,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                 .font(Fonts.mainBold)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
-            Text(model.profile.experience)
+            Text(model.profile.level.rawValue)
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
@@ -91,11 +91,11 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         }
     }
     
-    var specsView: some View {
+    var professionsView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Желаемые должности:")
                 .font(Fonts.mainBold)
-            Text(model.createString(array: model.profile.desired))
+            Text(model.createStringProf(array: model.profile.professions))
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }

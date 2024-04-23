@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIComponents
+import Types
 
 struct FillProfileCompView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
@@ -82,15 +83,15 @@ struct FillProfileCompView<Model: ProfileViewModel>: View {
     }
     
     func updateComp() {
-        var array: [String] = []
+        var array: [Companies] = []
         if yandex {
-            array.append("Яндекс")
+            array.append(.yandex)
         }
         if tinkoff {
-            array.append("Тинькофф")
+            array.append(.tinkoff)
         }
         if other {
-            array.append("Другое")
+            array.append(.other)
         }
         model.updateCompanies(comps: array)
     }

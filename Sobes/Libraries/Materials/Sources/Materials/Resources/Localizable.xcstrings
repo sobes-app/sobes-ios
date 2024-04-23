@@ -1,11 +1,7 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "Материалы для\nподготовки" : {
-
-    },
     "Материалы для подготовки" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

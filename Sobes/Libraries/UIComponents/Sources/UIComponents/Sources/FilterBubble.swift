@@ -9,11 +9,11 @@ public struct FilterBubble: View {
 
     public var body: some View {
         Text(filter.name)
-            .font(Font.custom("CoFoSans-Regular", size: 17))
+            .font(Fonts.main)
             .foregroundStyle(filter.isActive ? .white : Color(.grey))
             .padding(10)
             .background {
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 100)
                     .foregroundStyle(filter.isActive ? Color(.accent) : Color(.bubble))
             }
     }

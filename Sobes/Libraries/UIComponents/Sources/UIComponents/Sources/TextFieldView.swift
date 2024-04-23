@@ -8,6 +8,7 @@ public struct TextFieldView: View {
         case email
         case code
         case chat
+        case search
     }
     
     public enum InputState {
@@ -20,6 +21,7 @@ public struct TextFieldView: View {
     @Binding var inputState: InputState
     var isSendButtonAvailable: Bool
     var onSend: (()-> Void)?
+    var onFilter: (()-> Void)?
     
     public init(
         model: Model,
@@ -49,6 +51,8 @@ public struct TextFieldView: View {
             code
         case .chat:
             chat
+        case .search:
+            search
         }
     }
     
@@ -132,6 +136,36 @@ public struct TextFieldView: View {
             roundedRec
         }
     }
+    
+    var search: some View {
+        HStack(spacing: 5) {
+            TextField("поиск...", text: $input, axis: .vertical)
+                .foregroundColor(Static.Colors.grey)
+                .focused($isFocused)
+                .disableAutocorrection(true)
+                .onSubmit {
+                    onSend?()
+                }
+                .padding(5)
+                .background {
+                    roundedRec
+                }
+            Spacer()
+            Button(action: {onSend?()}) {
+                Image(systemName: "arrow.up")
+                    .foregroundColor(input.count == 0 ? Static.Colors.grey : .white)
+                    .onTapGesture {
+                        onFilter?()
+                    }
+                    .background {
+                        Circle()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(input.count == 0 ? Color(.light) : Color(.accent))
+                    }
+            }
+        }
+    }
+    
     var chat: some View {
         HStack(spacing: 5) {
             TextField("сообщение...", text: $input, axis: .vertical)
@@ -149,9 +183,6 @@ public struct TextFieldView: View {
             Button(action: {onSend?()}) {
                 Image(systemName: "arrow.up")
                     .foregroundColor(input.count == 0 ? Static.Colors.grey : .white)
-                    .onTapGesture {
-                        onSend?()
-                    }
                     .background {
                         Circle()
                             .frame(width: 40, height: 40)

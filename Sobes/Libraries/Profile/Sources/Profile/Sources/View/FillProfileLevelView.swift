@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIComponents
+import Types
 
 public enum Levels: String {
     case inter = "Хочу попасть на стажировку"
@@ -73,7 +74,7 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
                     jun = false
                     mid = false
                     sen = false
-                    model.level = "Стажировка"
+                    model.level = Types.Levels.inter
                 })
                 Text(Levels.inter.rawValue)
                     .font(Fonts.main)
@@ -83,7 +84,7 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
                     inter = false
                     mid = false
                     sen = false
-                    model.level = "Jun/Jun+"
+                    model.level = Types.Levels.jun
                 })
                 Text(Levels.jun.rawValue)
                     .font(Fonts.main)
@@ -93,7 +94,7 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
                     inter = false
                     jun = false
                     sen = false
-                    model.level = "Middle/Middle+"
+                    model.level = Types.Levels.mid
                 })
                 Text(Levels.mid.rawValue)
                     .font(Fonts.main)
@@ -103,7 +104,7 @@ struct FillProfileLevelView<Model: ProfileViewModel>: View {
                     inter = false
                     jun = false
                     mid = false
-                    model.level = "Senior"
+                    model.level = Types.Levels.sen
                 })
                 Text(Levels.sen.rawValue)
                     .font(Fonts.main)

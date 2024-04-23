@@ -2,6 +2,7 @@ import SwiftUI
 import UIComponents
 import Authorization
 
+
 @MainActor
 struct EntryPointView: View {
     @State private var presentRegistration: Bool = false

@@ -1,15 +1,23 @@
 import SwiftUI
 import UIComponents
+import Types
 
-
+enum Page {
+    case chats
+    case search
+}
 
 public struct ChatsView<Model: ChatViewModel>: View {
     @StateObject private var model: Model
+    @State private var presentDetailChat: Bool = false
     
-    @State private var presentSearch: Bool = false
-    @State private var presentChats: Bool = true
+    @State private var input: String = ""
+    @FocusState private var isFocused: Bool
     
-    @State private var detailIsPresented: Bool = false
+    @State private var filterPresent: Bool = false
+    @State private var filterIsOn: Bool = false
+    
+    @State private var page: Page = .chats
     
     @Binding private var showTabBar: Bool
     
@@ -25,20 +33,64 @@ public struct ChatsView<Model: ChatViewModel>: View {
                     .font(Fonts.heading)
                     .foregroundColor(.black)
                 select
-                if presentChats {
+                switch page {
+                case .chats:
                     chats
-                } else {
-                    
+                case .search:
+                    search
                 }
                 Spacer()
-                
             }
+            .navigationDestination(isPresented: $filterPresent, destination: {
+                FilterView(model: model, showTabBar: $showTabBar)
+                    .navigationBarBackButtonHidden()
+            })
             .onAppear {
                 model.onViewAppear()
             }
             .padding(.horizontal, Constants.horizontal)
             .padding(.bottom, Constants.horizontal)
         }
+    }
+    
+    var filteredItems: [Profile] {
+        return model.profiles.filter { item in
+            input.isEmpty || item.name.lowercased().contains(input.lowercased())
+        }
+    }
+    
+    var search: some View {
+        VStack(spacing: Constants.defSpacing) {
+            searchTextField
+            ScrollView {
+                VStack(spacing: Constants.defSpacing) {
+                    ForEach(filteredItems) { profile in
+                        if profile.id != model.profileId {
+                            ProfileElementView(profile: profile, onChatTapped: {
+                                presentDetailChat = true
+                            })
+                            .navigationDestination(isPresented: $presentDetailChat, destination: {
+                                ChatDetailView(showTabBar: $showTabBar, chat: model.getChatByResponderOrCreateNew(responder: profile), model: model)
+                            })
+                        }
+                    }
+                }
+            }
+            .refreshable {}
+            .scrollClipDisabled()
+            .scrollDismissesKeyboard(.immediately)
+            .scrollIndicators(.hidden)
+        }
+        .transition(.move(edge: .trailing))
+    }
+    
+    
+    var searchTextField: some View {
+        SearchTextFieldView(onAppear: {
+            filterIsOn = model.filtersNotActive()
+        }, input: $input, buttonAction: {
+            filterPresent = true
+        }, filterIsOn: $filterIsOn)
     }
     
     var chats: some View {
@@ -55,9 +107,9 @@ public struct ChatsView<Model: ChatViewModel>: View {
                                 .foregroundColor(Color(.light))
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(model.getResponder(chat: chat).name)
-                                    .font(Fonts.small.bold())
+                                    .font(Fonts.mainBold)
                                     .foregroundColor(.black)
-                                Text(model.getLastMessage(chat: chat))
+                                Text(chat.messages.last?.text ?? "")
                                     .font(Fonts.small)
                                     .foregroundColor(.black)
                                     .lineLimit(1)
@@ -71,32 +123,40 @@ public struct ChatsView<Model: ChatViewModel>: View {
                 }
             }
         }
+        .transition(.move(edge: .leading))
+        .refreshable {}
         .scrollClipDisabled()
     }
     
     var select: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: Constants.defSpacing) {
             VStack {
                 Text("Ваши чаты")
-                    .font(presentChats ? Fonts.mainBold : Fonts.main)
-                    .onTapGesture {
-                        presentChats = true
-                        presentSearch = false
-                    }
+                    .font(page == .chats ? Fonts.mainBold : Fonts.main)
                 RoundedRectangle(cornerRadius: Constants.corner)
-                    .foregroundColor(presentChats ? Color(.accent) : .clear)
+                    .foregroundColor(page == .chats ? Color(.accent) : .clear)
                     .frame(height: 3)
+            }
+            .onTapGesture {
+                withAnimation {
+                    if page != .chats {
+                        page = .chats
+                    }
+                }
             }
             VStack {
                 Text("Поиск")
-                    .font(presentSearch ? Fonts.mainBold : Fonts.main)
-                    .onTapGesture {
-                        presentChats = false
-                        presentSearch = true
-                    }
+                    .font(page == .search ? Fonts.mainBold : Fonts.main)
                 RoundedRectangle(cornerRadius: Constants.corner)
-                    .foregroundColor(presentSearch ? Color(.accent) : .clear)
+                    .foregroundColor(page == .search ? Color(.accent) : .clear)
                     .frame(height: 3)
+            }
+            .onTapGesture {
+                withAnimation {
+                    if page != .search {
+                        page = .search
+                    }
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

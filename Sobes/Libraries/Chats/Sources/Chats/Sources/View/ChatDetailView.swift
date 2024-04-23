@@ -81,13 +81,13 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     
     var description: some View {
         VStack(alignment: .leading) {
-            Text("Желаемые должности: \(model.getResponder(chat: chat).desired.joined(separator: ", "))")
+            Text("Желаемые должности: \(Profile.createStringOfProfessions(of: model.getResponder(chat: chat)).joined(separator: ", "))")
                 .font(Fonts.small)
                 .foregroundColor(.black)
-            Text("Желаемая позиция: \(model.getResponder(chat: chat).experience)")
+            Text("Желаемая позиция: \(model.getResponder(chat: chat).level.rawValue)")
                 .font(Fonts.small)
                 .foregroundColor(.black)
-            Text("Хочет работать в: \(model.getResponder(chat: chat).companies.joined(separator: ", "))")
+            Text("Хочет работать в: \(Profile.createStringOfCompanies(of: model.getResponder(chat: chat)).joined(separator: ", "))")
                 .font(Fonts.small)
                 .foregroundColor(.black)
         }
