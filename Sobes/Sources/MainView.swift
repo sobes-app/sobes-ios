@@ -22,9 +22,14 @@ public struct MainView: View {
             case .chat:
                 ChatsView(showTabBar: $showTabBar, model: ChatViewModelImpl(profileId: 0))
             case .profile:
-                ProfileView(model: ProfileViewModelImpl(onLogoutAction: {
-                    isAuthorized = false
-                }), showTabBar: $showTabBar)
+                ProfileView(
+                    model: ProfileViewModelImpl(
+                        onLogoutAction: {
+                            isAuthorized = false
+                        }
+                    ),
+                    showTabBar: $showTabBar
+                )
             }
             Spacer()
             if showTabBar {

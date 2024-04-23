@@ -11,4 +11,10 @@ public struct InterviewMessage: Identifiable {
     public let text: String
     public let sender: Sender
 
+    public init(id: Int, text: String, sender: Sender) {
+        self.id = id
+        self.text = text
+        self.sender = sender
+    }
+
 }

@@ -5,14 +5,13 @@ import Authorization
 
 @MainActor
 struct EntryPointView: View {
-    @State private var presentRegistration: Bool = false
-    @State private var presentAuth: Bool = false
+
     @Binding var isAuthorized: Bool
     @Binding var selectedTab: TabItem
 
     var body: some View {
         NavigationStack {
-            VStack (spacing: 30){
+            VStack (spacing: 30) {
                 Spacer()
                 Text("Готовься продуктивно")
                     .font(Font.custom("CoFoSans-Bold", size: 35))
@@ -30,9 +29,16 @@ struct EntryPointView: View {
             .padding(.bottom, 89)
         }
     }
-    
-    var authButton: some View {
-        Button(action: {presentAuth = true}) {
+
+    @State private var presentRegistration: Bool = false
+    @State private var presentAuth: Bool = false
+
+    private var authButton: some View {
+        Button(
+            action: {
+                presentAuth = true
+            }
+        ) {
             Text("Войти")
                 .bold()
                 .font(Font.custom("CoFoSans-Bold", size: 13))
@@ -47,14 +53,19 @@ struct EntryPointView: View {
         }
     }
     
-    var button: some View {
-        MainButton(action: {presentRegistration = true}, label: "Регистрация")
-            .navigationDestination(isPresented: $presentRegistration) {
-                RegEmailView(model: RegistrationViewModelImpl(onRegistrationComplete: {
-                    isAuthorized = true
-                    selectedTab = .profile
-                }))
-                .navigationBarBackButtonHidden()
-            }
+    private var button: some View {
+        MainButton(
+            action: {
+                presentRegistration = true
+            },
+            label: "Регистрация"
+        )
+        .navigationDestination(isPresented: $presentRegistration) {
+            RegEmailView(model: RegistrationViewModelImpl(onRegistrationComplete: {
+                isAuthorized = true
+                selectedTab = .profile
+            }))
+            .navigationBarBackButtonHidden()
+        }
     }
 }

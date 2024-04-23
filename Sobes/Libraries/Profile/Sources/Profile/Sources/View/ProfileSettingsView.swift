@@ -3,18 +3,7 @@ import UIComponents
 import Authorization
 
 public struct ProfileSettingsView<Model: ProfileViewModel>: View {
-    @ObservedObject private var model: Model
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    
-    @State private var input: String = ""
-    @State private var inputState: TextFieldView.InputState = .correct
-    
-    @State private var inputPass: String = ""
-    @State private var inputPassState: TextFieldView.InputState = .correct
-    
-    @State private var presentCode: Bool = false
-    @Binding private var showTabBar: Bool
-    
+
     public init(model: Model, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
         self._showTabBar = showTabBar
@@ -80,5 +69,6 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
     @State private var inputPassState: TextFieldView.InputState = .correct
 
     @State private var presentCode: Bool = false
+    @Binding private var showTabBar: Bool
 
 }

@@ -19,17 +19,17 @@ public struct InterviewEntryPointView<Model: InterviewViewModel>: View {
                 InterviewStatisticsView(model: model)
             }
             .fullScreenCover(isPresented: $isPresentingProjectManagerInterview) {
-                InterviewQuestionsView(type: .project)
+                InterviewQuestionsView(model: model, type: .project)
             }
             .fullScreenCover(isPresented: $isPresentingProductManagerInterview) {
-                InterviewQuestionsView(type: .product)
+                InterviewQuestionsView(model: model, type: .product)
             }
             .fullScreenCover(isPresented: $isPresentingBAInterview) {
-                InterviewQuestionsView(type: .ba)
+                InterviewQuestionsView(model: model, type: .ba)
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 31)
+        .padding(.horizontal, Constants.horizontal)
         .onAppear {
             model.onViewAppear()
         }
@@ -55,9 +55,9 @@ public struct InterviewEntryPointView<Model: InterviewViewModel>: View {
     private var statisticsButton: some View {
         Image(systemName: "chart.xyaxis.line")
             .foregroundColor(.black)
-            .padding(15)
+            .padding(Constants.elementPadding)
             .background {
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: Constants.corner)
                     .foregroundColor(Color(.light))
             }
             .onTapGesture {
@@ -68,7 +68,7 @@ public struct InterviewEntryPointView<Model: InterviewViewModel>: View {
     }
 
     private var interviewButtons: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: Constants.defSpacing) {
             ChevronButton(model: .button(text: "Менеджер проектов"))
                 .onTapGesture {
                     withoutAnimation {

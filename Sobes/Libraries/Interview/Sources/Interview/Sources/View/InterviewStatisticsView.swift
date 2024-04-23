@@ -9,20 +9,20 @@ public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 32) {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: Constants.topPadding) {
                 BackButton()
                 statisticsBubble
             }
             questions
             Spacer()
         }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 31)
         .navigationBarBackButtonHidden()
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, Constants.horizontal)
     }
 
     private var statisticsBubble: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: Constants.smallStack) {
             Text("Твоя статистика")
                 .font(Font.custom("CoFoSans-Bold", size: 23))
                 .foregroundStyle(.black)
@@ -50,15 +50,15 @@ public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
         }
         .multilineTextAlignment(.leading)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(15)
+        .padding(Constants.elementPadding)
         .background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: Constants.corner)
                 .stroke(.black, lineWidth: 1)
         }
     }
 
     private var questions: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: Constants.defSpacing) {
             Text("Твои вопросы")
                 .font(Font.custom("CoFoSans-Bold", size: 23))
             ChevronButton(model: .question(text: "Расскажите о случае, когда вам пришлось работать в команде, где возникли конфликты или разногласия между членами команды. Как вы управляли этой ситуацией?", result: 72.5))
