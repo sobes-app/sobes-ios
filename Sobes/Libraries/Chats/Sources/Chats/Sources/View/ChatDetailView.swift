@@ -2,7 +2,7 @@ import SwiftUI
 import UIComponents
 import Types
 import Combine
-
+import SwiftUIGIF
 
 struct ChatDetailView<Model: ChatViewModel>: View {
     @ObservedObject private var model: Model
@@ -55,20 +55,24 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     
     var messages: some View {
         ScrollView {
-            ForEach(chat.messages) { message in
-                if message.author == model.profileId {
-                    MessageBubble(message: message, type: .selfMessage)
-                        .id(message.id)
-                        .padding(.leading, 30)
-                } else {
-                    MessageBubble(message: message, type: .responder)
-                        .id(message.id)
-                        .padding(.trailing, 30)
+            if chat.messages.isEmpty {
+                GIFImage(name: "")
+            } else {
+                ForEach(chat.messages) { message in
+                    if message.author == model.getCurrentUser().id {
+                        MessageBubble(message: message, type: .selfMessage)
+                            .id(message.id)
+                            .padding(.leading, 30)
+                    } else {
+                        MessageBubble(message: message, type: .responder)
+                            .id(message.id)
+                            .padding(.trailing, 30)
+                    }
                 }
+                Spacer()
+                    .frame(height: 0)
+                    .id("bottom")
             }
-            Spacer()
-                .frame(height: 0)
-                .id("bottom")
         }
         .scrollIndicators(.hidden)
     }
@@ -81,13 +85,13 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     
     var description: some View {
         VStack(alignment: .leading) {
-            Text("Желаемые должности: \(Profile.createStringOfProfessions(of: model.getResponder(chat: chat)).joined(separator: ", "))")
+            Text("#\(Profile.createStringOfProfessions(of: model.getResponder(chat: chat)).joined(separator: ", "))")
                 .font(Fonts.small)
                 .foregroundColor(.black)
-            Text("Желаемая позиция: \(model.getResponder(chat: chat).level.rawValue)")
+            Text("#\(model.getResponder(chat: chat).level.rawValue)")
                 .font(Fonts.small)
                 .foregroundColor(.black)
-            Text("Хочет работать в: \(Profile.createStringOfCompanies(of: model.getResponder(chat: chat)).joined(separator: ", "))")
+            Text("#\(Profile.createStringOfCompanies(of: model.getResponder(chat: chat)).joined(separator: " #"))")
                 .font(Fonts.small)
                 .foregroundColor(.black)
         }

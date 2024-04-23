@@ -14,7 +14,7 @@ let package = Package(
     dependencies: [
         .package(path: "Sobes/Sources/Libraries/UIComponents"),
         .package(path: "Sobes/Sources/Libraries/Providers"),
-        .package(url: "https://github.com/dkk/WrappingHStack", from: "2.0.0")
+        .package(url: "https://github.com/dkk/WrappingHStack", from: "2.0.0"),
     ],
     targets: [
         .target(

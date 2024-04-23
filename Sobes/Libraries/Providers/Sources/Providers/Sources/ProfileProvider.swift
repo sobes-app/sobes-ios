@@ -5,6 +5,7 @@ public protocol ProfileProvider {
     func getProfiles() -> [Types.Profile]
     func getCurrentUser() -> Types.Profile
     func updateProfileInfo(id: Int, companies: [Companies], level: Levels, professions: [Professions])
+    func setNewName(name: String)
 }
 
 public final class ProfileProviderImpl: ProfileProvider {
@@ -31,5 +32,13 @@ public final class ProfileProviderImpl: ProfileProvider {
         profiles[id].level = level
         profiles[id].professions = professions
         profiles[id].companies = companies
+    }
+    
+    public func setNewName(name: String) {
+        for i in profiles.indices {
+            if profiles[i] == getCurrentUser() {
+                profiles[i].name = name
+            }
+        }
     }
 }

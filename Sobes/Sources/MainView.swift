@@ -12,6 +12,13 @@ public struct MainView: View {
     @State private var showTabBar = true
     @Binding var isAuthorized: Bool
     @Binding var selectedTab: TabItem
+    
+    public init(isAuthorized: Binding<Bool>, selectedTab: Binding<TabItem>) {
+        self._isAuthorized = isAuthorized
+        self._selectedTab = selectedTab
+        profileProvider = ProfileProviderImpl()
+        chatProvider = ChatsProviderImpl(profileProvider: profileProvider)
+    }
 
     public var body: some View {
         VStack {
@@ -21,7 +28,7 @@ public struct MainView: View {
             case .interview:
                 InterviewEntryPointView(model: InterviewViewModelImpl())
             case .chat:
-                ChatsView(showTabBar: $showTabBar, model: ChatViewModelImpl(profileProvider: profileProvider))
+                ChatsView(showTabBar: $showTabBar, model: ChatViewModelImpl(profileProvider: profileProvider, chatProvider: chatProvider))
             case .profile:
                 ProfileView(model: ProfileViewModelImpl(onLogoutAction: {
                     isAuthorized = false
@@ -34,6 +41,7 @@ public struct MainView: View {
         }
     }
     
-    let profileProvider: ProfileProvider = ProfileProviderImpl()
+    let profileProvider: ProfileProvider
+    let chatProvider: ChatsProvider
 
 }

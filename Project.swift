@@ -38,7 +38,6 @@ let project = Project(
                 .package(product: "WrappingHStack", type: .runtime),
                 .package(product: "Providers"),
                 .package(product: "SwiftUIGIF", type: .runtime)
-                
             ]
         ),
     ]
