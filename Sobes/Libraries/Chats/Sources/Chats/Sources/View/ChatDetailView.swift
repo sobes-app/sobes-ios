@@ -32,16 +32,20 @@ struct ChatDetailView<Model: ChatViewModel>: View {
                 .foregroundColor(Color(.light))
                 .frame(height: 1)
             ScrollViewReader { proxy in
-                messages
+                messages()
                     .onChange(of: chat.messages) { message in
                         withAnimation {
                             proxy.scrollTo("bottom")
                         }
                     }
+                
                 TextFieldView(model: .chat, input: $input, inputState: $inputState, onSend: {
                     model.addMessageToChat(chatId: chat.id, text: input)
                     input = ""
                 })
+                .onTapGesture {
+                    proxy.scrollTo("bottom")
+                }
                 .padding(.top, Constants.defSpacing)
             }
         }
@@ -53,26 +57,22 @@ struct ChatDetailView<Model: ChatViewModel>: View {
         }
     }
     
-    var messages: some View {
+    func messages() -> some View {
         ScrollView {
-            if chat.messages.isEmpty {
-                GIFImage(name: "")
-            } else {
-                ForEach(chat.messages) { message in
-                    if message.author == model.getCurrentUser().id {
-                        MessageBubble(message: message, type: .selfMessage)
-                            .id(message.id)
-                            .padding(.leading, 30)
-                    } else {
-                        MessageBubble(message: message, type: .responder)
-                            .id(message.id)
-                            .padding(.trailing, 30)
-                    }
+            ForEach(chat.messages) { message in
+                if message.author == model.getCurrentUser().id {
+                    MessageBubble(message: message, type: .selfMessage)
+                        .id(message.id)
+                        .padding(.leading, 30)
+                } else {
+                    MessageBubble(message: message, type: .responder)
+                        .id(message.id)
+                        .padding(.trailing, 30)
                 }
-                Spacer()
-                    .frame(height: 0)
-                    .id("bottom")
             }
+            Spacer()
+                .frame(height: 0)
+                .id("bottom")
         }
         .scrollIndicators(.hidden)
     }
@@ -85,15 +85,21 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     
     var description: some View {
         VStack(alignment: .leading) {
-            Text("#\(Profile.createStringOfProfessions(of: model.getResponder(chat: chat)).joined(separator: ", "))")
-                .font(Fonts.small)
-                .foregroundColor(.black)
-            Text("#\(model.getResponder(chat: chat).level.rawValue)")
-                .font(Fonts.small)
-                .foregroundColor(.black)
-            Text("#\(Profile.createStringOfCompanies(of: model.getResponder(chat: chat)).joined(separator: " #"))")
-                .font(Fonts.small)
-                .foregroundColor(.black)
+            if !model.getResponder(chat: chat).professions.isEmpty {
+                Text("#\(Profile.createStringOfProfessions(of: model.getResponder(chat: chat)).joined(separator: ", "))")
+                    .font(Fonts.small)
+                    .foregroundColor(.black)
+            }
+            if model.getResponder(chat: chat).level != .no {
+                Text("#\(model.getResponder(chat: chat).level.rawValue)")
+                    .font(Fonts.small)
+                    .foregroundColor(.black)
+            }
+            if !model.getResponder(chat: chat).companies.isEmpty {
+                Text("#\(Profile.createStringOfCompanies(of: model.getResponder(chat: chat)).joined(separator: " #"))")
+                    .font(Fonts.small)
+                    .foregroundColor(.black)
+            }
         }
     }
     

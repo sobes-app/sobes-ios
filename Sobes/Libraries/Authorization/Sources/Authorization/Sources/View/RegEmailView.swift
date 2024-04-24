@@ -16,7 +16,12 @@ public struct RegEmailView<Model: RegistrationViewModel>: View {
                     .foregroundColor(.black)
                 TextFieldView(model: .email, input: $input, inputState: $inputState)
                 Spacer()
-                button
+                VStack {
+                    if incorrect {
+                        IncorrectView(text: "неверный формат почты")
+                    }
+                    button
+                }
             }
             .padding(.top, Constants.topPadding)
         }
@@ -26,8 +31,19 @@ public struct RegEmailView<Model: RegistrationViewModel>: View {
     
     private var button: some View {
         MainButton(action: {
-            presentCode = true
-            model.sendCodetoEmail(email: input)
+            if TextFieldValidator.isInputValid(.email(input)) {
+                presentCode = true
+                model.sendCodetoEmail(email:input)
+            } else {
+                withAnimation {
+                    incorrect = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                    withAnimation {
+                        incorrect = false
+                    }
+                })
+            }
         }, label: "Дальше")
             .navigationDestination(isPresented: $presentCode) {
                 RegCodeView(model: model)
@@ -40,6 +56,5 @@ public struct RegEmailView<Model: RegistrationViewModel>: View {
     @State private var input: String = ""
     @State private var inputState: TextFieldView.InputState = .correct
     @State private var presentCode: Bool = false
-
-
+    @State private var incorrect: Bool = false
 }
