@@ -21,7 +21,7 @@ public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
         }
         .navigationBarBackButtonHidden()
         .onAppear {
-            model.fetchQuestions()
+            model.fetchUserQuestions()
         }
     }
 

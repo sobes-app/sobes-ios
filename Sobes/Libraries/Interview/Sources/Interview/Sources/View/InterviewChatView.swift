@@ -21,7 +21,7 @@ public struct InterviewChatView<Model: InterviewViewModel>: View {
         .navigationBarBackButtonHidden()
         .padding(Constants.horizontal)
         .onAppear {
-            model.startDialogueForQuestion(text: question.text)
+            model.startDialogueForQuestion(questionId: question.id, text: question.text)
         }
     }
 

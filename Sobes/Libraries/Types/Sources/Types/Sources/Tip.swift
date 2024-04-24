@@ -2,17 +2,22 @@ import SwiftUI
 
 public struct Tip: Identifiable, Equatable, Hashable {
 
+    public enum Company: String {
+        case tinkoff = "Тинькофф"
+        case yandex = "Яндекс"
+    }
+
     public let id: Int
     public let logo: Image
-    public let companyName: String
+    public let company: Company
     public let author: String
     public let role: String
     public let text: String
 
-    public init(id: Int, logo: Image, companyName: String, author: String, role: String, text: String) {
+    public init(id: Int, logo: Image, company: Company, author: String, role: String, text: String) {
         self.id = id
         self.logo = logo
-        self.companyName = companyName
+        self.company = company
         self.author = author
         self.role = role
         self.text = text

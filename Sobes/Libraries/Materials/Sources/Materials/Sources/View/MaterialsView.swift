@@ -64,6 +64,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
                 }
             }
         }
+        .scrollIndicators(.hidden)
     }
 
     @StateObject private var model: Model
