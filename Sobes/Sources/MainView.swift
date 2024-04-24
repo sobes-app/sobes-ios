@@ -24,9 +24,9 @@ public struct MainView: View {
         VStack {
             switch selectedTab {
             case .materials:
-                MaterialsView(model: MaterialsViewModelImpl())
+                MaterialsView(model: MaterialsViewModelImpl(materialsProvider: materialsProvider))
             case .interview:
-                InterviewEntryPointView(model: InterviewViewModelImpl())
+                InterviewEntryPointView(model: InterviewViewModelImpl(questionsProvider: questionsProvider))
             case .chat:
                 ChatsView(showTabBar: $showTabBar, model: ChatViewModelImpl(profileProvider: profileProvider, chatProvider: chatProvider))
             case .profile:
@@ -43,5 +43,7 @@ public struct MainView: View {
     
     let profileProvider: ProfileProvider
     let chatProvider: ChatsProvider
+    let materialsProvider: MaterialsProvider = MaterialsProviderImpl()
+    let questionsProvider: QuestionsProvider = QuestionsProviderImpl()
 
 }

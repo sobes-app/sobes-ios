@@ -16,6 +16,7 @@ let package = Package(
         .package(path: "Sobes/Sources/Libraries/UIComponents"),
         .package(path: "Sobes/Sources/Libraries/Types"),
         .package(path: "Sobes/Sources/Libraries/Toolbox"),
+        .package(path: "Sobes/Sources/Libraries/Providers"),
     ],
     targets: [
         .target(
@@ -23,7 +24,8 @@ let package = Package(
             dependencies: [
                 "UIComponents",
                 "Types",
-                "Toolbox"
+                "Toolbox",
+                "Providers",
             ],
             sources: ["Sources"],
             resources: [.process("Resources")]

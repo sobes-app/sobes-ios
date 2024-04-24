@@ -1,13 +1,13 @@
 import SwiftUI
 import UIComponents
 
-public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
+public enum InterviewType: String {
+    case ba = "Бизнес-аналитик"
+    case product = "Менеджер продукта"
+    case project = "Менеджер проектов"
+}
 
-    public enum InterviewType: String {
-        case ba = "Бизнес-аналитик"
-        case product = "Менеджер продукта"
-        case project = "Менеджер проектов"
-    }
+public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
 
     public init(model: Model, type: InterviewType) {
         self._model = ObservedObject(wrappedValue: model)
@@ -26,7 +26,7 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
             .padding(.horizontal, Constants.horizontal)
         }
         .onAppear {
-            model.fetchQuestions()
+            model.fetchQuestions(for: type)
         }
     }
 
@@ -61,7 +61,7 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
     private var changeQuestionsButton: some View {
         MainButton(
             action: {
-                model.shuffleQuestions()
+                model.fetchQuestions(for: type)
             },
             label: "Поменять вопросы"
         )

@@ -62,7 +62,7 @@ public struct MaterialBubble: View {
         Link(destination: URL(string: model.url)!) {
             HStack(alignment: .center, spacing: Constants.elementPadding) {
                 if let logo = model.logo {
-                    AsyncImage(url: URL(string: FavIcon(logo)[.l]))
+                    AsyncImage(url: URL(string: FavIcon(logo)[.m]))
                 }
                 VStack(spacing: Constants.smallStack) {
                     Text(model.author)

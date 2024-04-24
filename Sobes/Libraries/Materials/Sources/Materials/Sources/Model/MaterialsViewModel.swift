@@ -1,6 +1,7 @@
 import SwiftUI
 import Types
 import Toolbox
+import Providers
 
 @MainActor
 public protocol MaterialsViewModel: ObservableObject {
@@ -19,7 +20,9 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
     @Published public var filters: [Types.Filter] = []
     @Published public var materialsFilters: [Types.Filter] = []
 
-    public init() { }
+    public init(materialsProvider: MaterialsProvider) {
+        self.materialsProvider = materialsProvider
+    }
 
     public func onViewAppear() {
         materials = getTips()
@@ -28,10 +31,12 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
             Filter(id: 1, name: "Яндекс")
         ]
         materialsFilters = [
-            Filter(id: 0, name: "Статьи", isActive: true),
-            Filter(id: 1, name: "Советы")
+            Filter(id: 0, name: "Советы", isActive: true),
+            Filter(id: 1, name: "Статьи")
         ]
     }
+
+    private let materialsProvider: MaterialsProvider
 
     public func onFilterTapped(id: Int) {
         filters[id].isActive.toggle()
@@ -49,7 +54,7 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
                         filteredMaterials.append(contentsOf: getTips().filter { material in
                             switch material {
                             case .tip(let model):
-                                return model.companyName.contains(filter.name)
+                                return model.company.rawValue.contains(filter.name)
                             case .article:
                                 return false
                             }
@@ -84,45 +89,11 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
     }
 
     private func getTips() -> [Types.Material] {
-        return [
-            .tip(
-                model:
-                    Tip(
-                        id: 0,
-                        logo: Image("tinkoff", bundle: .module),
-                        companyName: "Тинькофф",
-                        author: "Татьяна",
-                        role: "Менеджер продукта",
-                        text: "Во время собеседования мне не так важно, какой ответ вы дадите на математическую или логическую задачу, я смотрю на ваши размышления, поэтому не стесняйтесь думать вслух"
-                    )
-            ),
-            .tip(
-                model:
-                    Tip(
-                        id: 1,
-                        logo: Image("yandex", bundle: .module),
-                        companyName: "Яндекс",
-                        author: "Артём",
-                        role: "Менеджер продукта",
-                        text: "Учитесь говорить о своих результатах в формате “Была такая проблема, я сделал это потому что..., это повлияло на целевую метрику вот так”"
-                    )
-            )
-        ]
+        return materialsProvider.getTips()
     }
 
     private func getArticles() -> [Types.Material] {
-        return [
-            .article(
-                model:
-                    Article(
-                        id: 0,
-                        logo: URL(string: "https://gopractice.ru/skills/product_manager_job_interview/")?.host(),
-                        author: "GO PRACTICE",
-                        text: "Вопросы на собеседовании продакт-менеджера: шаблон и гайд для кандидатов и работодателей", 
-                        url: "https://gopractice.ru/skills/product_manager_job_interview/"
-                    )
-            )
-        ]
+        return materialsProvider.getArticles()
     }
 
 }
