@@ -39,7 +39,7 @@ public final class ChatViewModelImpl: ChatViewModel {
     @Published public var chats: [Chat]
     @Published public var profiles: [Profile]
     @Published public var filters: [Types.Filter]
-    @Published public var messageId: Int = 5
+    @Published public var messageId: Int = 8
     
     @Published public var expFilter: [Filter]
     @Published public var desFilter: [Filter]
@@ -119,9 +119,11 @@ public final class ChatViewModelImpl: ChatViewModel {
     
     public func getResponder(chat: Chat) -> Profile {
         if profilesProvider.getCurrentUser().id == chat.firstResponderId {
-            return profiles.first(where: {$0.id == chat.secondResponderId}) ?? profilesProvider.getCurrentUser()
+            let profile = profilesProvider.getProfiles().first(where: {$0.id == chat.secondResponderId})
+            return profile ?? profilesProvider.getCurrentUser()
         }
-        return profiles.first(where: {$0.id == chat.firstResponderId}) ?? profilesProvider.getCurrentUser()
+        let profile = profilesProvider.getProfiles().first(where: {$0.id == chat.firstResponderId})
+        return profile ?? profilesProvider.getCurrentUser()
     }
     
     public func addMessageToChat(chatId: Int, text: String) {
@@ -139,7 +141,7 @@ public final class ChatViewModelImpl: ChatViewModel {
     }
     
     public func getChatByResponder(responder: Profile) -> Chat {
-        return chats.first(where: {$0.firstResponderId == responder.id || $0.secondResponderId == responder.id}) ?? chats[0]
+        return chats.first(where: {$0.firstResponderId == responder.id  || $0.secondResponderId == responder.id}) ?? chats[0]
     }
     
     func fetchChats() {

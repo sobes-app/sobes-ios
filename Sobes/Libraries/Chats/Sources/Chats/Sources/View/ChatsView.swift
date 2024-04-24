@@ -33,7 +33,9 @@ public struct ChatsView<Model: ChatViewModel>: View {
                 Text("Чаты")
                     .font(Fonts.heading)
                     .foregroundColor(.black)
+                    .padding(.horizontal, Constants.horizontal)
                 select
+                    .padding(.horizontal, Constants.horizontal)
                 switch page {
                 case .chats:
                     chats
@@ -49,7 +51,6 @@ public struct ChatsView<Model: ChatViewModel>: View {
             .onAppear {
                 model.onViewAppear()
             }
-            .padding(.horizontal, Constants.horizontal)
             .padding(.bottom, Constants.horizontal)
         }
     }
@@ -83,6 +84,8 @@ public struct ChatsView<Model: ChatViewModel>: View {
             .scrollDismissesKeyboard(.immediately)
             .scrollIndicators(.hidden)
         }
+        .padding(.horizontal, Constants.horizontal)
+        .background(.white)
         .transition(.move(edge: .trailing))
     }
     
@@ -101,16 +104,21 @@ public struct ChatsView<Model: ChatViewModel>: View {
                                                            chat: chat,
                                                            model: model)) {
                     VStack(spacing: Constants.defSpacing) {
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(model.getResponder(chat: chat).name)
-                                .font(Fonts.mainBold)
-                                .foregroundColor(.black)
-                            Text(chat.messages.last?.text ?? "")
-                                .font(Fonts.small)
-                                .foregroundColor(.black)
-                                .lineLimit(1)
+                        HStack {
+                            Circle()
+                                .frame(width: 50)
+                                .foregroundColor(Color(.light))
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(model.getResponder(chat: chat).name)
+                                    .font(Fonts.mainBold)
+                                    .foregroundColor(.black)
+                                Text(chat.messages.last?.text ?? "")
+                                    .font(Fonts.small)
+                                    .foregroundColor(.black)
+                                    .lineLimit(1)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
                         Rectangle()
                             .foregroundColor(Color(.light))
                             .frame(height: 1)
@@ -118,6 +126,8 @@ public struct ChatsView<Model: ChatViewModel>: View {
                 }
             }
         }
+        .padding(.horizontal, Constants.horizontal)
+        .background(.white)
         .transition(.move(edge: .leading))
         .refreshable {}
     }

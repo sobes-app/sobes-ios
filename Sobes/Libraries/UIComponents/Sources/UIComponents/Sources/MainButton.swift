@@ -1,5 +1,12 @@
 import SwiftUI
 
+struct ScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.8 : 1)
+    }
+}
+
 public struct MainButton: View {
 
     public init(action: @escaping @MainActor () -> Void, label: String) {
@@ -15,12 +22,14 @@ public struct MainButton: View {
                 .foregroundColor(.white)
                 .padding(.vertical, Constants.elementPadding)
                 .frame(maxWidth: .infinity)
+                .background {
+                    RoundedRectangle(cornerRadius: Constants.corner)
+                        .foregroundColor(Color(.accent))
+                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                }
             
         }
-		.background {
-            RoundedRectangle(cornerRadius: Constants.corner)
-                .foregroundColor(Color(.accent))
-        }
+        .buttonStyle(ScaleButtonStyle())
         .padding(.horizontal, 20)
     }
 

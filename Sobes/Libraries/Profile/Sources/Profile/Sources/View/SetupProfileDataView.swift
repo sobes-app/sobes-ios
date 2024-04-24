@@ -34,15 +34,18 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: Constants.defSpacing) {
-            back
+            Spacer()
             if question != nil {
                 switch question {
                 case .professions:
                     professions
+                        .transition(.move(edge: .trailing))
                 case .levels:
                     levels
+                        .transition(.move(edge: .trailing))
                 case .companies:
                     companies
+                        .transition(.move(edge: .trailing))
                 case nil:
                     Text("")
                 }
@@ -50,10 +53,13 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
                 switch currentQuestion {
                 case .professions:
                     professions
+                        .transition(.move(edge: .trailing))
                 case .levels:
                     levels
+                        .transition(.move(edge: .trailing))
                 case .companies:
                     companies
+                        .transition(.move(edge: .trailing))
                 }
             }
             Spacer()
@@ -70,10 +76,9 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
         .padding(.horizontal, Constants.horizontal)
         .padding(.bottom, Constants.bottom)
         .onAppear {
-            showTabBar = false
-        }
-        .onDisappear {
-            showTabBar = true
+            withoutAnimation {
+                showTabBar = false
+            }
         }
     }
     
@@ -88,6 +93,7 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
                 updateComp()
                 model.saveInfo()
                 presentationMode.wrappedValue.dismiss()
+                showTabBar = true
             default:
                 break
             }
@@ -111,20 +117,6 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
                 .foregroundColor(Color(.accent))
         }
         .padding(.horizontal, 20)
-    }
-    
-    var back: some View {
-        BackButton(onTap: {
-            if currentQuestion == .companies {
-                currentQuestion = .levels
-                step -= 1
-            } else if currentQuestion == .levels {
-                currentQuestion = .professions
-                step -= 1
-            } else {
-                presentationMode.wrappedValue.dismiss()
-            }
-        })
     }
     
     var professions: some View {
