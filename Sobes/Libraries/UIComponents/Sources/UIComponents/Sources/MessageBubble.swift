@@ -1,23 +1,18 @@
 import SwiftUI
 import Types
 
-public enum MessageType {
-    case selfMessage
-    case responder
-}
-
 public struct MessageBubble: View {
     private let message: Message
-    private let type: MessageType
+    private let isCurrentUser: Bool
     
-    public init(message: Message, type: MessageType) {
+    public init(message: Message, isCurrentUser: Bool) {
         self.message = message
-        self.type = type
+        self.isCurrentUser = isCurrentUser
     }
     
     public var body: some View {
         HStack {
-            if type == .selfMessage {
+            if isCurrentUser {
                 Spacer()
             }
             VStack {
@@ -28,9 +23,10 @@ public struct MessageBubble: View {
             }
             .background {
                 RoundedRectangle(cornerRadius: Constants.corner)
-                    .foregroundColor(type == .selfMessage ? Color(.message) : Color(.light))
+                    .foregroundColor(isCurrentUser ? Color(.message) : Color(.light))
             }
-            if type == .responder {
+            .padding(isCurrentUser ? .leading : .trailing, 30)
+            if !isCurrentUser {
                 Spacer()
             }
         }

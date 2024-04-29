@@ -9,7 +9,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     
     @State private var input: String = ""
     @State private var inputState: TextFieldView.InputState = .correct
-    @State var scale = 1.0
+    @State private var isPopoverPresented: Bool = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Binding private var showTabBar: Bool
     private let chat: Chat
@@ -24,16 +24,17 @@ struct ChatDetailView<Model: ChatViewModel>: View {
         VStack(alignment: .leading, spacing: Constants.defSpacing) {
             HStack(spacing: Constants.defSpacing) {
                 back
+                Spacer()
                 responderName
+                Spacer()
+                info
             }
-            description
-                .frame(maxWidth: .infinity, alignment: .leading)
             Rectangle()
                 .foregroundColor(Color(.light))
                 .frame(height: 1)
             ScrollViewReader { proxy in
                 messages()
-                    .onChange(of: chat.messages) { message in
+                    .onReceive(Just(chat.messages)) { _ in
                         withAnimation {
                             proxy.scrollTo("bottom")
                         }
@@ -60,14 +61,9 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     func messages() -> some View {
         ScrollView {
             ForEach(chat.messages) { message in
-                if message.author == model.getCurrentUser().id {
-                    MessageBubble(message: message, type: .selfMessage)
+                VStack(spacing: 5) {
+                    MessageBubble(message: message, isCurrentUser: message.isCurrentUser)
                         .id(message.id)
-                        .padding(.leading, 30)
-                } else {
-                    MessageBubble(message: message, type: .responder)
-                        .id(message.id)
-                        .padding(.trailing, 30)
                 }
             }
             Spacer()
@@ -101,6 +97,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
                     .foregroundColor(.black)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     var back: some View {
@@ -111,6 +108,21 @@ struct ChatDetailView<Model: ChatViewModel>: View {
             Image(systemName: "chevron.backward")
                 .foregroundColor(.black)
                 .frame(width: 10, height: 10, alignment: .leading)
+        }
+    }
+    
+    var info: some View {
+        Button(action: {
+            isPopoverPresented = true
+        }) {
+            Image(systemName: "info")
+                .foregroundColor(.black)
+                .frame(width: 10, height: 10, alignment: .center)
+        }
+        .popover(isPresented: $isPopoverPresented) {
+            description
+                .presentationCompactAdaptation(.popover)
+                .padding()
         }
     }
 }
