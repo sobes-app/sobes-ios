@@ -3,15 +3,15 @@ import SwiftUI
 public struct Message: Identifiable, Hashable {
 
     public let id: Int
-    public let author: Int
+    public let isCurrentUser: Bool
     public let text: String
-    public var isWritten: Bool?
+    public var isRead: Bool?
     
 
-    public init(id: Int, author: Int, text: String, isWritten: Bool? = true) {
+    public init(id: Int, isCurrentUser: Bool, text: String, isRead: Bool? = true) {
         self.id = id
-        self.author = author
+        self.isCurrentUser = isCurrentUser
         self.text = text
-        self.isWritten = isWritten
+        self.isRead = isRead
     }
 }
