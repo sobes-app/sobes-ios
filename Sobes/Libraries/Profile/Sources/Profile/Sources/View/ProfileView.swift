@@ -18,25 +18,31 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     
     public var body: some View {
         NavigationStack(path: $path) {
-            VStack(alignment: .leading) {
-                HStack(spacing: Constants.smallStack) {
-                    nameView
-                    Spacer()
-                    settingsView
-                    logoutView
+            ZStack {
+                VStack(alignment: .leading) {
+                    HStack(spacing: Constants.smallStack) {
+                        nameView
+                        Spacer()
+                        settingsView
+                        logoutView
+                    }
+                    if model.getProfileLevel() != "" {
+                        statsView
+                        Spacer()
+                    } else {
+                        Spacer()
+                        emptyView
+                        Spacer()
+                        button
+                    }
                 }
-                if model.getProfileLevel() != "" {
-                    statsView
-                    Spacer()
-                } else {
-                    Spacer()
-                    emptyView
-                    Spacer()
-                    button
+                .padding(.horizontal, Constants.horizontal)
+                .padding(.bottom, Constants.horizontal)
+                
+                if model.isLoading {
+                    SplashScreen()
                 }
             }
-            .padding(.horizontal, Constants.horizontal)
-            .padding(.bottom, Constants.horizontal)
         }
         .onAppear {
             model.onViewAppear()

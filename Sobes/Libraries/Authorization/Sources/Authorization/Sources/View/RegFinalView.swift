@@ -9,27 +9,33 @@ struct RegFinalView<Model: AuthViewModel>: View {
     }
         
     public var body: some View {
-        VStack(alignment: .leading) {
-            BackButton()
-            VStack(alignment: .leading, spacing: Constants.defSpacing){
-                Text("Почти закончили!")
-                    .font(Fonts.heading)
-                    .foregroundColor(.black)
-                TextFieldView(model: .name, input: $inputName, inputState: $inputNameState)
-                TextFieldView(model: .password, input: $inputPassword, inputState: $inputPasswordState)
-                TextFieldView(model: .repPassword, input: $inputRep, inputState: $inputRepState)
-                Spacer()
-                VStack {
-                    if incorrect {
-                        IncorrectView(text: message)
+        ZStack {
+            VStack(alignment: .leading) {
+                BackButton()
+                VStack(alignment: .leading, spacing: Constants.defSpacing){
+                    Text("Почти закончили!")
+                        .font(Fonts.heading)
+                        .foregroundColor(.black)
+                    TextFieldView(model: .name, input: $inputName, inputState: $inputNameState)
+                    TextFieldView(model: .password, input: $inputPassword, inputState: $inputPasswordState)
+                    TextFieldView(model: .repPassword, input: $inputRep, inputState: $inputRepState)
+                    Spacer()
+                    VStack {
+                        if incorrect {
+                            IncorrectView(text: message)
+                        }
+                        button
                     }
-                    button
                 }
+                .padding(.top, Constants.topPadding)
             }
-            .padding(.top, Constants.topPadding)
+            .padding(.horizontal, Constants.horizontal)
+            .padding(.bottom, Constants.bottom)
+            
+            if model.isLoading {
+                SplashScreen()
+            }
         }
-        .padding(.horizontal, Constants.horizontal)
-        .padding(.bottom, Constants.bottom)
     }
     
     var button: some View {

@@ -8,6 +8,7 @@ public protocol ProfileViewModel: ObservableObject {
     var companies: [Companies] {get set}
     var level: Types.Levels {get set}
     var stepsCount: Double {get set}
+    var isLoading: Bool {get set}
     
     func getProfileName() -> String
     func getProfileLevel() -> String
@@ -24,8 +25,9 @@ public protocol ProfileViewModel: ObservableObject {
 public final class ProfileViewModelImpl: ProfileViewModel {
     let profileProvider: ProfileProvider
     
+    @Published public var isLoading: Bool = false
+    
     @Published var profile: Profile?
-    @Published var isLoading = false
     
     @Published public var professions: [Professions] = []
     @Published public var companies: [Companies] = []
@@ -66,7 +68,9 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     }
     
     public func onLogoutTap() {
+        isLoading = true
         profileProvider.logout()
+        isLoading = false
     }
     
     public func saveInfo() {

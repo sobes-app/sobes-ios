@@ -10,33 +10,39 @@ public struct RegCodeView<Model: AuthViewModel>: View {
     }
     
     public var body: some View {
-        VStack(alignment: .leading) {
-            BackButton()
-            VStack(alignment: .leading, spacing: Constants.defSpacing) {
-                Text("Код")
-                    .font(Fonts.heading)
-                    .foregroundColor(.black)
-                Text("На вашу электронную почту было отправлено письмо с кодом подтверждения")
-                    .font(Fonts.main)
-                    .foregroundColor(.black)
-                TextFieldView(model: .code, input: $input, inputState: $inputState)
-                HStack {
-                    Spacer()
-                    repeatCode
+        ZStack {
+            VStack(alignment: .leading) {
+                BackButton()
+                VStack(alignment: .leading, spacing: Constants.defSpacing) {
+                    Text("Код")
+                        .font(Fonts.heading)
+                        .foregroundColor(.black)
+                    Text("На вашу электронную почту было отправлено письмо с кодом подтверждения")
+                        .font(Fonts.main)
+                        .foregroundColor(.black)
+                    TextFieldView(model: .code, input: $input, inputState: $inputState)
+                    HStack {
+                        Spacer()
+                        repeatCode
+                    }
                 }
-            }
-            .padding(.top, Constants.topPadding)
-            Spacer()
-            VStack {
-                if incorrect {
-                    IncorrectView(text: "неверный код подтверждения")
+                .padding(.top, Constants.topPadding)
+                Spacer()
+                VStack {
+                    if incorrect {
+                        IncorrectView(text: "неверный код подтверждения")
+                    }
+                    button
                 }
-                button
+                
             }
+            .padding(.horizontal, Constants.horizontal)
+            .padding(.bottom, Constants.bottom)
             
+            if model.isLoading {
+                SplashScreen()
+            }
         }
-        .padding(.horizontal, Constants.horizontal)
-        .padding(.bottom, Constants.bottom)
     }
     
     private var button: some View {

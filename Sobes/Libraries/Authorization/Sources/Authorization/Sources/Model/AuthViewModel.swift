@@ -32,9 +32,9 @@ public final class AuthViewModelImpl: AuthViewModel {
     
     public func onLoginTap(email:String, password: String) async -> Bool {
         isLoading = true
-        let auth = await provider.authUser(email: email , password: password)
+        let success = await provider.authUser(email: email , password: password)
         isLoading = false
-        return auth
+        return success
     }
     
     public func sendCodeResetPassword(email: String) {
@@ -50,14 +50,23 @@ public final class AuthViewModelImpl: AuthViewModel {
     }
     
     public func registerUser(username: String, password: String) async -> Bool {
-        return await provider.registerUser(name: username, password: password)
+        isLoading = true
+        let success = await provider.registerUser(name: username, password: password)
+        isLoading = false
+        return success
     }
     
     public func sendCodetoEmail(email: String) async -> Bool {
-        return await provider.sendEmail(email: email)
+        isLoading = true
+        let success = await provider.sendEmail(email: email)
+        isLoading = false
+        return success
     }
     
     public func validateCode(code: String) async -> Bool {
-        return await provider.verifyCode(code: code)
+        isLoading = true
+        let success = await provider.verifyCode(code: code)
+        isLoading = false
+        return success
     }
 }

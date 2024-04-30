@@ -9,25 +9,31 @@ public struct RegEmailView<Model: AuthViewModel>: View {
     }
     
     public var body: some View {
-        VStack(alignment: .leading) {
-            BackButton()
-            VStack(alignment: .leading, spacing: Constants.defSpacing) {
-                Text("Поехали!")
-                    .font(Fonts.heading)
-                    .foregroundColor(.black)
-                TextFieldView(model: .email, input: $input, inputState: $inputState)
-                Spacer()
-                VStack {
-                    if incorrect {
-                        IncorrectView(text: "неверный формат почты")
+        ZStack {
+            VStack(alignment: .leading) {
+                BackButton()
+                VStack(alignment: .leading, spacing: Constants.defSpacing) {
+                    Text("Поехали!")
+                        .font(Fonts.heading)
+                        .foregroundColor(.black)
+                    TextFieldView(model: .email, input: $input, inputState: $inputState)
+                    Spacer()
+                    VStack {
+                        if incorrect {
+                            IncorrectView(text: "неверный формат почты")
+                        }
+                        button
                     }
-                    button
                 }
+                .padding(.top, Constants.topPadding)
             }
-            .padding(.top, Constants.topPadding)
+            .padding(.horizontal, Constants.horizontal)
+            .padding(.bottom, Constants.bottom)
+            
+            if model.isLoading {
+                SplashScreen()
+            }
         }
-        .padding(.horizontal, Constants.horizontal)
-        .padding(.bottom, Constants.bottom)
     }
     
     private var button: some View {

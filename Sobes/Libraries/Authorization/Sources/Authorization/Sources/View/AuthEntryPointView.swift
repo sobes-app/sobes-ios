@@ -1,6 +1,17 @@
 import SwiftUI
 import UIComponents
 
+public struct SplashScreen: View {
+    public init() {}
+    
+    public var body: some View {
+        ZStack {
+            Color.white.opacity(0.6).edgesIgnoringSafeArea(.all)
+        }
+        ProgressView()
+    }
+}
+
 public struct AuthEntryPointView<Model: AuthViewModel>: View {
     @EnvironmentObject var auth: Authentication
     
@@ -10,31 +21,37 @@ public struct AuthEntryPointView<Model: AuthViewModel>: View {
     
     public var body: some View {
         NavigationStack {
-            VStack(alignment: .leading) {
-                BackButton()
-                VStack(alignment: .leading, spacing: Constants.defSpacing) {
-                    Text("Вход в аккаунт")
-                        .font(Fonts.heading)
-                        .foregroundColor(.black)
-                    TextFieldView(model: .email, input: $inputEmail, inputState: $inputEmailState)
-                    TextFieldView(model: .password, input: $inputPass, inputState: $inputPassState)
-                    HStack {
-                        Spacer()
-                        forgotPasswordButton
-                    }
-                    Spacer()
-                    VStack {
-                        if incorrect {
-                            IncorrectView(text: "неверная почта или пароль")
+            ZStack {
+                VStack(alignment: .leading) {
+                    BackButton()
+                    VStack(alignment: .leading, spacing: Constants.defSpacing) {
+                        Text("Вход в аккаунт")
+                            .font(Fonts.heading)
+                            .foregroundColor(.black)
+                        TextFieldView(model: .email, input: $inputEmail, inputState: $inputEmailState)
+                        TextFieldView(model: .password, input: $inputPass, inputState: $inputPassState)
+                        HStack {
+                            Spacer()
+                            forgotPasswordButton
                         }
-                        button
+                        Spacer()
+                        VStack {
+                            if incorrect {
+                                IncorrectView(text: "неверная почта или пароль")
+                            }
+                            button
+                        }
                     }
+                    .padding(.top, Constants.topPadding)
                 }
-                .padding(.top, Constants.topPadding)
+                .padding(.horizontal, Constants.horizontal)
+                .padding(.bottom, Constants.bottom)
+                
+                if model.isLoading {
+                    SplashScreen()
+                }
             }
         }
-        .padding(.horizontal, Constants.horizontal)
-        .padding(.bottom, Constants.bottom)
     }
     
     private var forgotPasswordButton: some View {
