@@ -31,11 +31,6 @@ public struct RefreshTokenRequest: Encodable {
     var refreshToken: String
 }
 
-public struct ResetPasswordRequest:Encodable {
-    var oldPassword: String
-    var newPasswoed: String
-}
-
 public struct SignUpResponse: Decodable {
     public var id: Int
     public var email: String
@@ -105,15 +100,6 @@ public final class AuthClient {
         self.netLayer.makeRequest(method: "POST",
                                   urlPattern: "/auth/recovery",
                                   body: EmailRequest(email: email),
-                                  completion: completion)
-    }
-    
-    public func resetPassword(oldPassword: String,
-                              newPassword: String,
-                              completion: @escaping (Result<SignUpResponse, ClientError>) -> Void) {
-        self.netLayer.makeRequest(method: "POST",
-                                  urlPattern: "/auth/reset",
-                                  body: ResetPasswordRequest(oldPassword: oldPassword, newPasswoed: newPassword),
                                   completion: completion)
     }
 }

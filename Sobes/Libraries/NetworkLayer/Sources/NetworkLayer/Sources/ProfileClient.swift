@@ -22,6 +22,11 @@ public struct CreateProfileRequest: Encodable {
     public var companies: [String]
 }
 
+public struct ResetPasswordRequest: Encodable {
+    var oldPassword: String
+    var newPasswoed: String
+}
+
 public final class ProfileClient {
     let netLayer: NetworkLayer
     
@@ -41,6 +46,16 @@ public final class ProfileClient {
             self.netLayer.makeRequest(method: "POST",
                                       urlPattern: "/user/profile",
                                       body: CreateProfileRequest(experience: "", professions: [], companies: [])) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    public func resetPassword(oldPassword: String, newPassword: String) async -> Result<SignUpResponse, ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "POST",
+                                      urlPattern: "/auth/reset",
+                                      body: ResetPasswordRequest(oldPassword: oldPassword, newPasswoed: newPassword)) { result in
                 continuation.resume(returning: result)
             }
         }

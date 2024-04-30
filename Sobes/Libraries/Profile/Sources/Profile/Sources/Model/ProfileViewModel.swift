@@ -12,6 +12,7 @@ public protocol ProfileViewModel: ObservableObject {
     
     func getProfileName() -> String
     func getProfileLevel() -> String
+    func changePassword(oldPassword: String, newPassword: String) async -> Bool
     
     func onViewAppear() 
     func onLogoutTap()
@@ -38,6 +39,13 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     public init(profileProvider: ProfileProvider) {
         self.profileProvider = profileProvider
         setProfile()
+    }
+    
+    public func changePassword(oldPassword: String, newPassword: String) async -> Bool {
+        isLoading = true
+        let success = await profileProvider.changePassword(oldPassword: oldPassword, newPassword: newPassword)
+        isLoading = false
+        return success
     }
     
     public func getProfileName() -> String {

@@ -17,6 +17,7 @@ public protocol ProfileProvider {
     func registerUser(name: String, password: String) async -> Bool
     func authUser(email: String, password: String) async -> Bool
     func createProfile() async -> Bool
+    func changePassword(oldPassword: String, newPassword: String) async -> Bool
     func logout()
 }
 
@@ -105,6 +106,19 @@ public final class ProfileProviderImpl: ProfileProvider {
             profile?.companies = Profile.setCompanies(array: success.companies)
             return true
         case .failure:
+            return false
+        }
+    }
+    
+    public func changePassword(oldPassword: String, newPassword: String) async -> Bool {
+        let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey))
+        let result = await profileClient.resetPassword(oldPassword: oldPassword, newPassword: newPassword)
+        switch result {
+        case .success:
+            print("suc")
+            return true
+        case .failure:
+            print("f")
             return false
         }
     }

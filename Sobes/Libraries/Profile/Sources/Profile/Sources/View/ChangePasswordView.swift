@@ -1,0 +1,81 @@
+//
+//  SwiftUIView.swift
+//  
+//
+//  Created by Алиса Вышегородцева on 30.04.2024.
+//
+
+import SwiftUI
+import Foundation
+import UIComponents
+import Authorization
+
+struct ChangePasswordView<Model: ProfileViewModel>: View {
+    public init(model: Model) {
+        self._model = ObservedObject(wrappedValue: model)
+    }
+            
+    public var body: some View {
+        ZStack {
+            VStack(alignment: .leading) {
+                BackButton()
+                VStack(alignment: .leading, spacing: Constants.defSpacing){
+                    Text("Смена пароля")
+                        .font(Fonts.heading)
+                        .foregroundColor(.black)
+                    TextFieldView(model: .password, input: $inputPassword, inputState: $inputPasswordState)
+                    TextFieldView(model: .password, input: $inputNew, inputState: $inputNewState)
+                    TextFieldView(model: .repPassword, input: $inputRep, inputState: $inputRepState)
+                    Spacer()
+                    VStack {
+                        if incorrect {
+                            IncorrectView(text: "ошибка при смене пароля")
+                        }
+                        button
+                    }
+                }
+                .padding(.top, Constants.topPadding)
+            }
+            .padding(.horizontal, Constants.horizontal)
+            .padding(.bottom, Constants.bottom)
+            
+            if model.isLoading {
+                SplashScreen()
+            }
+        }
+    }
+    
+    private var button: some View {
+        MainButton(action: {
+            Task { @MainActor in
+                let success = await model.changePassword(oldPassword: inputPassword, newPassword: inputNew)
+                if success {
+                    presentationMode.wrappedValue.dismiss()
+                } else {
+                    withAnimation {
+                        incorrect = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                        withAnimation {
+                            incorrect = false
+                        }
+                    })
+                }
+            }
+        }, label: "Сменить пароль")
+    }
+
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @ObservedObject private var model: Model
+
+    @State private var inputPassword: String = ""
+    @State private var inputPasswordState: TextFieldView.InputState = .correct
+
+    @State private var inputNew: String = ""
+    @State private var inputNewState: TextFieldView.InputState = .correct
+    
+    @State private var inputRep: String = ""
+    @State private var inputRepState: TextFieldView.InputState = .correct
+    
+    @State var incorrect: Bool = false
+}
