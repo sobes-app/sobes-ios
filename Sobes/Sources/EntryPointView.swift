@@ -2,12 +2,14 @@ import SwiftUI
 import UIComponents
 import Authorization
 import SwiftUIGIF
+import Providers
 
 @MainActor
 struct EntryPointView: View {
+    @EnvironmentObject var auth: Authentication
 
-    @Binding var isAuthorized: Bool
     @Binding var selectedTab: TabItem
+    let provider: ProfileProvider
 
     var body: some View {
         NavigationStack {
@@ -16,7 +18,7 @@ struct EntryPointView: View {
                 GIFImage(name: "entryPointGif")
                     .frame(width: 600)
                 Text("Готовься продуктивно")
-                    .font(Font.custom("CoFoSans-Bold", size: 35))
+                    .font(Font.system(size: 35, weight: .bold))
                     .multilineTextAlignment(.center)
                     .foregroundColor(.black)
                 button
@@ -47,10 +49,10 @@ struct EntryPointView: View {
                 .foregroundColor(Color(.accent))
         }
         .navigationDestination(isPresented: $presentAuth) {
-            AuthEntryPointView(model: LoginViewModelImpl(onLoginComplete: {
-                isAuthorized = true
+            AuthEntryPointView(model: AuthViewModelImpl(onLoginComplete: {
                 selectedTab = .materials
-            }))
+            }, provider: provider))
+            .environmentObject(auth)
             .navigationBarBackButtonHidden()
         }
     }
@@ -63,10 +65,10 @@ struct EntryPointView: View {
             label: "Регистрация"
         )
         .navigationDestination(isPresented: $presentRegistration) {
-            RegEmailView(model: RegistrationViewModelImpl(onRegistrationComplete: {
-                isAuthorized = true
+            RegEmailView(model: AuthViewModelImpl(onRegistrationComplete: {
                 selectedTab = .profile
-            }))
+            }, provider: provider))
+            .environmentObject(auth)
             .navigationBarBackButtonHidden()
         }
     }

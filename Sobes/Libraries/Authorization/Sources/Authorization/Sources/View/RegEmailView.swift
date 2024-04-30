@@ -1,8 +1,9 @@
 import SwiftUI
 import UIComponents
 
-public struct RegEmailView<Model: RegistrationViewModel>: View {
-
+public struct RegEmailView<Model: AuthViewModel>: View {
+    @EnvironmentObject var auth: Authentication
+    
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)
     }
@@ -32,8 +33,9 @@ public struct RegEmailView<Model: RegistrationViewModel>: View {
     private var button: some View {
         MainButton(action: {
             if TextFieldValidator.isInputValid(.email(input)) {
-                presentCode = true
-                model.sendCodetoEmail(email:input)
+                Task { @MainActor in
+                    presentCode = await model.sendCodetoEmail(email: input)
+                }
             } else {
                 withAnimation {
                     incorrect = true
@@ -45,14 +47,15 @@ public struct RegEmailView<Model: RegistrationViewModel>: View {
                 })
             }
         }, label: "Дальше")
-            .navigationDestination(isPresented: $presentCode) {
-                RegCodeView(model: model)
-                    .navigationBarBackButtonHidden()
-            }
+        .navigationDestination(isPresented: $presentCode) {
+            RegCodeView(model: model)
+                .environmentObject(auth)
+                .navigationBarBackButtonHidden()
+        }
     }
-
+    
     @ObservedObject private var model: Model
-
+    
     @State private var input: String = ""
     @State private var inputState: TextFieldView.InputState = .correct
     @State private var presentCode: Bool = false

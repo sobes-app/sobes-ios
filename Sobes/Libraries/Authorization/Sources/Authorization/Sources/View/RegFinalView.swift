@@ -1,7 +1,8 @@
 import SwiftUI
 import UIComponents
 
-struct RegFinalView<Model: RegistrationViewModel>: View {
+struct RegFinalView<Model: AuthViewModel>: View {
+    @EnvironmentObject var auth: Authentication
 
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)
@@ -18,7 +19,12 @@ struct RegFinalView<Model: RegistrationViewModel>: View {
                 TextFieldView(model: .password, input: $inputPassword, inputState: $inputPasswordState)
                 TextFieldView(model: .repPassword, input: $inputRep, inputState: $inputRepState)
                 Spacer()
-                button
+                VStack {
+                    if incorrect {
+                        IncorrectView(text: message)
+                    }
+                    button
+                }
             }
             .padding(.top, Constants.topPadding)
         }
@@ -29,7 +35,33 @@ struct RegFinalView<Model: RegistrationViewModel>: View {
     var button: some View {
         MainButton(
             action: {
-                model.onRegisterTap()
+                if inputPassword != inputRep {
+                    message = "Пароли не совпадают"
+                    withAnimation {
+                        incorrect = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                        withAnimation {
+                            incorrect = false
+                        }
+                    })
+                }
+                Task { @MainActor in
+                    if !(await model.registerUser(username: inputName, password: inputPassword)) {
+                        auth.updateStatus(success: false)
+                        message = "Возникла ошибка при регистрации"
+                        withAnimation {
+                            incorrect = true
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                            withAnimation {
+                                incorrect = false
+                            }
+                        })
+                    } else {
+                        auth.updateStatus(success: true)
+                    }
+                }
             },
             label: "Зарегистрироваться"
         )
@@ -46,7 +78,8 @@ struct RegFinalView<Model: RegistrationViewModel>: View {
     @State private var inputRep: String = ""
     @State private var inputRepState: TextFieldView.InputState = .correct
 
-    @State private var presentProfile: Bool = false
+    @State private var message: String = ""
+    @State private var incorrect: Bool = false
 
 }
 

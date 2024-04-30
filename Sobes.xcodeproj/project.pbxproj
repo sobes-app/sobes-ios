@@ -3,23 +3,25 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7FF03488FC3A5564B68E6E /* Media.xcassets */; };
-		1B4E37F3E7A2ED8226C687A1 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = D5E8F84EF157ADF85339B8F6 /* WrappingHStack */; };
+		1B4E37F3E7A2ED8226C687A1 /* Toolbox in Frameworks */ = {isa = PBXBuildFile; productRef = 04CB3256A8930B988C790464 /* Toolbox */; };
+		1EA433DFD508C5B7A44F9360 /* SwiftUIGIF in Frameworks */ = {isa = PBXBuildFile; productRef = C38AE65860A9DE8EC2C7457F /* SwiftUIGIF */; };
 		1FC97C4ED085CE1BD6FD9E28 /* EntryPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5451022752FC90FD51F87803 /* EntryPointView.swift */; };
 		2BF0031E108AB9E39C98A56A /* Profile in Frameworks */ = {isa = PBXBuildFile; productRef = 824023B102ED7ECF050CD92B /* Profile */; };
 		323FF5DB2C45B16EBB0002CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF46344658ABC2FD254BED77 /* ContentView.swift */; };
 		5F05D0FC47369E6E742D0DF6 /* Materials in Frameworks */ = {isa = PBXBuildFile; productRef = 33318F6D74D3038758FE1634 /* Materials */; };
+		6EC8C01160588D5C75CA7E6A /* SwiftyKeychainKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7CACF08556F089242EA3E657 /* SwiftyKeychainKit */; };
 		6F382E0557D9704D1522BB20 /* SobesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BC15B7AEE733B31130AE65 /* SobesApp.swift */; };
 		874BB4D94C5F74F9B8F49EF5 /* TuistFonts+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 269350B98311A6A45C9FF539 /* TuistFonts+Sobes.swift */; };
 		9EC70BF7D942830F831516E0 /* TuistAssets+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9CD791A8619AA6C2F195BA /* TuistAssets+Sobes.swift */; };
-		9FEDCEAB9F37381C8CB33316 /* SwiftUIGIF in Frameworks */ = {isa = PBXBuildFile; productRef = C38AE65860A9DE8EC2C7457F /* SwiftUIGIF */; };
+		9FEDCEAB9F37381C8CB33316 /* Providers in Frameworks */ = {isa = PBXBuildFile; productRef = E1EEE74F258AC4F4587915FE /* Providers */; };
 		A961DA05B277A70E5E607049 /* Interview in Frameworks */ = {isa = PBXBuildFile; productRef = 45D4EE3CE452A68C230C2889 /* Interview */; };
-		AAB264A39AA3C720B9FA6F3D /* Toolbox in Frameworks */ = {isa = PBXBuildFile; productRef = 04CB3256A8930B988C790464 /* Toolbox */; };
-		B15C2A3C20797D50723C30D3 /* Providers in Frameworks */ = {isa = PBXBuildFile; productRef = E1EEE74F258AC4F4587915FE /* Providers */; };
+		AAB264A39AA3C720B9FA6F3D /* NetworkLayer in Frameworks */ = {isa = PBXBuildFile; productRef = 7ABCF30F7F3F86F1BA1F581F /* NetworkLayer */; };
+		B15C2A3C20797D50723C30D3 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = D5E8F84EF157ADF85339B8F6 /* WrappingHStack */; };
 		BFBBDAC98182AB26F0B19F42 /* entryPointGif.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4F76209C57B104A3FEE04BD3 /* entryPointGif.gif */; };
 		C750B8A7C4B8618BD8B92759 /* UIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = AD0D56FF7E78D6CD4946A15F /* UIComponents */; };
 		D2AE393E024D2BB821D87B5B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */; };
@@ -49,8 +51,9 @@
 		074EDA10E4BF2CAEF11FAF81 /* Profile */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Profile; path = Sobes/Libraries/Profile; sourceTree = "<group>"; };
 		1EBB81CE7895D83631574242 /* Materials */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Materials; path = Sobes/Libraries/Materials; sourceTree = "<group>"; };
 		269350B98311A6A45C9FF539 /* TuistFonts+Sobes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TuistFonts+Sobes.swift"; sourceTree = "<group>"; };
-		28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		28100CDAF71A82E97E522DC6 /* Localizable.xcstrings */ = {isa = PBXFileReference; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		308FAA419A3AF3827A2BFDF9 /* Sobes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sobes.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B51F2177AD8348F476EAD63 /* NetworkLayer */ = {isa = PBXFileReference; lastKnownFileType = folder; name = NetworkLayer; path = Sobes/Libraries/NetworkLayer; sourceTree = "<group>"; };
 		4F76209C57B104A3FEE04BD3 /* entryPointGif.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = entryPointGif.gif; sourceTree = "<group>"; };
 		5451022752FC90FD51F87803 /* EntryPointView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryPointView.swift; sourceTree = "<group>"; };
 		575A14500DDE9C80C9DDBDCB /* Types */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Types; path = Sobes/Libraries/Types; sourceTree = "<group>"; };
@@ -83,10 +86,12 @@
 				E86019111AA5A2F416A9CC6A /* Types in Frameworks */,
 				2BF0031E108AB9E39C98A56A /* Profile in Frameworks */,
 				A961DA05B277A70E5E607049 /* Interview in Frameworks */,
-				AAB264A39AA3C720B9FA6F3D /* Toolbox in Frameworks */,
-				1B4E37F3E7A2ED8226C687A1 /* WrappingHStack in Frameworks */,
-				B15C2A3C20797D50723C30D3 /* Providers in Frameworks */,
-				9FEDCEAB9F37381C8CB33316 /* SwiftUIGIF in Frameworks */,
+				AAB264A39AA3C720B9FA6F3D /* NetworkLayer in Frameworks */,
+				1B4E37F3E7A2ED8226C687A1 /* Toolbox in Frameworks */,
+				B15C2A3C20797D50723C30D3 /* WrappingHStack in Frameworks */,
+				9FEDCEAB9F37381C8CB33316 /* Providers in Frameworks */,
+				1EA433DFD508C5B7A44F9360 /* SwiftUIGIF in Frameworks */,
+				6EC8C01160588D5C75CA7E6A /* SwiftyKeychainKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,6 +172,7 @@
 				FE39A994F4CD75769344D4F5 /* Providers */,
 				746536782072B44421A82605 /* Interview */,
 				C1A5B72100A8F109499EB87F /* Toolbox */,
+				4B51F2177AD8348F476EAD63 /* NetworkLayer */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -235,10 +241,12 @@
 				9C380053BDEB33F32B55201D /* Types */,
 				824023B102ED7ECF050CD92B /* Profile */,
 				45D4EE3CE452A68C230C2889 /* Interview */,
+				7ABCF30F7F3F86F1BA1F581F /* NetworkLayer */,
 				04CB3256A8930B988C790464 /* Toolbox */,
 				D5E8F84EF157ADF85339B8F6 /* WrappingHStack */,
 				E1EEE74F258AC4F4587915FE /* Providers */,
 				C38AE65860A9DE8EC2C7457F /* SwiftUIGIF */,
+				7CACF08556F089242EA3E657 /* SwiftyKeychainKit */,
 			);
 			productName = Sobes;
 			productReference = 308FAA419A3AF3827A2BFDF9 /* Sobes.app */;
@@ -252,6 +260,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				ORGANIZATIONNAME = FCS;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 1AD83AFD799ED8F09B299CBE /* Build configuration list for PBXProject "Sobes" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -263,6 +273,7 @@
 			);
 			mainGroup = 720B1E35ED662266430FCE19;
 			packageReferences = (
+				C6C47D98F0094C501413EC7C /* XCRemoteSwiftPackageReference "SwiftyKeychainKit" */,
 				60678069E0FEAA07CB34239C /* XCRemoteSwiftPackageReference "WrappingHStack" */,
 				48565CE09132DCFA28CF00C4 /* XCRemoteSwiftPackageReference "swiftui-gif" */,
 			);
@@ -366,7 +377,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = LM3CWDSTFW;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Sobes/Sources/Sobes-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -380,7 +390,10 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+					"$(inherited)",
+					DEBUG,
+				);
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -452,7 +465,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = LM3CWDSTFW;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Sobes/Sources/Sobes-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -513,6 +525,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		C6C47D98F0094C501413EC7C /* XCRemoteSwiftPackageReference "SwiftyKeychainKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/andriyslyusar/SwiftyKeychainKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = "1.0.0-beta.2";
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -527,6 +547,14 @@
 		45D4EE3CE452A68C230C2889 /* Interview */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Interview;
+		};
+		7ABCF30F7F3F86F1BA1F581F /* NetworkLayer */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetworkLayer;
+		};
+		7CACF08556F089242EA3E657 /* SwiftyKeychainKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftyKeychainKit;
 		};
 		824023B102ED7ECF050CD92B /* Profile */ = {
 			isa = XCSwiftPackageProductDependency;

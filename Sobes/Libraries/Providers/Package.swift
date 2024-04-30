@@ -13,11 +13,13 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "Sobes/Sources/Libraries/Types"),
+        .package(path: "Sobes/Sources/Libraries/NetworkLayer"),
+        .package(url: "https://github.com/andriyslyusar/SwiftyKeychainKit", from: "1.0.0-beta.2"),
     ],
     targets: [
         .target(
             name: "Providers",
-            dependencies: ["Types"],
+            dependencies: ["Types", "SwiftyKeychainKit", "NetworkLayer"],
             sources: ["Sources"]
         ),
     ]

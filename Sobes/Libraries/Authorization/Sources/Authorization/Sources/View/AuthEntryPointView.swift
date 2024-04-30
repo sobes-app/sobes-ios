@@ -1,10 +1,11 @@
 import SwiftUI
 import UIComponents
 
-public struct AuthEntryPointView<Model: LoginViewModel>: View {
-
+public struct AuthEntryPointView<Model: AuthViewModel>: View {
+    @EnvironmentObject var auth: Authentication
+    
     public init(model: Model) {
-        self._model = ObservedObject(wrappedValue: model)
+        self._model = StateObject(wrappedValue: model)
     }
     
     public var body: some View {
@@ -35,7 +36,7 @@ public struct AuthEntryPointView<Model: LoginViewModel>: View {
         .padding(.horizontal, Constants.horizontal)
         .padding(.bottom, Constants.bottom)
     }
-
+    
     private var forgotPasswordButton: some View {
         Button(action: {presentPasswordRecreate = true}) {
             Text("забыл пароль")
@@ -51,8 +52,21 @@ public struct AuthEntryPointView<Model: LoginViewModel>: View {
     private var button: some View {
         MainButton(action: {
             if TextFieldValidator.isInputValid(.email(inputEmail)) && TextFieldValidator.isInputValid(.password(inputPass)) {
-                presentMain = true
-                model.onLoginTap()
+                Task { @MainActor in
+                    if !(await model.onLoginTap(email: inputEmail, password: inputPass)) {
+                        auth.updateStatus(success: false)
+                        withAnimation {
+                            incorrect = true
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                            withAnimation {
+                                incorrect = false
+                            }
+                        })
+                    } else {
+                        auth.updateStatus(success: true)
+                    }
+                }
             } else {
                 withAnimation {
                     incorrect = true
@@ -65,18 +79,17 @@ public struct AuthEntryPointView<Model: LoginViewModel>: View {
             }
         }, label: "Войти")
     }
-
-    @ObservedObject private var model: Model
-
+    
+    @StateObject private var model: Model
+    
     @State private var inputEmail: String = ""
     @State private var inputEmailState: TextFieldView.InputState = .correct
-
+    
     @State private var inputPass: String = ""
     @State private var inputPassState: TextFieldView.InputState = .correct
-
+    
     @State private var presentMain: Bool = false
     @State private var presentPasswordRecreate: Bool = false
     
     @State private var incorrect: Bool = false
-
 }

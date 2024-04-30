@@ -8,31 +8,23 @@ import Providers
 import Interview
 
 public struct MainView: View {
+    @EnvironmentObject var auth: Authentication
 
     @State private var showTabBar = true
-    @Binding var isAuthorized: Bool
     @Binding var selectedTab: TabItem
-    
-    public init(isAuthorized: Binding<Bool>, selectedTab: Binding<TabItem>) {
-        self._isAuthorized = isAuthorized
-        self._selectedTab = selectedTab
-        profileProvider = ProfileProviderImpl()
-        chatProvider = ChatsProviderImpl(profileProvider: profileProvider)
-    }
 
     public var body: some View {
         VStack {
             switch selectedTab {
             case .materials:
-                MaterialsView(model: MaterialsViewModelImpl(materialsProvider: materialsProvider))
+                MaterialsView(model: MaterialsViewModelImpl(materialsProvider: MaterialsProviderImpl()))
             case .interview:
-                InterviewEntryPointView(model: InterviewViewModelImpl(questionsProvider: questionsProvider))
+                InterviewEntryPointView(model: InterviewViewModelImpl(questionsProvider: QuestionsProviderImpl()))
             case .chat:
-                ChatsView(showTabBar: $showTabBar, model: ChatViewModelImpl(profileProvider: profileProvider, chatProvider: chatProvider))
+                ChatsView(showTabBar: $showTabBar, model: ChatViewModelImpl(profileProvider: profileProvider, chatProvider: ChatsProviderImpl(profileProvider: profileProvider)))
             case .profile:
-                ProfileView(model: ProfileViewModelImpl(onLogoutAction: {
-                    isAuthorized = false
-                }, profileProvider: profileProvider), showTabBar: $showTabBar)
+                ProfileView(model: ProfileViewModelImpl(profileProvider: profileProvider), showTabBar: $showTabBar)
+                    .environmentObject(auth)
             }
             Spacer()
             if showTabBar {
@@ -42,8 +34,4 @@ public struct MainView: View {
     }
     
     let profileProvider: ProfileProvider
-    let chatProvider: ChatsProvider
-    let materialsProvider: MaterialsProvider = MaterialsProviderImpl()
-    let questionsProvider: QuestionsProvider = QuestionsProviderImpl()
-
 }

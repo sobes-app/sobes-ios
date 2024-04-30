@@ -1,8 +1,10 @@
 import SwiftUI
 import UIComponents
+import Combine
 
-public struct RegCodeView<Model: RegistrationViewModel>: View {
-
+public struct RegCodeView<Model: AuthViewModel>: View {
+    @EnvironmentObject var auth: Authentication
+    
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)
     }
@@ -25,7 +27,12 @@ public struct RegCodeView<Model: RegistrationViewModel>: View {
             }
             .padding(.top, Constants.topPadding)
             Spacer()
-            button
+            VStack {
+                if incorrect {
+                    IncorrectView(text: "неверный код подтверждения")
+                }
+                button
+            }
             
         }
         .padding(.horizontal, Constants.horizontal)
@@ -34,31 +41,41 @@ public struct RegCodeView<Model: RegistrationViewModel>: View {
     
     private var button: some View {
         MainButton(action: {
-            if model.validateCode(code: input) {
-                present = true
-            } else {
-                //TODO: прописать некорректный данный блять короче вы поняли
+            Task { @MainActor in
+                present = await model.validateCode(code: input)
+                if !present {
+                    withAnimation {
+                        incorrect = true
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+                        withAnimation {
+                            incorrect = false
+                        }
+                    })
+                }
             }
         }, label: "Дальше")
         .navigationDestination(isPresented: $present) {
             RegFinalView(model: model)
                 .navigationBarBackButtonHidden()
+                .environmentObject(auth)
         }
     }
     
     private var repeatCode: some View {
         Button(action: {
-            model.sendCodetoEmail(email: input)
+            
         }) {
             Text("отправить повторно")
                 .foregroundColor(Color(.accent))
                 .font(Fonts.small)
         }
     }
-
+    
     @ObservedObject private var model: Model
     @State private var input: String = ""
     @State private var inputState: TextFieldView.InputState = .correct
     @State private var present: Bool = false
-
+    @State private var incorrect: Bool = false
+    
 }

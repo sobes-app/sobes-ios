@@ -14,7 +14,9 @@ let project = Project(
         .package(url: "https://github.com/globulus/swiftui-gif", .upToNextMajor(from: "1.0.1")),
         .local(path: "Sobes/Libraries/Interview"),
         .local(path: "Sobes/Libraries/Toolbox"),
-        .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0"))
+        .local(path: "Sobes/Libraries/NetworkLayer"),
+        .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
+        .package(url: "https://github.com/andriyslyusar/SwiftyKeychainKit", .upToNextMajor(from: "1.0.0-beta.2"))
     ],
     targets: [
         .target(
@@ -34,10 +36,12 @@ let project = Project(
                 .package(product: "Types"),
                 .package(product: "Profile"),
                 .package(product: "Interview"),
+                .package(product: "NetworkLayer"),
                 .package(product: "Toolbox"),
                 .package(product: "WrappingHStack", type: .runtime),
                 .package(product: "Providers"),
-                .package(product: "SwiftUIGIF", type: .runtime)
+                .package(product: "SwiftUIGIF", type: .runtime),
+                .package(product: "SwiftyKeychainKit", type: .runtime)
             ]
         ),
     ]
