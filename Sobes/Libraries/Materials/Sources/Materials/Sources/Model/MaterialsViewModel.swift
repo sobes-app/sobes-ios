@@ -2,6 +2,8 @@ import SwiftUI
 import Types
 import Toolbox
 import Providers
+import Alamofire
+import SwiftSoup
 
 @MainActor
 public protocol MaterialsViewModel: ObservableObject {
@@ -94,7 +96,69 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
 
     private func getArticles() async -> [Types.Material] {
         return await materialsProvider.getArticles()
+	}
+
+    private func fetchArticles() {
+        fetchArticle(from: articleURL)
     }
+
+    private func fetchArticle(from url: String) {
+        materials = []
+        AF.request(url).responseString { [weak self] response in
+            switch response.result {
+            case .success(let html):
+                if let article = self?.parseArticle(html: html, url: url) {
+                    self?.materials = [.article(model: article)]
+                }
+            case .failure(let error):
+                print("Error while fetching the page: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func parseArticle(html: String, url: String) -> Article? {
+        do {
+            let doc: Document = try SwiftSoup.parse(html)
+            let heading = try doc.select("h1").first()?.text()
+
+            let h2 = try doc.select("h2").array().map { try $0.text() }
+            let h3 = try doc.select("h3").array().map { try $0.text() }
+
+            let paragraphs = try doc.select("p").array().map { try $0.text() }
+            let bodyText = paragraphs.joined(separator: "\n\n")
+
+            let authorName = try doc.select(".tm-user-info__username").first()?.text()
+            let datePublished = try doc.select(".tm-article-datetime-published").first()?.text()
+
+            let keywords = try doc.select("meta[name=keywords]").first()?.attr("content").split(separator: ", ").map { String($0) }
+
+            return Article(id: 0, source: URL(string: url)?.host(), tags: keywords ?? [], logo: URL(string: url)?.host(), author: authorName, heading: heading, datePublished: datePublished, bodyText: bodyText, url: url)
+        } catch Exception.Error(let type, let message) {
+            print("Error parsing HTML (\(type)): \(message)")
+        } catch {
+            print("An unknown error occurred while parsing HTML.")
+        }
+
+        return nil
+    }
+
+    private func downloadImage(from url: URL) -> Image? {
+        var userPic: Image?
+        AF.download(url).responseData { response in
+            switch response.result {
+            case .success(let data):
+                if let image = UIImage(data: data) {
+                    userPic = Image(uiImage: image)
+                }
+            case .failure(let error):
+                print("Error in downloading image: \(error.localizedDescription)")
+            }
+        }
+
+        return userPic
+    }
+
+    private let articleURL = "https://habr.com/ru/articles/811253/"
 
 }
 

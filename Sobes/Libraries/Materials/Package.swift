@@ -17,6 +17,8 @@ let package = Package(
         .package(path: "Sobes/Sources/Libraries/Types"),
         .package(path: "Sobes/Sources/Libraries/Toolbox"),
         .package(path: "Sobes/Sources/Libraries/Providers"),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.9.1"),
+        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.7.2"),
     ],
     targets: [
         .target(
@@ -26,6 +28,8 @@ let package = Package(
                 "Types",
                 "Toolbox",
                 "Providers",
+                "Alamofire",
+                "SwiftSoup",
             ],
             sources: ["Sources"],
             resources: [.process("Resources")]

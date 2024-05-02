@@ -1,5 +1,6 @@
 import SwiftUI
 import UIComponents
+import Toolbox
 import Types
 
 public struct MaterialsView<Model: MaterialsViewModel>: View {
@@ -9,13 +10,16 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
     }
     
     public var body: some View {
-        VStack(spacing: Constants.defSpacing) {
-            headline
-            filters
-            bubbles
+        NavigationStack {
+            VStack(spacing: Constants.defSpacing) {
+                headline
+                filters
+                bubbles
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, Constants.horizontal)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, Constants.horizontal)
+        .navigationBarBackButtonHidden()
         .task {
             await model.onViewAppear()
         }
@@ -64,13 +68,20 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
         ScrollView {
             VStack(spacing: Constants.defSpacing) {
                 ForEach(model.materials, id: \.self) { material in
-                    MaterialBubble(model: material)
+                    if case .article(let article) = material {
+                        NavigationLink(destination: ArticleView(article: article)) {
+                            MaterialBubble(model: material)
+                        }
+                    } else {
+                        MaterialBubble(model: material)
+                    }
                 }
             }
         }
         .scrollIndicators(.hidden)
     }
 
+    @State private var isPresentWebView = false
     @StateObject private var model: Model
 
 }
