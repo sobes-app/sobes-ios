@@ -26,7 +26,7 @@ public final class NetworkLayer {
     let token: String?
     
     //TODO: путь до бека
-    let baseUrl = "http://localhost:8082"
+    let baseUrl = "http://localhost:8080"
     public init(token: String?) {
         self.token = token
     }
@@ -39,7 +39,7 @@ public final class NetworkLayer {
             let url = URL(string: baseUrl + urlPattern)!
             var request = URLRequest(url: url)
             if let token = token {
-                request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpMethod = method

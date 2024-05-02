@@ -14,8 +14,7 @@ let package = Package(
     targets: [
         .target(
             name: "NetworkLayer",
-            sources: ["Sources"],
-            resources: [.process("Resources")]
+            sources: ["Sources"]
         ),
     ]
 )

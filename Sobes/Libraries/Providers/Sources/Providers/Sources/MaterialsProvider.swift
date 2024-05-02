@@ -1,22 +1,45 @@
 import SwiftUI
 import Types
+import NetworkLayer
+import SwiftyKeychainKit
 
 public protocol MaterialsProvider {
-    func getTips() -> [Types.Material]
-    func getArticles() -> [Types.Material]
+    func getTips() async -> [Types.Material]
+    func getArticles() async -> [Types.Material]
 }
 
 public final class MaterialsProviderImpl: MaterialsProvider {
 
     public init() { }
 
-    public func getTips() -> [Types.Material] {
-        return tips.shuffled()
+    public func getTips() async -> [Types.Material] {
+        let materialsClient = MaterialsClient(token: try? self.keychain.get(accessTokenKey))
+        let result = await materialsClient.getTips()
+        switch result {
+        case .success(let tips):
+            return tips.map {
+                .tip(model: Tip(id: $0.id, logo: Image("tinkoff", bundle: .module), company: .tinkoff, author: $0.name, role: $0.profession.profession, text: $0.text))
+            }
+        case .failure:
+            return []
+        }
     }
 
-    public func getArticles() -> [Types.Material] {
-       return articles
+    public func getArticles() async -> [Types.Material] {
+        let materialsClient = MaterialsClient(token: try? self.keychain.get(accessTokenKey))
+        let result = await materialsClient.getArticles()
+        switch result {
+        case .success(let articles):
+            return articles.map {
+                .article(model: Article(id: $0.id, logo: URL(string: $0.link)?.host(), author: $0.author, text: $0.author, url: $0.link))
+            }
+        case .failure:
+            return []
+        }
     }
+
+    private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
+    private let accessTokenKey = KeychainKey<String>(key: "accessToken")
 
     private var articles: [Types.Material] = [
         .article(
