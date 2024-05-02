@@ -1,4 +1,5 @@
 import SwiftUI
+import NetworkLayer
 
 public enum Companies: String, CaseIterable {
     case no = ""
@@ -23,19 +24,39 @@ public enum Levels: String, CaseIterable {
 }
 
 public struct Profile: Identifiable, Hashable {
-
+    
     public let id: Int
     public var name: String
+    public let email: String
     public var professions: [Professions]
     public var companies: [Companies]
     public var level: Levels
-
-    public init(id: Int, name: String, professions: [Professions], companies: [Companies], level: Levels) {
+    
+    public init(id: Int = 0, name: String = "", email: String = "", professions: [Professions] = [], companies: [Companies] = [], level: Levels = .no) {
         self.id = id
         self.name = name
         self.professions = professions
         self.companies = companies
         self.level = level
+        self.email = email
+    }
+    
+    public init(signUpResponse: SignUpResponse) {
+        self.id = signUpResponse.id
+        self.name = signUpResponse.username
+        self.email = signUpResponse.email
+        self.professions = []
+        self.companies = []
+        self.level = Levels.no
+    }
+    
+    public init(profileResponse: ProfileResponse) {
+        self.id = profileResponse.id
+        self.name = profileResponse.username
+        self.email = profileResponse.email
+        self.professions = []
+        self.companies = []
+        self.level = Levels(rawValue: profileResponse.level) ?? .no
     }
     
     public static func createStringOfCompanies(of profile: Profile) -> [String] {
@@ -53,5 +74,24 @@ public struct Profile: Identifiable, Hashable {
         }
         return array
     }
-
+    
+    func getUserData() {
+        
+    }
+    
+    public static func setProfessions(array: [String]) -> [Professions]{
+        var profArray: [Professions] = []
+        for i in array {
+            profArray.append(Professions(rawValue: i) ?? .no)
+        }
+        return profArray
+    }
+    
+    public static func setCompanies(array: [String]) -> [Companies] {
+        var compArray: [Companies] = []
+        for i in array {
+            compArray.append(Companies(rawValue: i) ?? .no)
+        }
+        return compArray
+    }
 }

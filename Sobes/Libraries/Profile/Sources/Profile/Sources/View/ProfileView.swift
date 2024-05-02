@@ -1,7 +1,10 @@
 import SwiftUI
 import UIComponents
+import Authorization
 
 public struct ProfileView<Model: ProfileViewModel>: View {
+    @EnvironmentObject var auth: Authentication
+    
     @State private var presentSettings: Bool = false
     @State private var presentFill: Bool = false
     @State private var path = NavigationPath()
@@ -15,25 +18,34 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     
     public var body: some View {
         NavigationStack(path: $path) {
-            VStack(alignment: .leading) {
-                HStack(spacing: Constants.smallStack) {
-                    nameView
-                    Spacer()
-                    settingsView
-                    logoutView
+            ZStack {
+                VStack(alignment: .leading) {
+                    HStack(spacing: Constants.smallStack) {
+                        nameView
+                        Spacer()
+                        settingsView
+                        logoutView
+                    }
+                    if model.getProfileLevel() != "" {
+                        statsView
+                        Spacer()
+                    } else {
+                        Spacer()
+                        emptyView
+                        Spacer()
+                        button
+                    }
                 }
-                if model.getProfile().professions != [] {
-                    statsView
-                    Spacer()
-                } else {
-                    Spacer()
-                    emptyView
-                    Spacer()
-                    button
+                .padding(.horizontal, Constants.horizontal)
+                .padding(.bottom, Constants.horizontal)
+                
+                if model.isLoading {
+                    SplashScreen()
                 }
             }
-            .padding(.horizontal, Constants.horizontal)
-            .padding(.bottom, Constants.horizontal)
+        }
+        .onAppear {
+            model.onViewAppear()
         }
     }
     var button: some View {
@@ -60,7 +72,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Хочет работать в:")
                 .font(Fonts.mainBold)
-            Text(model.createStringComp(array: model.getProfile().companies))
+            Text(model.createStringComp())
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
@@ -78,7 +90,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                 .font(Fonts.mainBold)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
-            Text(model.getProfile().level.rawValue)
+            Text(model.getProfileLevel())
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
@@ -95,7 +107,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Желаемые должности:")
                 .font(Fonts.mainBold)
-            Text(model.createStringProf(array: model.getProfile().professions))
+            Text(model.createStringProf())
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
@@ -124,7 +136,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         Text("Привет, ")
             .font(Fonts.heading)
             .foregroundColor(.black)
-        + Text(model.getProfile().name)
+        + Text(model.getProfileName())
             .font(Fonts.heading)
             .foregroundColor(Color(.accent))
         + Text("!")
@@ -151,6 +163,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     var logoutView: some View {
         Button(action: {
             model.onLogoutTap()
+            auth.updateStatus(success: false)
         }) {
             Image(systemName: "rectangle.portrait.and.arrow.right.fill")
                 .foregroundColor(.black)

@@ -49,7 +49,7 @@ public struct ProfileElementView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 WrappingHStack(getRawValues(), id: \.self, spacing: .constant(5), lineSpacing: 5) { elem in
                     Text("#\(elem)")
-                        .font(Font.custom("CofoSand-Regular", size: 10))
+                        .font(Font.system(size: 10))
                         .foregroundColor(Color("grey", bundle: .module))
                    
                 }
@@ -71,7 +71,7 @@ public struct ProfileElementView: View {
     func bubble(profileData: String) -> some View {
         if profileData != "" {
             Text(profileData)
-                .font(Font.custom("CofoSans-Regular", size: 10))
+                .font(Font.system(size: 10))
                 .foregroundColor(.black)
                 .lineLimit(1)
                 .padding(5)

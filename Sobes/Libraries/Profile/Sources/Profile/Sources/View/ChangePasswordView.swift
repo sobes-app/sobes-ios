@@ -1,28 +1,35 @@
+//
+//  SwiftUIView.swift
+//  
+//
+//  Created by Алиса Вышегородцева on 30.04.2024.
+//
+
 import SwiftUI
+import Foundation
 import UIComponents
+import Authorization
 
-struct RegFinalView<Model: AuthViewModel>: View {
-    @EnvironmentObject var auth: Authentication
-
+struct ChangePasswordView<Model: ProfileViewModel>: View {
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)
     }
-        
+            
     public var body: some View {
         ZStack {
             VStack(alignment: .leading) {
                 BackButton()
                 VStack(alignment: .leading, spacing: Constants.defSpacing){
-                    Text("Почти закончили!")
+                    Text("Смена пароля")
                         .font(Fonts.heading)
                         .foregroundColor(.black)
-                    TextFieldView(model: .name, input: $inputName, inputState: $inputNameState)
                     TextFieldView(model: .password, input: $inputPassword, inputState: $inputPasswordState)
+                    TextFieldView(model: .password, input: $inputNew, inputState: $inputNewState)
                     TextFieldView(model: .repPassword, input: $inputRep, inputState: $inputRepState)
                     Spacer()
                     VStack {
                         if incorrect {
-                            IncorrectView(text: message)
+                            IncorrectView(text: "ошибка при смене пароля")
                         }
                         button
                     }
@@ -38,11 +45,13 @@ struct RegFinalView<Model: AuthViewModel>: View {
         }
     }
     
-    var button: some View {
-        MainButton(
-            action: {
-                if inputPassword != inputRep {
-                    message = "Пароли не совпадают"
+    private var button: some View {
+        MainButton(action: {
+            Task { @MainActor in
+                let success = await model.changePassword(oldPassword: inputPassword, newPassword: inputNew)
+                if success {
+                    presentationMode.wrappedValue.dismiss()
+                } else {
                     withAnimation {
                         incorrect = true
                     }
@@ -52,40 +61,21 @@ struct RegFinalView<Model: AuthViewModel>: View {
                         }
                     })
                 }
-                Task { @MainActor in
-                    if !(await model.registerUser(username: inputName, password: inputPassword)) {
-                        auth.updateStatus(success: false)
-                        message = "Возникла ошибка при регистрации"
-                        withAnimation {
-                            incorrect = true
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                            withAnimation {
-                                incorrect = false
-                            }
-                        })
-                    } else {
-                        auth.updateStatus(success: true)
-                    }
-                }
-            },
-            label: "Зарегистрироваться"
-        )
+            }
+        }, label: "Сменить пароль")
     }
 
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @ObservedObject private var model: Model
-
-    @State private var inputName: String = ""
-    @State private var inputNameState: TextFieldView.InputState = .correct
 
     @State private var inputPassword: String = ""
     @State private var inputPasswordState: TextFieldView.InputState = .correct
 
+    @State private var inputNew: String = ""
+    @State private var inputNewState: TextFieldView.InputState = .correct
+    
     @State private var inputRep: String = ""
     @State private var inputRepState: TextFieldView.InputState = .correct
-
-    @State private var message: String = ""
-    @State private var incorrect: Bool = false
-
+    
+    @State var incorrect: Bool = false
 }
-

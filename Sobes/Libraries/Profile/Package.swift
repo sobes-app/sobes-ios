@@ -14,12 +14,13 @@ let package = Package(
     dependencies: [
         .package(path: "Sobes/Sources/Libraries/UIComponents"),
         .package(path: "Sobes/Sources/Libraries/Authorization"),
-        .package(path: "Sobes/Sources/Libraries/Providers")
+        .package(path: "Sobes/Sources/Libraries/Providers"),
+        .package(path: "Sobes/Sources/Libraries/NetworkLayer")
     ],
     targets: [
         .target(
             name: "Profile",
-            dependencies: ["UIComponents", "Authorization", "Providers"],
+            dependencies: ["UIComponents", "Authorization", "Providers", "NetworkLayer"],
             sources: ["Sources"],
             resources: [.process("Resources")]
         ),

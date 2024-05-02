@@ -114,7 +114,7 @@ public struct ChatsView<Model: ChatViewModel>: View {
                                     .foregroundColor(.black)
                                 Text(chat.messages.last?.text ?? "")
                                     .font(Fonts.small)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(Color("grey", bundle: .module))
                                     .lineLimit(1)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)

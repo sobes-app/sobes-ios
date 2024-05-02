@@ -12,9 +12,13 @@ let package = Package(
             name: "Types",
             targets: ["Types"]),
     ],
+    dependencies: [
+        .package(path: "Sobes/Sources/Libraries/NetworkLayer"),
+    ],
     targets: [
         .target(
             name: "Types",
+            dependencies: ["NetworkLayer"],
             sources: ["Sources"]
         ),
     ]

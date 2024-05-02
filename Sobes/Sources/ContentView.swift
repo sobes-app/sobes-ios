@@ -1,28 +1,32 @@
 import SwiftUI
 import Authorization
 import UIComponents
+import Providers
 
 struct ContentView: View {
+    @StateObject var auth = Authentication()
     
     init() {
-        self._isAuthorized = State(initialValue: true)
         self.selectedTab = .materials
+        self.profileProvider = ProfileProviderImpl()
     }
     
     var body: some View {
-        MainView(isAuthorized: $isAuthorized, selectedTab: $selectedTab)
-            .overlay {
-                if !isAuthorized {
-                    EntryPointView(
-                        isAuthorized: $isAuthorized,
-                        selectedTab: $selectedTab
-                    )
-                }
+        MainView(selectedTab: $selectedTab,
+                 profileProvider: profileProvider)
+        .environmentObject(auth)
+        .overlay {
+            if !auth.isAuth {
+                EntryPointView(
+                    selectedTab: $selectedTab,
+                    provider: profileProvider
+                ).environmentObject(auth)
             }
+        }
     }
     
-    @State private var isAuthorized: Bool
     @State private var selectedTab: TabItem
+    let profileProvider: ProfileProvider
 }
 
 #Preview {

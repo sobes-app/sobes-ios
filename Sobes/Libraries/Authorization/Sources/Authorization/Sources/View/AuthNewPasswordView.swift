@@ -8,7 +8,7 @@
 import SwiftUI
 import UIComponents
 
-struct AuthNewPasswordView<Model: LoginViewModel>: View {
+struct AuthNewPasswordView<Model: AuthViewModel>: View {
     
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)

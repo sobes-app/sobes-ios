@@ -39,13 +39,14 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
     }
     
     private var changePassword: some View {
-        Button(action: {presentCode = true}) {
+        Button(action: {presentChangePassword = true}) {
             Text("сменить пароль")
                 .foregroundColor(Color(.accent))
                 .font(Fonts.small)
         }
-        .navigationDestination(isPresented: $presentCode) {
-            
+        .navigationDestination(isPresented: $presentChangePassword) {
+            ChangePasswordView(model: model)
+                .navigationBarBackButtonHidden()
         }
     }
     
@@ -71,7 +72,7 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
     @State private var inputPass: String = ""
     @State private var inputPassState: TextFieldView.InputState = .correct
     
-    @State private var presentCode: Bool = false
+    @State private var presentChangePassword: Bool = false
     @Binding private var showTabBar: Bool
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>

@@ -1,7 +1,7 @@
 import SwiftUI
 import UIComponents
 
-struct AuthPasswordRecreateView<Model: LoginViewModel>: View {
+struct AuthPasswordRecreateView<Model: AuthViewModel>: View {
 
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)
@@ -26,7 +26,7 @@ struct AuthPasswordRecreateView<Model: LoginViewModel>: View {
     
     private var button: some View {
         MainButton(action: {
-            model.sendCodeToEmail(email: inputEmail)
+            model.sendCodeResetPassword(email: inputEmail)
             presentCode = true
         }, label: "Дальше")
             .navigationDestination(isPresented: $presentCode) {

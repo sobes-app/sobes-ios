@@ -8,66 +8,98 @@ public protocol ProfileViewModel: ObservableObject {
     var companies: [Companies] {get set}
     var level: Types.Levels {get set}
     var stepsCount: Double {get set}
+    var isLoading: Bool {get set}
     
-    func onViewAppear()
-    func getProfile() -> Types.Profile
+    func getProfileName() -> String
+    func getProfileLevel() -> String
+    func changePassword(oldPassword: String, newPassword: String) async -> Bool
+    
+    func onViewAppear() 
     func onLogoutTap()
     func saveInfo()
     func saveNewName(newName: String)
-    func createStringProf(array: [Professions]) -> String
-    func createStringComp(array: [Companies]) -> String
+    func createStringProf() -> String
+    func createStringComp() -> String
 }
 
 @MainActor
 public final class ProfileViewModelImpl: ProfileViewModel {
     let profileProvider: ProfileProvider
     
+    @Published public var isLoading: Bool = false
+    
+    @Published var profile: Profile?
+    
     @Published public var professions: [Professions] = []
     @Published public var companies: [Companies] = []
     @Published public var level: Types.Levels = .no
     
     @Published public var stepsCount: Double = 3
-    
-    private let onLogoutAction: () -> Void
-    
-    public init(onLogoutAction: @escaping () -> Void, profileProvider: ProfileProvider) {
-        self.onLogoutAction = onLogoutAction
+        
+    public init(profileProvider: ProfileProvider) {
         self.profileProvider = profileProvider
+        setProfile()
     }
     
-    public func getProfile() -> Types.Profile {
-        profileProvider.getProfiles()[0]
+    public func changePassword(oldPassword: String, newPassword: String) async -> Bool {
+        isLoading = true
+        let success = await profileProvider.changePassword(oldPassword: oldPassword, newPassword: newPassword)
+        isLoading = false
+        return success
+    }
+    
+    public func getProfileName() -> String {
+        return profile?.name ?? "123"
+    }
+    
+    public func getProfileLevel() -> String {
+        return profile?.level.rawValue ?? "123"
     }
     
     public func onViewAppear() {
-        professions.removeAll()
+        if profile == nil {
+            setProfile()
+        }
     }
     
+    func setProfile() {
+        profileProvider.getProfile(onFinish: { [weak self] result in
+            switch result {
+            case .success(let success):
+                print("success")
+                self?.profile = success
+            case .failure:
+                print("fail")
+                break
+            }
+        })
+    }
     
     public func onLogoutTap() {
-        onLogoutAction()
+        isLoading = true
+        profileProvider.logout()
+        isLoading = false
     }
     
-    
     public func saveInfo() {
-        profileProvider.updateProfileInfo(id: profileProvider.getCurrentUser().id, companies: companies, level: level, professions: professions)
+        
     }
     
     public func saveNewName(newName: String) {
-        profileProvider.setNewName(name: newName)
+
     }
     
-    public func createStringProf(array: [Professions]) -> String {
+    public func createStringProf() -> String {
         var a: [String] = []
-        for i in array {
+        for i in profile?.professions ?? [] {
             a.append(i.rawValue)
         }
         return a.joined(separator: ", ")
     }
     
-    public func createStringComp(array: [Companies]) -> String {
+    public func createStringComp() -> String {
         var a: [String] = []
-        for i in array {
+        for i in profile?.companies ?? [] {
             a.append(i.rawValue)
         }
         return a.joined(separator: ", ")

@@ -1,7 +1,7 @@
 import SwiftUI
 import UIComponents
 
-struct AuthCodeView<Model:LoginViewModel>: View {
+struct AuthCodeView<Model:AuthViewModel>: View {
     @ObservedObject private var model: Model
     @State private var input: String = ""
     @State private var inputState: TextFieldView.InputState = .correct
@@ -66,7 +66,7 @@ struct AuthCodeView<Model:LoginViewModel>: View {
     
     var repeatCode: some View {
         Button(action: {
-            model.sendCodeToEmail(email: input)
+            model.sendCodeResetPassword(email: input)
         }) {
             Text("отправить повторно")
                 .foregroundColor(Color(.accent))
