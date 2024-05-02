@@ -45,7 +45,6 @@ public final class ChatViewModelImpl: ChatViewModel {
     @Published public var desFilter: [Filter]
     @Published public var comFilter: [Filter]
     
-    
     public init(profileProvider: ProfileProvider, chatProvider: ChatsProvider) {
         self.chats = []
         self.profiles = []

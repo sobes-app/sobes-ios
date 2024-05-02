@@ -13,6 +13,7 @@ public protocol MaterialsViewModel: ObservableObject {
     func onViewAppear() async
     func onFilterTapped(id: Int) async
     func onMaterialsFilterTapped(id: Int) async
+    func getParsedArticle(id: Int) async -> ParsedArticle?
 }
 
 @MainActor
@@ -82,6 +83,12 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
         }
     }
 
+    public func getParsedArticle(id: Int) async -> ParsedArticle? {
+        let material = await getArticles()[id]
+        guard case .article(let article) = material else { return nil }
+        return await fetchArticle(from: article.url)
+    }
+
     private func filtersNotActive() -> Bool {
         return !filters.contains { $0.isActive }
     }
@@ -98,31 +105,29 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
         return await materialsProvider.getArticles()
 	}
 
-    private func fetchArticles() {
-        fetchArticle(from: articleURL)
-    }
-
-    private func fetchArticle(from url: String) {
-        materials = []
-        AF.request(url).responseString { [weak self] response in
-            switch response.result {
-            case .success(let html):
-                if let article = self?.parseArticle(html: html, url: url) {
-                    self?.materials = [.article(model: article)]
+    private func fetchArticle(from url: String) async -> ParsedArticle? {
+        await withCheckedContinuation { continuation in
+            AF.request(url).responseString { [weak self] response in
+                switch response.result {
+                case .success(let html):
+                    if let article = self?.parseArticle(html: html, url: url) {
+                        continuation.resume(with: .success(article))
+                    }
+                case .failure(let error):
+                    print("Error while fetching the page: \(error.localizedDescription)")
+                    continuation.resume(with: .success(nil))
                 }
-            case .failure(let error):
-                print("Error while fetching the page: \(error.localizedDescription)")
             }
         }
     }
 
-    private func parseArticle(html: String, url: String) -> Article? {
+    private func parseArticle(html: String, url: String) -> ParsedArticle? {
         do {
             let doc: Document = try SwiftSoup.parse(html)
             let heading = try doc.select("h1").first()?.text()
 
-            let h2 = try doc.select("h2").array().map { try $0.text() }
-            let h3 = try doc.select("h3").array().map { try $0.text() }
+//            let h2 = try doc.select("h2").array().map { try $0.text() }
+//            let h3 = try doc.select("h3").array().map { try $0.text() }
 
             let paragraphs = try doc.select("p").array().map { try $0.text() }
             let bodyText = paragraphs.joined(separator: "\n\n")
@@ -132,7 +137,17 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
 
             let keywords = try doc.select("meta[name=keywords]").first()?.attr("content").split(separator: ", ").map { String($0) }
 
-            return Article(id: 0, source: URL(string: url)?.host(), tags: keywords ?? [], logo: URL(string: url)?.host(), author: authorName, heading: heading, datePublished: datePublished, bodyText: bodyText, url: url)
+            return ParsedArticle(
+                id: 0,
+                source: URL(string: url)?.host(),
+                tags: keywords ?? [],
+                logo: URL(string: url)?.host(),
+                author: authorName,
+                heading: heading,
+                datePublished: datePublished,
+                bodyText: bodyText,
+                url: url
+            )
         } catch Exception.Error(let type, let message) {
             print("Error parsing HTML (\(type)): \(message)")
         } catch {
@@ -157,8 +172,6 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
 
         return userPic
     }
-
-    private let articleURL = "https://habr.com/ru/articles/811253/"
 
 }
 

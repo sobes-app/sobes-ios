@@ -64,15 +64,13 @@ public struct MaterialBubble: View {
                 AsyncImage(url: URL(string: FavIcon(logo)[.m]))
             }
             VStack(spacing: Constants.smallStack) {
-                if let source = model.source {
-                    Text(source)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundStyle(Color(.black))
-                        .font(Fonts.mainBold)
-                }
+                Text(model.author ?? "")
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(Color(.black))
+                    .font(Fonts.mainBold)
 
-                Text(model.heading ?? "")
+                Text(model.text ?? "")
                     .multilineTextAlignment(.leading)
                     .lineLimit(5)
                     .frame(maxWidth: .infinity, alignment: .leading)

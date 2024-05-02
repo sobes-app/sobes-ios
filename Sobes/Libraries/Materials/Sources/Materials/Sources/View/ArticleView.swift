@@ -2,9 +2,12 @@ import SwiftUI
 import Types
 import UIComponents
 
-public struct ArticleView: View {
+public struct ArticleView<Model: MaterialsViewModel>: View {
 
-    public let article: Article
+    public init(model: Model, id: Int) {
+        self._model = ObservedObject(wrappedValue: model)
+        self.id = id
+    }
 
     public var body: some View {
         ScrollView {
@@ -19,6 +22,9 @@ public struct ArticleView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .navigationBarBackButtonHidden()
         .padding(Constants.horizontal)
+        .task {
+            article = await model.getParsedArticle(id: id) ?? nil
+        }
     }
 
     private var header: some View {
@@ -29,7 +35,7 @@ public struct ArticleView: View {
     }
 
     private var heading: some View {
-        Text(article.heading ?? "")
+        Text(article?.heading ?? "")
             .font(Fonts.heading)
             .foregroundStyle(.black)
             .multilineTextAlignment(.leading)
@@ -37,14 +43,14 @@ public struct ArticleView: View {
 
     private var source: some View {
         HStack {
-            Text("Источник: \(article.source ?? "")")
+            Text("Источник: \(article?.source ?? "")")
                 .font(Fonts.small)
                 .foregroundStyle(Color(.grey))
             Spacer()
-            Link(destination: URL(string: article.url)!) {
+//            Link(destination: URL(string: article?.url ?? "")!) {
                 Text("Читать полную версию статьи")
                     .font(Fonts.small)
-            }
+//            }
         }
         .frame(maxWidth: .infinity)
     }
@@ -53,7 +59,7 @@ public struct ArticleView: View {
     private var keywords: some View {
         if showAllTags {
             VStack(alignment: .leading) {
-                ForEach(article.tags, id: \.self) { tag in
+                ForEach(article?.tags ?? [], id: \.self) { tag in
                     Text("#\(tag)")
                         .foregroundStyle(.blue)
                         .font(Fonts.small)
@@ -71,7 +77,7 @@ public struct ArticleView: View {
             }
         } else {
             VStack(alignment: .leading) {
-                ForEach(article.tags.prefix(3), id: \.self) { tag in
+                ForEach(article?.tags.prefix(3) ?? [], id: \.self) { tag in
                     Text("#\(tag)")
                         .foregroundStyle(.blue)
                         .font(Fonts.small)
@@ -92,11 +98,11 @@ public struct ArticleView: View {
 
     private var authorBubble: some View {
         VStack {
-            Text(article.author ?? "")
+            Text(article?.author ?? "")
                 .font(Fonts.main)
                 .foregroundStyle(.black)
                 .multilineTextAlignment(.leading)
-            Text(article.datePublished ?? "")
+            Text(article?.datePublished ?? "")
                 .font(Fonts.small)
                 .foregroundStyle(Color(.grey))
                 .multilineTextAlignment(.leading)
@@ -110,7 +116,7 @@ public struct ArticleView: View {
     }
 
     private var bodyText: some View {
-        Text(article.bodyText ?? "")
+        Text(article?.bodyText ?? "")
             .textSelection(.enabled)
             .font(Fonts.main)
             .foregroundStyle(.black)
@@ -118,5 +124,8 @@ public struct ArticleView: View {
     }
 
     @State private var showAllTags: Bool = false
+    @State private var article: ParsedArticle?
+    @ObservedObject private var model: Model
+    private let id: Int
 
 }

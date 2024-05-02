@@ -69,7 +69,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
             VStack(spacing: Constants.defSpacing) {
                 ForEach(model.materials, id: \.self) { material in
                     if case .article(let article) = material {
-                        NavigationLink(destination: ArticleView(article: article)) {
+                        NavigationLink(destination: ArticleView(model: model, id: article.id)) {
                             MaterialBubble(model: material)
                         }
                     } else {
