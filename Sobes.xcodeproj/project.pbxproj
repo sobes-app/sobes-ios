@@ -7,16 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05B9E8968DD79110A3539450 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 9AAB613DC6C734A86D6F67B1 /* SwiftSoup */; };
 		09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7FF03488FC3A5564B68E6E /* Media.xcassets */; };
-		1B4E37F3E7A2ED8226C687A1 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = D5E8F84EF157ADF85339B8F6 /* WrappingHStack */; };
-		1EA433DFD508C5B7A44F9360 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 3363D49F82E4786D3E7B78D5 /* Alamofire */; };
 		1B4E37F3E7A2ED8226C687A1 /* Toolbox in Frameworks */ = {isa = PBXBuildFile; productRef = 04CB3256A8930B988C790464 /* Toolbox */; };
 		1EA433DFD508C5B7A44F9360 /* SwiftUIGIF in Frameworks */ = {isa = PBXBuildFile; productRef = C38AE65860A9DE8EC2C7457F /* SwiftUIGIF */; };
 		1FC97C4ED085CE1BD6FD9E28 /* EntryPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5451022752FC90FD51F87803 /* EntryPointView.swift */; };
 		2BF0031E108AB9E39C98A56A /* Profile in Frameworks */ = {isa = PBXBuildFile; productRef = 824023B102ED7ECF050CD92B /* Profile */; };
 		323FF5DB2C45B16EBB0002CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF46344658ABC2FD254BED77 /* ContentView.swift */; };
+		3C530CC56827A5E1032CEA81 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 3363D49F82E4786D3E7B78D5 /* Alamofire */; };
 		5F05D0FC47369E6E742D0DF6 /* Materials in Frameworks */ = {isa = PBXBuildFile; productRef = 33318F6D74D3038758FE1634 /* Materials */; };
-		6EC8C01160588D5C75CA7E6A /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 9AAB613DC6C734A86D6F67B1 /* SwiftSoup */; };
 		6EC8C01160588D5C75CA7E6A /* SwiftyKeychainKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7CACF08556F089242EA3E657 /* SwiftyKeychainKit */; };
 		6F382E0557D9704D1522BB20 /* SobesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BC15B7AEE733B31130AE65 /* SobesApp.swift */; };
 		874BB4D94C5F74F9B8F49EF5 /* TuistFonts+Sobes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 269350B98311A6A45C9FF539 /* TuistFonts+Sobes.swift */; };
@@ -89,15 +88,14 @@
 				E86019111AA5A2F416A9CC6A /* Types in Frameworks */,
 				2BF0031E108AB9E39C98A56A /* Profile in Frameworks */,
 				A961DA05B277A70E5E607049 /* Interview in Frameworks */,
-				9FEDCEAB9F37381C8CB33316 /* SwiftUIGIF in Frameworks */,
-				1EA433DFD508C5B7A44F9360 /* Alamofire in Frameworks */,
-				6EC8C01160588D5C75CA7E6A /* SwiftSoup in Frameworks */,
 				AAB264A39AA3C720B9FA6F3D /* NetworkLayer in Frameworks */,
 				1B4E37F3E7A2ED8226C687A1 /* Toolbox in Frameworks */,
 				B15C2A3C20797D50723C30D3 /* WrappingHStack in Frameworks */,
 				9FEDCEAB9F37381C8CB33316 /* Providers in Frameworks */,
 				1EA433DFD508C5B7A44F9360 /* SwiftUIGIF in Frameworks */,
 				6EC8C01160588D5C75CA7E6A /* SwiftyKeychainKit in Frameworks */,
+				3C530CC56827A5E1032CEA81 /* Alamofire in Frameworks */,
+				05B9E8968DD79110A3539450 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,9 +234,9 @@
 				D5E8F84EF157ADF85339B8F6 /* WrappingHStack */,
 				E1EEE74F258AC4F4587915FE /* Providers */,
 				C38AE65860A9DE8EC2C7457F /* SwiftUIGIF */,
+				7CACF08556F089242EA3E657 /* SwiftyKeychainKit */,
 				3363D49F82E4786D3E7B78D5 /* Alamofire */,
 				9AAB613DC6C734A86D6F67B1 /* SwiftSoup */,
-				7CACF08556F089242EA3E657 /* SwiftyKeychainKit */,
 			);
 			productName = Sobes;
 			productReference = 308FAA419A3AF3827A2BFDF9 /* Sobes.app */;
