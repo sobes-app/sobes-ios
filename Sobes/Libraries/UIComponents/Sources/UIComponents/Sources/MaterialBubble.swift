@@ -59,37 +59,35 @@ public struct MaterialBubble: View {
     }
 
     private func article(model: Article) -> some View {
-        Link(destination: URL(string: model.url)!) {
-            HStack(alignment: .center, spacing: Constants.elementPadding) {
-                if let logo = model.logo {
-                    AsyncImage(url: URL(string: FavIcon(logo)[.m]))
-                }
-                VStack(spacing: Constants.smallStack) {
-                    Text(model.author)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundStyle(Color(.black))
-                        .font(Fonts.mainBold)
-
-                    Text(model.text)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(5)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .foregroundStyle(Color(.black))
-                        .font(Fonts.main)
-                }
-
-                Image(systemName: "chevron.right")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 22)
-                    .foregroundStyle(Color(.grey))
+        HStack(alignment: .center, spacing: Constants.elementPadding) {
+            if let logo = model.logo {
+                AsyncImage(url: URL(string: FavIcon(logo)[.m]))
             }
-            .padding(Constants.elementPadding)
-            .background {
-                RoundedRectangle(cornerRadius: Constants.corner)
-                    .stroke(.black, lineWidth: Constants.strokeWidth)
+            VStack(spacing: Constants.smallStack) {
+                Text(model.author ?? "")
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(Color(.black))
+                    .font(Fonts.mainBold)
+
+                Text(model.text ?? "")
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(5)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .foregroundStyle(Color(.black))
+                    .font(Fonts.main)
             }
+
+            Image(systemName: "chevron.right")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 22)
+                .foregroundStyle(Color(.grey))
+        }
+        .padding(Constants.elementPadding)
+        .background {
+            RoundedRectangle(cornerRadius: Constants.corner)
+                .stroke(.black, lineWidth: Constants.strokeWidth)
         }
     }
 }
