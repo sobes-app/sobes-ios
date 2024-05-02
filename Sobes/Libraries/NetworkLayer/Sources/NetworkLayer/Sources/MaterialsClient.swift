@@ -1,21 +1,21 @@
 import Foundation
 
 public struct TipResponse: Decodable {
-    public var id: Int
-    public var profession: String
-    public var company: String
-    public var name: String
-    public var level: String
-    public var text: String
+    public let id: Int
+    public let profession: String
+    public let company: String
+    public let name: String
+    public let level: String
+    public let text: String
 }
 
 public struct ArticleResponse: Decodable {
-    public var id: Int
-    public var profession: String
-    public var title: String
-    public var author: String
-    public var content: String
-    public var link: String
+    public let id: Int
+    public let profession: String
+    public let title: String
+    public let author: String
+    public let content: String
+    public let link: String
 }
 
 public final class MaterialsClient {

@@ -1,10 +1,12 @@
 import SwiftUI
 import Types
+import NetworkLayer
+import SwiftyKeychainKit
 
 public protocol QuestionsProvider {
-    func getProjectQuestions() -> [Types.InterviewQuestion]
-    func getProductQuestions() -> [Types.InterviewQuestion]
-    func getBAQuestions() -> [Types.InterviewQuestion]
+    func getProjectQuestions() async -> [Types.InterviewQuestion]
+    func getProductQuestions() async -> [Types.InterviewQuestion]
+    func getBAQuestions() async -> [Types.InterviewQuestion]
     func getUserQuestions() -> [Types.InterviewQuestion]
     func addMessageToInterviewChat(questionId: Int, message: InterviewMessage)
     func areQuestionMessagesEmpty(id: Int) -> Bool
@@ -23,16 +25,43 @@ public final class QuestionsProviderImpl: QuestionsProvider {
         return questions[id].messages
     }
 
-    public func getProjectQuestions() -> [Types.InterviewQuestion] {
-        return questions.filter { $0.questionType == .project || $0.questionType == .general }
+    public func getProjectQuestions() async -> [Types.InterviewQuestion] {
+        let interviewClient = InterviewClient(token: try? self.keychain.get(accessTokenKey))
+        let result = await interviewClient.generateQuestions(profession: "Менеджер проекта", level: "Junior")
+        switch result {
+        case .success(let questions):
+            return questions.enumerated().map { (index, question) in
+                InterviewQuestion(id: index, questionType: .project, text: question.question)
+            }
+        case .failure:
+            return []
+        }
     }
 
-    public func getProductQuestions() -> [Types.InterviewQuestion] {
-        return questions.filter { $0.questionType == .product || $0.questionType == .general }
+    public func getProductQuestions() async -> [Types.InterviewQuestion] {
+        let interviewClient = InterviewClient(token: try? self.keychain.get(accessTokenKey))
+        let result = await interviewClient.generateQuestions(profession: "Менеджер продукта", level: "Junior")
+        switch result {
+        case .success(let questions):
+            return questions.enumerated().map { (index, question) in
+                InterviewQuestion(id: index, questionType: .product, text: question.question)
+            }
+        case .failure:
+            return []
+        }
     }
 
-    public func getBAQuestions() -> [Types.InterviewQuestion] {
-        return questions.filter { $0.questionType == .ba || $0.questionType == .general }
+    public func getBAQuestions() async -> [Types.InterviewQuestion] {
+        let interviewClient = InterviewClient(token: try? self.keychain.get(accessTokenKey))
+        let result = await interviewClient.generateQuestions(profession: "Бизнес-аналитик", level: "Junior")
+        switch result {
+        case .success(let questions):
+            return questions.enumerated().map { (index, question) in
+                InterviewQuestion(id: index, questionType: .ba, text: question.question)
+            }
+        case .failure:
+            return []
+        }
     }
 
     public func getUserQuestions() -> [Types.InterviewQuestion] {
@@ -42,6 +71,9 @@ public final class QuestionsProviderImpl: QuestionsProvider {
     public func addMessageToInterviewChat(questionId: Int, message: InterviewMessage) {
         questions[questionId].messages.append(message)
     }
+
+    private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
+    private let accessTokenKey = KeychainKey<String>(key: "accessToken")
 
     private var questions: [Types.InterviewQuestion] = [
         InterviewQuestion(id: 0, questionType: .project, text: "Расскажите о случае, когда вам пришлось работать в команде, где возникли конфликты или разногласия между членами команды. Как вы управляли этой ситуацией?", messages: []),

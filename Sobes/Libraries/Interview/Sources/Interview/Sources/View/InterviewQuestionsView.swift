@@ -25,8 +25,8 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
             }
             .padding(.horizontal, Constants.horizontal)
         }
-        .onAppear {
-            model.fetchQuestions(for: type)
+        .task {
+            await model.fetchQuestions(for: type)
         }
     }
 
@@ -56,12 +56,19 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
                 }
             }
         }
+        .overlay {
+            if model.areQuestionsLoading {
+                SplashScreen()
+            }
+        }
     }
 
     private var changeQuestionsButton: some View {
         MainButton(
             action: {
-                model.fetchQuestions(for: type)
+                Task { @MainActor in
+                    await model.fetchQuestions(for: type)
+                }
             },
             label: "Поменять вопросы"
         )

@@ -4,11 +4,12 @@ import Providers
 
 @MainActor
 public protocol InterviewViewModel: ObservableObject {
+    var areQuestionsLoading: Bool { get }
     var messages: [InterviewMessage] { get }
     var questions: [InterviewQuestion] { get }
     func onViewAppear()
     func fetchUserQuestions()
-    func fetchQuestions(for interviewType: InterviewType)
+    func fetchQuestions(for interviewType: InterviewType) async
     func getQuestionsInProgress() -> String
     func getQuestionsWithIdealResult() -> String
     func getMeanQuestionsResult() -> String
@@ -19,6 +20,7 @@ public protocol InterviewViewModel: ObservableObject {
 @MainActor
 public final class InterviewViewModelImpl: InterviewViewModel {
 
+    @Published public var areQuestionsLoading: Bool = false
     @Published public var messages: [InterviewMessage] = []
     @Published public var questions: [InterviewQuestion] = []
 
@@ -29,15 +31,17 @@ public final class InterviewViewModelImpl: InterviewViewModel {
     public func onViewAppear() {
     }
 
-    public func fetchQuestions(for interviewType: InterviewType) {
+    public func fetchQuestions(for interviewType: InterviewType) async {
+        areQuestionsLoading = true
         switch interviewType {
         case .project:
-            questions = Array(questionsProvider.getProjectQuestions().shuffled()[0..<3])
+            questions = await questionsProvider.getProjectQuestions()
         case .product:
-            questions = Array(questionsProvider.getProductQuestions().shuffled()[0..<3])
+            questions = await questionsProvider.getProductQuestions()
         case .ba:
-            questions = Array(questionsProvider.getBAQuestions().shuffled()[0..<3])
+            questions = await questionsProvider.getBAQuestions()
         }
+        areQuestionsLoading = false
     }
 
     public func fetchUserQuestions() {
