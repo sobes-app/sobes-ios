@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Алиса Вышегородцева on 29.04.2024.
-//
-
 import Foundation
 
 public struct EmailRequest: Encodable {

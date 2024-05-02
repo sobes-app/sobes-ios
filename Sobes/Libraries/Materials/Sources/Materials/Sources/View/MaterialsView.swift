@@ -16,8 +16,8 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, Constants.horizontal)
-        .onAppear {
-            model.onViewAppear()
+        .task {
+            await model.onViewAppear()
         }
     }
     
@@ -34,7 +34,9 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
             ForEach(model.materialsFilters) { filter in
                 FilterBubble(filter: filter)
                     .onTapGesture {
-                        model.onMaterialsFilterTapped(id: filter.id)
+                        Task { @MainActor in
+                            await model.onMaterialsFilterTapped(id: filter.id)
+                        }
                     }
             }
         }
@@ -49,7 +51,9 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
             ForEach(model.filters) { filter in
                 FilterBubble(filter: filter, type: .secondary)
                     .onTapGesture {
-                        model.onFilterTapped(id: filter.id)
+                        Task { @MainActor in
+                            await model.onFilterTapped(id: filter.id)
+                        }
                     }
             }
         }

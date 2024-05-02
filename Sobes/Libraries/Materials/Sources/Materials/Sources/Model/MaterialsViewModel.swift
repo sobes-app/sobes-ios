@@ -8,9 +8,9 @@ public protocol MaterialsViewModel: ObservableObject {
     var materials: [Types.Material] { get }
     var filters: [Types.Filter] { get }
     var materialsFilters: [Types.Filter] { get }
-    func onViewAppear()
-    func onFilterTapped(id: Int)
-    func onMaterialsFilterTapped(id: Int)
+    func onViewAppear() async
+    func onFilterTapped(id: Int) async
+    func onMaterialsFilterTapped(id: Int) async
 }
 
 @MainActor
@@ -24,8 +24,8 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
         self.materialsProvider = materialsProvider
     }
 
-    public func onViewAppear() {
-        materials = getTips()
+    public func onViewAppear() async {
+        materials = await getTips()
         filters = [
             Filter(id: 0, name: "Тинькофф"),
             Filter(id: 1, name: "Яндекс")
@@ -38,20 +38,20 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
 
     private let materialsProvider: MaterialsProvider
 
-    public func onFilterTapped(id: Int) {
+    public func onFilterTapped(id: Int) async {
         filters[id].isActive.toggle()
         if filtersNotActive() {
             if materialsFilters.isTipsFilterActive {
-                materials = getTips()
+                materials = await getTips()
             } else {
-                materials = getArticles()
+                materials = await getArticles()
             }
         } else {
             var filteredMaterials: [Types.Material] = []
             for filter in filters {
                 if filter.isActive {
                     if materialsFilters.isTipsFilterActive {
-                        filteredMaterials.append(contentsOf: getTips().filter { material in
+                        filteredMaterials.append(contentsOf: await getTips().filter { material in
                             switch material {
                             case .tip(let model):
                                 return model.company.rawValue.contains(filter.name)
@@ -60,7 +60,7 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
                             }
                         })
                     } else {
-                        filteredMaterials = getArticles()
+                        filteredMaterials = await getArticles()
                     }
                 }
             }
@@ -68,15 +68,15 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
         }
     }
 
-    public func onMaterialsFilterTapped(id: Int) {
+    public func onMaterialsFilterTapped(id: Int) async {
         for i in 0...materialsFilters.count - 1 {
             materialsFilters[i].isActive = false
         }
         materialsFilters[id].isActive.toggle()
         if id.isTipsFilter {
-            materials = getTips()
+            materials = await getTips()
         } else {
-            materials = getArticles()
+            materials = await getArticles()
         }
     }
 
@@ -88,12 +88,12 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
         return materialsFilters.firstIndex(where: { $0.isActive }) ?? 0
     }
 
-    private func getTips() -> [Types.Material] {
-        return materialsProvider.getTips()
+    private func getTips() async -> [Types.Material] {
+        return await materialsProvider.getTips()
     }
 
-    private func getArticles() -> [Types.Material] {
-        return materialsProvider.getArticles()
+    private func getArticles() async -> [Types.Material] {
+        return await materialsProvider.getArticles()
     }
 
 }
