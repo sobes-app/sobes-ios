@@ -9,9 +9,12 @@ public struct BackButton: View {
     
     public var body: some View {
         Button(action: {
-            withoutAnimation {
-                presentationMode.wrappedValue.dismiss()
+            if onTap != nil {
                 onTap?()
+            } else {
+                withoutAnimation {
+                    presentationMode.wrappedValue.dismiss()
+                }
             }
         }) {
             Image(systemName: "chevron.backward")

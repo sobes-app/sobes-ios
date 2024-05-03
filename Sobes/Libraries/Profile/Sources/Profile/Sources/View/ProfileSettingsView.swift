@@ -12,20 +12,17 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
     public var body: some View {
         VStack(alignment: .leading) {
             BackButton(onTap: {
-                showTabBar = true
+                presentationMode.wrappedValue.dismiss()
+                withAnimation {
+                    showTabBar = true
+                }
             })
             VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 Text("Настройки")
                     .font(Fonts.heading)
                     .foregroundColor(.black)
-                TextFieldView(model: .name, input: $input, inputState: $inputState)
-                TextFieldView(model: .password, input: $inputPass, inputState: $inputPassState)
-                HStack {
-                    Spacer()
-                    changePassword
-                }
+                resetPasswordButton
                 Spacer()
-                button
             }
             .padding(.top, Constants.topPadding)
         }
@@ -38,39 +35,18 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
         }
     }
     
-    private var changePassword: some View {
-        Button(action: {presentChangePassword = true}) {
-            Text("сменить пароль")
-                .foregroundColor(Color(.accent))
-                .font(Fonts.small)
-        }
-        .navigationDestination(isPresented: $presentChangePassword) {
-            ChangePasswordView(model: model)
-                .navigationBarBackButtonHidden()
-        }
-    }
-    
-    private var button: some View {
-        MainButton(
-            action: {
-               
-                withoutAnimation {
-                    presentationMode.wrappedValue.dismiss()
-
-                }
-                showTabBar = true
-            },
-            label: "Сохранить"
-        )
+    private var resetPasswordButton: some View {
+        ChevronButton(model: .button(text: "Сменить пароль"))
+            .onTapGesture {
+                presentChangePassword = true
+            }
+            .navigationDestination(isPresented: $presentChangePassword) {
+                ChangePasswordView(model: model)
+                    .navigationBarBackButtonHidden()
+            }
     }
     
     @ObservedObject private var model: Model
-    
-    @State private var input: String = ""
-    @State private var inputState: TextFieldView.InputState = .correct
-    
-    @State private var inputPass: String = ""
-    @State private var inputPassState: TextFieldView.InputState = .correct
     
     @State private var presentChangePassword: Bool = false
     @Binding private var showTabBar: Bool

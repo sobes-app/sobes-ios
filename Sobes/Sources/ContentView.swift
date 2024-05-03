@@ -12,17 +12,27 @@ struct ContentView: View {
     }
     
     var body: some View {
-        MainView(selectedTab: $selectedTab,
-                 profileProvider: profileProvider)
-        .environmentObject(auth)
-        .overlay {
-            if !auth.isAuth {
-                EntryPointView(
-                    selectedTab: $selectedTab,
-                    provider: profileProvider
-                ).environmentObject(auth)
-            }
+        if !auth.isAuth {
+            EntryPointView(
+                selectedTab: $selectedTab,
+                provider: profileProvider
+            ).environmentObject(auth)
+        } else {
+            MainView(selectedTab: $selectedTab,
+                     profileProvider: profileProvider)
+            .environmentObject(auth)
         }
+//        MainView(selectedTab: $selectedTab,
+//                 profileProvider: profileProvider)
+//        .environmentObject(auth)
+//        .overlay {
+//            if !auth.isAuth {
+//                EntryPointView(
+//                    selectedTab: $selectedTab,
+//                    provider: profileProvider
+//                ).environmentObject(auth)
+//            }
+//        }
     }
     
     @State private var selectedTab: TabItem

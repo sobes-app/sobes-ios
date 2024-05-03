@@ -1,6 +1,7 @@
 import Foundation
 import Types
 import Providers
+import NetworkLayer
 
 @MainActor
 public protocol ProfileViewModel: ObservableObject {
@@ -16,7 +17,7 @@ public protocol ProfileViewModel: ObservableObject {
     func setProfileInfo() async -> Bool
     func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Bool
     
-    func onViewAppear() async
+    func onViewAppear() async -> Bool
     func onLogoutTap()
     func createStringProf() -> String
     func createStringComp() -> String
@@ -55,14 +56,38 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         return profile?.level.rawValue ?? ""
     }
     
-    public func onViewAppear() async {
+    public func onViewAppear() async -> Bool{
+        var success = true
         if profile == nil {
-            await setProfile()
+            success = await setProfile()
         }
+        return success
     }
     
-    func setProfile() async {
-        profile = await profileProvider.getProfile()
+    func setProfile() async -> Bool {
+        isLoading = true
+        let result = await profileProvider.getProfile()
+        switch result {
+        case .success(let success):
+            profile = success
+            isLoading = false
+            return true
+        case .failure(let failure):
+            if failure == ClientError.unautharized {
+                let update = await profileProvider.updateToken()
+                if update {
+                    if await setProfile() {
+                        isLoading = false
+                        return true
+                    } else {
+                        isLoading = false
+                        return false
+                    }
+                }
+            }
+            isLoading = false
+            return false
+        }
     }
     
     public func onLogoutTap() {
@@ -74,8 +99,8 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         isLoading = true
         let com = Profile.stringArrayComp(of: companies)
         let pro = Profile.stringArrayProf(of: professions)
-        let success = await profileProvider.createProfile(exp: level.rawValue, comp: com, prof: pro)
-        await setProfile()
+        var success = await profileProvider.createProfile(exp: level.rawValue, comp: com, prof: pro)
+        success = await setProfile()
         isLoading = false
         return success
     }
@@ -83,8 +108,8 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     
     public func updateProfile(level: String? = nil, professions: [String]? = nil, companies: [String]? = nil) async -> Bool {
         isLoading = true
-        let success = await profileProvider.updateProfile(level: level, professions: professions, companies: companies)
-        await setProfile()
+        var success = await profileProvider.updateProfile(level: level, professions: professions, companies: companies)
+        success = await setProfile()
         isLoading = false
         return success
     }

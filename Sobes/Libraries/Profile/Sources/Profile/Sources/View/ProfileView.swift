@@ -36,6 +36,13 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                         Spacer()
                         emptyView
                         Spacer()
+                    }
+                    HStack {
+                        Spacer()
+                        feedbackButton
+                            .padding(.bottom, Constants.defSpacing)
+                    }
+                    if model.getProfileLevel().isEmpty {
                         button
                     }
                 }
@@ -53,10 +60,20 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         }
         .onAppear {
             Task { @MainActor in
-               await model.onViewAppear()
+                if !(await model.onViewAppear()) {
+                    auth.updateStatus(success: false)
+                    model.onLogoutTap()
+                }
             }
         }
     }
+    
+    private var feedbackButton: some View {
+        Button(action: {}, label: {
+            CircularTextView(title: "обратная связь * обратная связь *".uppercased(), radius: 61)
+        })
+    }
+    
     var button: some View {
         MainButton(action: {presentFill=true}, label: "Рассказать о себе")
             .navigationDestination(isPresented: $presentFill) {
@@ -133,7 +150,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         .background {
             RoundedRectangle(cornerRadius: Constants.corner)
                 .foregroundColor(.white)
-                .shadow(color: Color("grey", bundle: .module), radius: 10)
+                .shadow(color: Static.Colors.grey, radius: 10)
         }.onTapGesture {
             editParam = true
             profileParam = .professions
@@ -142,12 +159,10 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     
     var emptyView: some View {
         VStack(alignment: .center) {
-            Text("В вашем профиле пока пусто :(")
-                .font(Fonts.mainBold)
-                .foregroundColor(Static.Colors.grey)
-            Text("Расскажите о себе, чтобы подготовка стала продуктивнее")
+            Image("empty_view", bundle: .module)
+            Text("Расскажите нам о себе")
+                .font(Fonts.small)
                 .multilineTextAlignment(.center)
-                .font(Fonts.main)
                 .foregroundColor(Static.Colors.grey)
         }
         .frame(maxWidth: .infinity)

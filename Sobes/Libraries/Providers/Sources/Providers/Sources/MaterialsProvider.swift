@@ -13,7 +13,7 @@ public final class MaterialsProviderImpl: MaterialsProvider {
     public init() { }
 
     public func getTips() async -> Result<[Types.Material], CustomError> {
-        let materialsClient = MaterialsClient(token: try? self.keychain.get(accessTokenKey))
+        let materialsClient = MaterialsClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
         let result = await materialsClient.getTips()
         switch result {
         case .success(let tips):
@@ -47,7 +47,7 @@ public final class MaterialsProviderImpl: MaterialsProvider {
     }
 
     public func getArticles() async -> Result<[Types.Material], CustomError> {
-        let materialsClient = MaterialsClient(token: try? self.keychain.get(accessTokenKey))
+        let materialsClient = MaterialsClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
         let result = await materialsClient.getArticles()
         switch result {
         case .success(let articles):
@@ -71,6 +71,7 @@ public final class MaterialsProviderImpl: MaterialsProvider {
 
     private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
     private let accessTokenKey = KeychainKey<String>(key: "accessToken")
+    private let tokenType = KeychainKey<String>(key: "tokenType")
 
 //    private var articles: [Types.Material] = [
 //        .article(

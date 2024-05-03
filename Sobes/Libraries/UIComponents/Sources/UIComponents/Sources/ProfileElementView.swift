@@ -48,10 +48,11 @@ public struct ProfileElementView: View {
                     .foregroundColor(.black)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 WrappingHStack(getRawValues(), id: \.self, spacing: .constant(5), lineSpacing: 5) { elem in
-                    Text("#\(elem)")
-                        .font(Font.system(size: 10))
-                        .foregroundColor(Color("grey", bundle: .module))
-                   
+                    if elem != "" {
+                        Text("#\(elem)")
+                            .font(Font.system(size: 10))
+                            .foregroundColor(Color("grey", bundle: .module))
+                    }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

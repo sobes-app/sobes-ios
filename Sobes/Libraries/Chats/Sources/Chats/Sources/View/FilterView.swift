@@ -17,7 +17,11 @@ struct FilterView<Model: ChatViewModel>: View {
             HStack {
                 BackButton()
                 Spacer()
-                Button(action: {model.clearFilters()}) {
+                Button(action: {
+                    Task { @MainActor in
+                        await model.clearFilters()
+                    }
+                }) {
                     Text("Сбросить\nфильтры")
                         .font(Fonts.small)
                         .multilineTextAlignment(.center)

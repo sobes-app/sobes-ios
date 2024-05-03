@@ -29,11 +29,10 @@ public struct ResetPasswordRequest: Encodable {
 public final class ProfileClient {
     let netLayer: NetworkLayer
     
-    public init(token: String?) {
-        self.netLayer = NetworkLayer(token: token)
+    public init(token: String?, tokenType: String?) {
+        self.netLayer = NetworkLayer(token: token, tokenType: tokenType)
     }
     
-
     public func getProfile() async -> Result<ProfileResponse, ClientError>{
         await withCheckedContinuation { continuation in
             self.netLayer.makeRequest(method: "GET",

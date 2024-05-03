@@ -20,7 +20,7 @@ public struct RegEmailView<Model: AuthViewModel>: View {
                     Spacer()
                     VStack {
                         if incorrect {
-                            IncorrectView(text: "неверный формат почты")
+                            IncorrectView(text: message)
                         }
                         button
                     }
@@ -42,6 +42,7 @@ public struct RegEmailView<Model: AuthViewModel>: View {
                 Task { @MainActor in
                     presentCode = await model.sendCodetoEmail(email: input)
                     if !presentCode {
+                        message = "ошибка отправки кода"
                         showIncorrect()
                     }
                 }
@@ -73,4 +74,5 @@ public struct RegEmailView<Model: AuthViewModel>: View {
     @State private var inputState: TextFieldView.InputState = .correct
     @State private var presentCode: Bool = false
     @State private var incorrect: Bool = false
+    @State private var message: String = "неверный формат почты"
 }
