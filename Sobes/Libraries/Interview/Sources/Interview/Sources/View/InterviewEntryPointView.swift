@@ -25,7 +25,7 @@ public struct InterviewEntryPointView<Model: InterviewViewModel>: View {
                 InterviewQuestionsView(model: model, type: .product)
             }
             .fullScreenCover(isPresented: $isPresentingBAInterview) {
-                InterviewQuestionsView(model: model, type: .ba)
+                InterviewQuestionsView(model: model, type: .analyst)
             }
         }
         .frame(maxWidth: .infinity)

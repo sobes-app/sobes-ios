@@ -9,9 +9,10 @@ public protocol InterviewViewModel: ObservableObject {
     var messages: [InterviewMessage] { get }
     var questions: [InterviewQuestion] { get }
     var assessment: InterviewAssessment? { get }
+    var isError: Bool { get }
     func onViewAppear()
     func fetchUserQuestions(profession: String) async
-    func fetchQuestions(for interviewType: InterviewType) async
+    func fetchQuestions(for interviewType: Professions) async
     func getQuestionsInProgress() -> String
     func getQuestionsWithIdealResult() -> String
     func getMeanQuestionsResult() -> String
@@ -25,6 +26,7 @@ public final class InterviewViewModelImpl: InterviewViewModel {
 
     @Published public var areQuestionsLoading: Bool = false
     @Published public var isAssessmentLoading: Bool = false
+    @Published public var isError: Bool = false
     @Published public var messages: [InterviewMessage] = []
     @Published public var questions: [InterviewQuestion] = []
     @Published public var assessment: InterviewAssessment?
@@ -36,28 +38,47 @@ public final class InterviewViewModelImpl: InterviewViewModel {
     public func onViewAppear() {
     }
 
-    public func fetchQuestions(for interviewType: InterviewType) async {
+    public func fetchQuestions(for interviewType: Professions) async {
+        isError = false
         areQuestionsLoading = true
-        switch interviewType {
-        case .project:
-            questions = await questionsProvider.getProjectQuestions()
-        case .product:
-            questions = await questionsProvider.getProductQuestions()
-        case .ba:
-            questions = await questionsProvider.getBAQuestions()
+        let result = await questionsProvider.getInterviewQuestions(for: interviewType)
+        switch result {
+        case .success(let interviewQuestions):
+            areQuestionsLoading = false
+            self.questions = interviewQuestions
+        case .failure(let error):
+            areQuestionsLoading = false
+            if error == .empty {
+                self.questions = []
+            } else {
+                isError = true
+            }
+
         }
-        areQuestionsLoading = false
     }
 
     public func fetchUserQuestions(profession: String) async {
-        questions = await questionsProvider.getUserQuestions(profession: profession)
+        isError = false
+        areQuestionsLoading = true
+        let result = await questionsProvider.getUserQuestions(profession: profession)
+        switch result {
+        case .success(let questions):
+            areQuestionsLoading = false
+            self.questions = questions
+        case .failure(let error):
+            areQuestionsLoading = false
+            if error == .empty {
+                self.questions = []
+            } else {
+                isError = true
+            }
+        }
     }
 
     public func startDialogueForQuestion(question: String, questionId: Int, text: String) async {
         messages = []
         currentQuestionId = questionId
         guard await questionsProvider.areQuestionMessagesEmpty(question: question) else {
-            print("huy")
             messages = questionsProvider.getMessagesForQuestion(question: question)
             return
         }
@@ -82,11 +103,19 @@ public final class InterviewViewModelImpl: InterviewViewModel {
     }
 
     public func fetchAssessment(question: String, answer: String) async {
+        isError = false
         isAssessmentLoading = true
-        assessment = await questionsProvider.getAnswerAssessment(
+        let result = await questionsProvider.getAnswerAssessment(
             question: question, answer: answer, profession: "Менеджер проекта"
-        ) ?? nil
-        isAssessmentLoading = false
+        )
+        switch result {
+        case .success(let assessment):
+            isAssessmentLoading = false
+            self.assessment = assessment
+        case .failure:
+            isAssessmentLoading = false
+            isError = true
+        }
     }
 
     public func getQuestionsInProgress() -> String {

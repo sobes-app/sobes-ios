@@ -19,7 +19,13 @@ public struct MainView: View {
             case .materials:
                 MaterialsView(model: MaterialsViewModelImpl(materialsProvider: MaterialsProviderImpl()))
             case .interview:
-                InterviewEntryPointView(model: InterviewViewModelImpl(questionsProvider: QuestionsProviderImpl()))
+                InterviewEntryPointView(
+                    model: InterviewViewModelImpl(
+                        questionsProvider: QuestionsProviderImpl(
+                            profileProvider: profileProvider
+                        )
+                    )
+                )
             case .chat:
                 ChatsView(showTabBar: $showTabBar, model: ChatViewModelImpl(profileProvider: profileProvider, chatProvider: ChatsProviderImpl(profileProvider: profileProvider)))
             case .profile:

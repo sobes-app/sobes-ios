@@ -10,6 +10,8 @@ public protocol MaterialsViewModel: ObservableObject {
     var materials: [Types.Material] { get }
     var filters: [Types.Filter] { get }
     var materialsFilters: [Types.Filter] { get }
+    var isLoading: Bool { get }
+    var isError: Bool { get }
     func onViewAppear() async
     func onFilterTapped(id: Int) async
     func onMaterialsFilterTapped(id: Int) async
@@ -22,6 +24,8 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
     @Published public var materials: [Types.Material] = []
     @Published public var filters: [Types.Filter] = []
     @Published public var materialsFilters: [Types.Filter] = []
+    @Published public var isLoading: Bool = false
+    @Published public var isError: Bool = false
 
     public init(materialsProvider: MaterialsProvider) {
         self.materialsProvider = materialsProvider
@@ -98,11 +102,43 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
     }
 
     private func getTips() async -> [Types.Material] {
-        return await materialsProvider.getTips()
+        isError = false
+        isLoading = true
+
+        let result = await materialsProvider.getTips()
+        switch result {
+        case .success(let tips):
+            isLoading = false
+            return tips
+        case .failure(let error):
+            isLoading = false
+            if error == .empty {
+                return []
+            } else {
+                isError = true
+            }
+        }
+        return []
     }
 
     private func getArticles() async -> [Types.Material] {
-        return await materialsProvider.getArticles()
+        isError = false
+        isLoading = true
+
+        let result = await materialsProvider.getArticles()
+        switch result {
+        case .success(let articles):
+            isLoading = false
+            return articles
+        case .failure(let error):
+            isLoading = false
+            if error == .empty {
+                return []
+            } else {
+                isError = true
+            }
+        }
+        return []
 	}
 
     private func fetchArticle(from url: String) async -> ParsedArticle? {
