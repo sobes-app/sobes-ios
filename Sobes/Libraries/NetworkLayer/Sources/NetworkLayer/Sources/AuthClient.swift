@@ -29,6 +29,10 @@ public struct RefreshTokenRequest: Encodable {
     var refreshToken: String
 }
 
+public struct RefreshAccessTokenResponse: Decodable {
+    public var accessToken: String
+}
+
 public struct SignUpResponse: Decodable {
     public var id: Int
     public var email: String
@@ -41,8 +45,8 @@ public struct SignUpResponse: Decodable {
 public final class AuthClient {
     let netLayer: NetworkLayer
     
-    public init(token: String?) {
-        self.netLayer = NetworkLayer(token: token)
+    public init(token: String?, tokenType: String?) {
+        self.netLayer = NetworkLayer(token: token, tokenType: tokenType)
     }
     
     public func sendEmail(email: String) async -> Result<[String: String], ClientError> {
@@ -85,12 +89,15 @@ public final class AuthClient {
         }
     }
     
-    public func refreshToken(refreshToken: String,
-                             completion: @escaping (Result<SignUpResponse, ClientError>) -> Void) {
-        self.netLayer.makeRequest(method: "POST",
-                                  urlPattern: "/auth/refreshtoken",
-                                  body: RefreshTokenRequest(refreshToken: refreshToken),
-                                  completion: completion)
+    public func refreshToken(refreshToken: String) async -> Result<RefreshAccessTokenResponse, ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "POST",
+                                      urlPattern: "/auth/refreshtoken",
+                                      body: RefreshTokenRequest(refreshToken: refreshToken)) { result in
+                continuation.resume(returning: result)
+                
+            }
+        }
     }
     
     public func recoverAccountRequest(email: String) async -> Result<[String: String], ClientError> {

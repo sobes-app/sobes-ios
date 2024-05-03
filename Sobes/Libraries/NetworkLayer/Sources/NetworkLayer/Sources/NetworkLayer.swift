@@ -1,10 +1,11 @@
 import Foundation
 
-public enum ClientError: Error {
+public enum ClientError: Error, Equatable {
     case jsonEncodeError
     case jsonDecodeError
     case responseError
     case noDataError
+    case unautharized
     case httpError(Int)
 }
 
@@ -19,11 +20,13 @@ public struct ErrorResponse: Decodable {
 
 public final class NetworkLayer {
     let token: String?
+    let tokenType: String?
     
     //TODO: путь до бека
     let baseUrl = "http://localhost:8080"
-    public init(token: String?) {
+    public init(token: String?, tokenType: String?) {
         self.token = token
+        self.tokenType = tokenType
     }
     
     public func makeRequest<T: Decodable, Body: Encodable> (
@@ -33,15 +36,15 @@ public final class NetworkLayer {
         completion: @escaping (Result<T, ClientError>) -> Void) {
             let url = URL(string: baseUrl + urlPattern)!
             var request = URLRequest(url: url)
-            if let token {
-                print(token)
-                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            if let token = token {
+                if let tokenType = tokenType {
+                    request.setValue("\(tokenType) \(token)", forHTTPHeaderField: "Authorization")
+                }
             }
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpMethod = method
             if method != "GET" {
                 let encoder = JSONEncoder()
-                encoder.keyEncodingStrategy = .convertToSnakeCase
                 guard let httpBody = try? encoder.encode(body) else {
                     completion(.failure(.jsonEncodeError))
                     return
@@ -58,10 +61,9 @@ public final class NetworkLayer {
                 if let httpResponse = response as? HTTPURLResponse {
                     switch httpResponse.statusCode {
                     case 401, 403:
-                        NotificationCenter.default.post(name: .unauthNetworkNotificationName, object: nil)
+                        completion(.failure(.unautharized))
                         return
                     case 400...599:
-                        print(httpResponse.statusCode)
                         completion(.failure(.httpError(httpResponse.statusCode)))
                         return
                     default:
@@ -86,7 +88,6 @@ public final class NetworkLayer {
                     let resp = try decoder.decode(T.self, from: data)
                     completion(.success(resp))
                 } catch {
-                    print(error)
                     completion(.failure(.jsonDecodeError))
                 }
             }

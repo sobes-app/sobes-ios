@@ -20,8 +20,8 @@ public struct ArticleResponse: Decodable {
 
 public final class MaterialsClient {
 
-    public init(token: String?) {
-        self.netLayer = NetworkLayer(token: token)
+    public init(token: String?, tokenType: String?) {
+        self.netLayer = NetworkLayer(token: token, tokenType: tokenType)
     }
 
     public func getTips() async -> Result<[TipResponse], ClientError> {

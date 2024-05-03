@@ -29,36 +29,44 @@ public struct ChatsView<Model: ChatViewModel>: View {
     
     public var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: Constants.defSpacing) {
-                Text("Чаты")
-                    .font(Fonts.heading)
-                    .foregroundColor(.black)
-                    .padding(.horizontal, Constants.horizontal)
-                select
-                    .padding(.horizontal, Constants.horizontal)
-                switch page {
-                case .chats:
-                    chats
-                case .search:
-                    search
+            ZStack {
+                VStack(alignment: .leading, spacing: Constants.defSpacing) {
+                    Text("Чаты")
+                        .font(Fonts.heading)
+                        .foregroundColor(.black)
+                        .padding(.horizontal, Constants.horizontal)
+                    select
+                        .padding(.horizontal, Constants.horizontal)
+                    switch page {
+                    case .chats:
+                        chats
+                    case .search:
+                        search
+                    }
+                    Spacer()
                 }
-                Spacer()
+                .navigationDestination(isPresented: $filterPresent, destination: {
+                    FilterView(model: model, showTabBar: $showTabBar)
+                        .navigationBarBackButtonHidden()
+                })
+                .onAppear {
+                    Task { @MainActor in
+                        await model.onViewAppear()
+                    }
+                }
+                .padding(.bottom, Constants.horizontal)
+                
+                if model.isLoading {
+                    SplashScreen()
+                }
             }
-            .navigationDestination(isPresented: $filterPresent, destination: {
-                FilterView(model: model, showTabBar: $showTabBar)
-                    .navigationBarBackButtonHidden()
-            })
-            .onAppear {
-                model.onViewAppear()
-            }
-            .padding(.bottom, Constants.horizontal)
         }
     }
     
     var filteredItems: [Profile] {
-        return model.profiles.filter { item in
+        return model.profiles?.filter { item in
             input.isEmpty || item.name.lowercased().contains(input.lowercased())
-        }
+        } ?? []
     }
     
     var search: some View {
@@ -67,20 +75,22 @@ public struct ChatsView<Model: ChatViewModel>: View {
             ScrollView {
                 VStack(spacing: Constants.defSpacing) {
                     ForEach(filteredItems) { profile in
-                        if profile != model.getCurrentUser() {
-                            ProfileElementView(profile: profile, onChatTapped: {
-                                if !model.checkChatExistance(responder: profile) {
-                                    model.createNewChat(reponder: profile)
-                                }
-                                withAnimation {
-                                    page = .chats
-                                }
-                            })
-                        }
+                        ProfileElementView(profile: profile, onChatTapped: {
+                            if !model.checkChatExistance(responder: profile) {
+                                model.createNewChat(reponder: profile)
+                            }
+                            withAnimation {
+                                page = .chats
+                            }
+                        })
                     }
                 }
             }
-            .refreshable {}
+            .refreshable {
+                Task { @MainActor in
+                    await model.onViewAppear()
+                }
+            }
             .scrollDismissesKeyboard(.immediately)
             .scrollIndicators(.hidden)
         }
@@ -99,7 +109,7 @@ public struct ChatsView<Model: ChatViewModel>: View {
     
     var chats: some View {
         ScrollView {
-            ForEach(model.chats) { chat in
+            ForEach(model.chats ?? []) { chat in
                 NavigationLink(destination: ChatDetailView(showTabBar: $showTabBar,
                                                            chat: chat,
                                                            model: model)) {

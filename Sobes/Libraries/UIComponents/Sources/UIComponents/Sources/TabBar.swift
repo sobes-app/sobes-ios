@@ -15,7 +15,7 @@ public struct TabBar: View {
                     .renderingMode(.template)
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 24)
-                    .foregroundStyle(selectedTab == .materials ? .white : Color(.light))
+                    .foregroundStyle(selectedTab == .materials ? .white : .gray)
             }
 
             Button {
@@ -25,7 +25,7 @@ public struct TabBar: View {
                     .renderingMode(.template)
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 24)
-                    .foregroundStyle(selectedTab == .interview ? .white : Color(.light))
+                    .foregroundStyle(selectedTab == .interview ? .white : .gray)
             }
 
             Button {
@@ -35,7 +35,7 @@ public struct TabBar: View {
                     .renderingMode(.template)
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 24)
-                    .foregroundStyle(selectedTab == .chat ? .white : Color(.light))
+                    .foregroundStyle(selectedTab == .chat ? .white : .gray)
             }
 
             Button {
@@ -45,7 +45,7 @@ public struct TabBar: View {
                     .renderingMode(.template)
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 24)
-                    .foregroundStyle(selectedTab == .profile ? .white : Color(.light))
+                    .foregroundStyle(selectedTab == .profile ? .white : .gray)
             }
         }
         .ignoresSafeArea(.keyboard)

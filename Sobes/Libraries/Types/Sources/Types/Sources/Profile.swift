@@ -31,7 +31,6 @@ public struct Profile: Identifiable, Hashable {
     public var professions: [Professions]
     public var companies: [Companies]
     public var level: Levels
-    public var refreshToken: String
     
     public init() {
         self.id = 0
@@ -40,7 +39,6 @@ public struct Profile: Identifiable, Hashable {
         self.companies = [.no]
         self.level = .no
         self.email = "example@ya.ru"
-        self.refreshToken = ""
     }
     
     public init(signUpResponse: SignUpResponse) {
@@ -50,17 +48,15 @@ public struct Profile: Identifiable, Hashable {
         self.professions = []
         self.companies = []
         self.level = Levels.no
-        self.refreshToken = signUpResponse.refreshToken
     }
     
-    public init(profileResponse: ProfileResponse, refreshToken: String) {
+    public init(profileResponse: ProfileResponse) {
         self.id = profileResponse.id
         self.name = profileResponse.username ?? ""
         self.email = profileResponse.email
         self.professions = Profile.setProfessions(array: Array(profileResponse.professions ?? []))
         self.companies = Profile.setCompanies(array: Array(profileResponse.companies ?? []))
         self.level = Levels(rawValue: profileResponse.level ?? "") ?? .no
-        self.refreshToken = refreshToken
     }
     
     public static func createStringOfCompanies(of profile: Profile) -> [String] {
