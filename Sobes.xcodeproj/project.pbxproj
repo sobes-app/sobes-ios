@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05B9E8968DD79110A3539450 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 9AAB613DC6C734A86D6F67B1 /* SwiftSoup */; };
 		09A97AAEE3ABCF90432D2D0C /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB7FF03488FC3A5564B68E6E /* Media.xcassets */; };
 		1B4E37F3E7A2ED8226C687A1 /* Toolbox in Frameworks */ = {isa = PBXBuildFile; productRef = 04CB3256A8930B988C790464 /* Toolbox */; };
 		1EA433DFD508C5B7A44F9360 /* SwiftUIGIF in Frameworks */ = {isa = PBXBuildFile; productRef = C38AE65860A9DE8EC2C7457F /* SwiftUIGIF */; };
 		1FC97C4ED085CE1BD6FD9E28 /* EntryPointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5451022752FC90FD51F87803 /* EntryPointView.swift */; };
 		2BF0031E108AB9E39C98A56A /* Profile in Frameworks */ = {isa = PBXBuildFile; productRef = 824023B102ED7ECF050CD92B /* Profile */; };
 		323FF5DB2C45B16EBB0002CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF46344658ABC2FD254BED77 /* ContentView.swift */; };
+		3C530CC56827A5E1032CEA81 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 3363D49F82E4786D3E7B78D5 /* Alamofire */; };
 		5F05D0FC47369E6E742D0DF6 /* Materials in Frameworks */ = {isa = PBXBuildFile; productRef = 33318F6D74D3038758FE1634 /* Materials */; };
 		6EC8C01160588D5C75CA7E6A /* SwiftyKeychainKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7CACF08556F089242EA3E657 /* SwiftyKeychainKit */; };
 		6F382E0557D9704D1522BB20 /* SobesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BC15B7AEE733B31130AE65 /* SobesApp.swift */; };
@@ -92,6 +94,8 @@
 				9FEDCEAB9F37381C8CB33316 /* Providers in Frameworks */,
 				1EA433DFD508C5B7A44F9360 /* SwiftUIGIF in Frameworks */,
 				6EC8C01160588D5C75CA7E6A /* SwiftyKeychainKit in Frameworks */,
+				3C530CC56827A5E1032CEA81 /* Alamofire in Frameworks */,
+				05B9E8968DD79110A3539450 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,13 +109,6 @@
 				8E4FF843CEDBD8A6C1BFA80E /* CoFoSans-Regular.ttf */,
 			);
 			path = Fonts;
-			sourceTree = "<group>";
-		};
-		617D91222A1F96274994A73F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		633E0B5AD19666F57FF3254D /* Sobes */ = {
@@ -138,18 +135,9 @@
 			isa = PBXGroup;
 			children = (
 				DE64F142281DCAA9CB37CA9E /* Project */,
-				617D91222A1F96274994A73F /* Frameworks */,
-				85A194BA7C2EC45672C8F3EA /* Cache */,
 				CAEAB2C2BF0DD83C38196ECF /* Products */,
 				B71E3A24B7FA6386E95EC181 /* Packages */,
 			);
-			sourceTree = "<group>";
-		};
-		85A194BA7C2EC45672C8F3EA /* Cache */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Cache;
 			sourceTree = "<group>";
 		};
 		A3B3AED4B4450A81D4F7FA1B /* Derived */ = {
@@ -164,15 +152,15 @@
 			isa = PBXGroup;
 			children = (
 				E436B704D2E1609F0162A2DB /* Authorization */,
-				7E0310729F3C4675FCE9D6BB /* UIComponents */,
-				074EDA10E4BF2CAEF11FAF81 /* Profile */,
 				9008B7159A75AC35CCC62150 /* Chats */,
-				1EBB81CE7895D83631574242 /* Materials */,
-				575A14500DDE9C80C9DDBDCB /* Types */,
-				FE39A994F4CD75769344D4F5 /* Providers */,
 				746536782072B44421A82605 /* Interview */,
-				C1A5B72100A8F109499EB87F /* Toolbox */,
+				1EBB81CE7895D83631574242 /* Materials */,
 				4B51F2177AD8348F476EAD63 /* NetworkLayer */,
+				074EDA10E4BF2CAEF11FAF81 /* Profile */,
+				FE39A994F4CD75769344D4F5 /* Providers */,
+				C1A5B72100A8F109499EB87F /* Toolbox */,
+				575A14500DDE9C80C9DDBDCB /* Types */,
+				7E0310729F3C4675FCE9D6BB /* UIComponents */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -247,6 +235,8 @@
 				E1EEE74F258AC4F4587915FE /* Providers */,
 				C38AE65860A9DE8EC2C7457F /* SwiftUIGIF */,
 				7CACF08556F089242EA3E657 /* SwiftyKeychainKit */,
+				3363D49F82E4786D3E7B78D5 /* Alamofire */,
+				9AAB613DC6C734A86D6F67B1 /* SwiftSoup */,
 			);
 			productName = Sobes;
 			productReference = 308FAA419A3AF3827A2BFDF9 /* Sobes.app */;
@@ -273,9 +263,11 @@
 			);
 			mainGroup = 720B1E35ED662266430FCE19;
 			packageReferences = (
+				CB408C43D639BBC921273D3F /* XCRemoteSwiftPackageReference "Alamofire" */,
 				C6C47D98F0094C501413EC7C /* XCRemoteSwiftPackageReference "SwiftyKeychainKit" */,
 				60678069E0FEAA07CB34239C /* XCRemoteSwiftPackageReference "WrappingHStack" */,
 				48565CE09132DCFA28CF00C4 /* XCRemoteSwiftPackageReference "swiftui-gif" */,
+				D81951CE4D6D5416AF6F0A42 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 			);
 			productRefGroup = CAEAB2C2BF0DD83C38196ECF /* Products */;
 			projectDirPath = "";
@@ -533,6 +525,22 @@
 				minimumVersion = "1.0.0-beta.2";
 			};
 		};
+		CB408C43D639BBC921273D3F /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.9.1;
+			};
+		};
+		D81951CE4D6D5416AF6F0A42 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -543,6 +551,10 @@
 		33318F6D74D3038758FE1634 /* Materials */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Materials;
+		};
+		3363D49F82E4786D3E7B78D5 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Alamofire;
 		};
 		45D4EE3CE452A68C230C2889 /* Interview */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -559,6 +571,10 @@
 		824023B102ED7ECF050CD92B /* Profile */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Profile;
+		};
+		9AAB613DC6C734A86D6F67B1 /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftSoup;
 		};
 		9C380053BDEB33F32B55201D /* Types */ = {
 			isa = XCSwiftPackageProductDependency;

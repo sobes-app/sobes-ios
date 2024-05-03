@@ -1,5 +1,6 @@
 import SwiftUI
 import UIComponents
+import Toolbox
 import Types
 
 public struct MaterialsView<Model: MaterialsViewModel>: View {
@@ -9,15 +10,18 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
     }
     
     public var body: some View {
-        VStack(spacing: Constants.defSpacing) {
-            headline
-            filters
-            bubbles
+        NavigationStack {
+            VStack(spacing: Constants.defSpacing) {
+                headline
+                filters
+                bubbles
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, Constants.horizontal)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, Constants.horizontal)
-        .onAppear {
-            model.onViewAppear()
+        .navigationBarBackButtonHidden()
+        .task {
+            await model.onViewAppear()
         }
     }
     
@@ -34,7 +38,9 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
             ForEach(model.materialsFilters) { filter in
                 FilterBubble(filter: filter)
                     .onTapGesture {
-                        model.onMaterialsFilterTapped(id: filter.id)
+                        Task { @MainActor in
+                            await model.onMaterialsFilterTapped(id: filter.id)
+                        }
                     }
             }
         }
@@ -49,7 +55,9 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
             ForEach(model.filters) { filter in
                 FilterBubble(filter: filter, type: .secondary)
                     .onTapGesture {
-                        model.onFilterTapped(id: filter.id)
+                        Task { @MainActor in
+                            await model.onFilterTapped(id: filter.id)
+                        }
                     }
             }
         }
@@ -60,13 +68,20 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
         ScrollView {
             VStack(spacing: Constants.defSpacing) {
                 ForEach(model.materials, id: \.self) { material in
-                    MaterialBubble(model: material)
+                    if case .article(let article) = material {
+                        NavigationLink(destination: ArticleView(model: model, id: article.id)) {
+                            MaterialBubble(model: material)
+                        }
+                    } else {
+                        MaterialBubble(model: material)
+                    }
                 }
             }
         }
         .scrollIndicators(.hidden)
     }
 
+    @State private var isPresentWebView = false
     @StateObject private var model: Model
 
 }

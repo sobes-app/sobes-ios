@@ -28,7 +28,7 @@ public final class NetworkLayer {
     let token: String?
     
     //TODO: путь до бека
-    let baseUrl = "http://localhost:8082"
+    let baseUrl = "http://localhost:8080"
     public init(token: String?) {
         self.token = token
     }

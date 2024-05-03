@@ -11,10 +11,12 @@ let project = Project(
         .local(path: "Sobes/Libraries/Materials"),
         .local(path: "Sobes/Libraries/Types"),
         .local(path: "Sobes/Libraries/Providers"),
-        .package(url: "https://github.com/globulus/swiftui-gif", .upToNextMajor(from: "1.0.1")),
         .local(path: "Sobes/Libraries/Interview"),
         .local(path: "Sobes/Libraries/Toolbox"),
-        .local(path: "Sobes/Libraries/NetworkLayer"),
+		.local(path: "Sobes/Libraries/NetworkLayer"),
+        .package(url: "https://github.com/globulus/swiftui-gif", .upToNextMajor(from: "1.0.1")),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.9.1")),
+        .package(url: "https://github.com/scinfu/SwiftSoup.git", .upToNextMajor(from: "2.7.2")),
         .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
         .package(url: "https://github.com/andriyslyusar/SwiftyKeychainKit", .upToNextMajor(from: "1.0.0-beta.2"))
     ],
@@ -41,7 +43,9 @@ let project = Project(
                 .package(product: "WrappingHStack", type: .runtime),
                 .package(product: "Providers"),
                 .package(product: "SwiftUIGIF", type: .runtime),
-                .package(product: "SwiftyKeychainKit", type: .runtime)
+                .package(product: "SwiftyKeychainKit", type: .runtime),
+                .package(product: "Alamofire", type: .runtime),
+                .package(product: "SwiftSoup", type: .runtime),
             ]
         ),
     ]

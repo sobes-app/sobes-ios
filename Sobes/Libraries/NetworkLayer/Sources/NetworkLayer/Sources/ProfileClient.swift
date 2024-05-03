@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Алиса Вышегородцева on 29.04.2024.
-//
-
 import Foundation
 
 public struct ProfileResponse: Decodable {
@@ -40,6 +33,7 @@ public final class ProfileClient {
         self.netLayer = NetworkLayer(token: token)
     }
     
+
     public func getProfile() async -> Result<ProfileResponse, ClientError>{
         await withCheckedContinuation { continuation in
             self.netLayer.makeRequest(method: "GET",
