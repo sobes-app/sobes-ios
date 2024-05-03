@@ -14,7 +14,7 @@ public struct InterviewAssessmentView<Model: InterviewViewModel>: View {
         VStack(alignment: .leading, spacing: Constants.topPadding) {
             BackButton()
             if model.isAssessmentLoading {
-                LoadingQuestionsScreen(placeholder: "Оцениваем ваш ответ...")
+                LoadingScreen(placeholder: "Оцениваем ваш ответ...")
             } else {
                 if let assessment = model.assessment {
                     loadedView(assessment: assessment)

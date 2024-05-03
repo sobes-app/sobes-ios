@@ -4,20 +4,20 @@ import NetworkLayer
 import SwiftyKeychainKit
 
 public protocol MaterialsProvider {
-    func getTips() async -> [Types.Material]
-    func getArticles() async -> [Types.Material]
+    func getTips() async -> Result<[Types.Material], CustomError>
+    func getArticles() async -> Result<[Types.Material], CustomError>
 }
 
 public final class MaterialsProviderImpl: MaterialsProvider {
 
     public init() { }
 
-    public func getTips() async -> [Types.Material] {
+    public func getTips() async -> Result<[Types.Material], CustomError> {
         let materialsClient = MaterialsClient(token: try? self.keychain.get(accessTokenKey))
         let result = await materialsClient.getTips()
         switch result {
         case .success(let tips):
-            return tips.map {
+            return .success(tips.map {
                 .tip(
                     model: Tip(
                         id: $0.id,
@@ -30,22 +30,42 @@ public final class MaterialsProviderImpl: MaterialsProvider {
                         text: $0.text
                     )
                 )
+            })
+        case .failure(let error):
+            switch error {
+            case .httpError(let code):
+                if code == 404 {
+                    return .failure(.empty)
+                }
+                return .failure(.error)
+            case .noDataError:
+                return .failure(.empty)
+            case .jsonDecodeError, .jsonEncodeError, .responseError:
+                return .failure(.error)
             }
-        case .failure:
-            return []
         }
     }
 
-    public func getArticles() async -> [Types.Material] {
+    public func getArticles() async -> Result<[Types.Material], CustomError> {
         let materialsClient = MaterialsClient(token: try? self.keychain.get(accessTokenKey))
         let result = await materialsClient.getArticles()
         switch result {
         case .success(let articles):
-            return articles.map {
+            return .success(articles.map {
                 .article(model: Article(id: $0.id, logo: URL(string: $0.link)?.host(), author: $0.author, text: $0.author, url: $0.link))
+            })
+        case .failure(let error):
+            switch error {
+            case .httpError(let code):
+                if code == 404 {
+                    return .failure(.empty)
+                }
+                return .failure(.error)
+            case .noDataError:
+                return .failure(.empty)
+            case .jsonDecodeError, .jsonEncodeError, .responseError:
+                return .failure(.error)
             }
-        case .failure:
-            return []
         }
     }
 

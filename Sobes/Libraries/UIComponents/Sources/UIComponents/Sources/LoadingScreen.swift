@@ -1,7 +1,6 @@
 import SwiftUI
-import UIComponents
 
-public struct LoadingQuestionsScreen: View {
+public struct LoadingScreen: View {
 
     public init(placeholder: String) {
         self.placeholder = placeholder

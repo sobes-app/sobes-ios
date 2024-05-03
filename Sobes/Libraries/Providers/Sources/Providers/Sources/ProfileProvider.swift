@@ -10,7 +10,10 @@ public protocol ProfileProvider {
     func getCurrentUser() -> Profile
     func updateProfileInfo(id: Int, companies: [Companies], level: Levels, professions: [Professions])
     func getProfiles() -> [Types.Profile]
-    
+
+    func getUserProfessions() -> [Professions]
+    func getUserLevel() -> Levels
+
     func sendEmail(email: String) async -> Bool
     func verifyCode(email: String, code: String) async -> Bool
     func registerUser(email: String, name: String, password: String) async -> Bool
@@ -32,7 +35,15 @@ public final class ProfileProviderImpl: ProfileProvider {
     private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
         
     public init() { }
-    
+
+    public func getUserProfessions() -> [Professions] {
+        return profile?.professions ?? []
+    }
+
+    public func getUserLevel() -> Levels {
+        return profile?.level ?? .jun
+    }
+
     public func sendEmail(email: String) async -> Bool {
         let authClient = AuthClient(token: try? self.keychain.get(accessTokenKey))
         let result = await authClient.sendEmail(email: email)

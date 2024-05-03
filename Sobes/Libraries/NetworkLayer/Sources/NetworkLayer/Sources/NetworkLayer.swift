@@ -1,10 +1,3 @@
-//
-//  NetworkLayer.swift
-//
-//
-//  Created by Ринат Афиатуллов on 18.04.2023.
-//
-
 import Foundation
 
 public enum ClientError: Error {
@@ -40,7 +33,7 @@ public final class NetworkLayer {
         completion: @escaping (Result<T, ClientError>) -> Void) {
             let url = URL(string: baseUrl + urlPattern)!
             var request = URLRequest(url: url)
-            if let token = token {
+            if let token {
                 print(token)
                 request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
@@ -81,7 +74,7 @@ public final class NetworkLayer {
                     return
                 }
                 
-                guard let data = data else {
+                guard let data else {
                     completion(.failure(.noDataError))
                     return
                 }

@@ -14,10 +14,19 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
             VStack(spacing: Constants.defSpacing) {
                 headline
                 filters
-                bubbles
+                materials
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, Constants.horizontal)
+            .overlay {
+                if model.isError {
+                    ErrorView(retryAction: {
+                        Task { @MainActor in
+                            await model.onViewAppear()
+                        }
+                    })
+                }
+            }
         }
         .navigationBarBackButtonHidden()
         .task {
@@ -64,21 +73,26 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var bubbles: some View {
-        ScrollView {
-            VStack(spacing: Constants.defSpacing) {
-                ForEach(model.materials, id: \.self) { material in
-                    if case .article(let article) = material {
-                        NavigationLink(destination: ArticleView(model: model, id: article.id)) {
+    @ViewBuilder
+    private var materials: some View {
+        if model.isLoading {
+            LoadingScreen(placeholder: "Загружаем материалы...")
+        } else {
+            ScrollView {
+                VStack(spacing: Constants.defSpacing) {
+                    ForEach(model.materials, id: \.self) { material in
+                        if case .article(let article) = material {
+                            NavigationLink(destination: ArticleView(model: model, id: article.id)) {
+                                MaterialBubble(model: material)
+                            }
+                        } else {
                             MaterialBubble(model: material)
                         }
-                    } else {
-                        MaterialBubble(model: material)
                     }
                 }
             }
+            .scrollIndicators(.hidden)
         }
-        .scrollIndicators(.hidden)
     }
 
     @State private var isPresentWebView = false

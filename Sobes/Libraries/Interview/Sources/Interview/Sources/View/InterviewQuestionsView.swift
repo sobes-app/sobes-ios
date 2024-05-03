@@ -1,15 +1,10 @@
 import SwiftUI
+import Types
 import UIComponents
-
-public enum InterviewType: String {
-    case ba = "Бизнес-аналитик"
-    case product = "Менеджер продукта"
-    case project = "Менеджер проектов"
-}
 
 public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
 
-    public init(model: Model, type: InterviewType) {
+    public init(model: Model, type: Professions) {
         self._model = ObservedObject(wrappedValue: model)
         self.type = type
     }
@@ -19,8 +14,6 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
             VStack(spacing: Constants.topPadding) {
                 navBar
                 questionsBlock
-                Spacer()
-                changeQuestionsButton
             }
             .padding(.horizontal, Constants.horizontal)
         }
@@ -53,10 +46,24 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
                     }
                 }
             }
+            Spacer()
+            changeQuestionsButton
         }
         .overlay {
             if model.areQuestionsLoading {
-                LoadingQuestionsScreen(placeholder: "Подготавливаем вам вопросы...")
+//                LoadingQuestionsScreen(placeholder: "Подготавливаем вам вопросы...")
+                ErrorView(retryAction: {
+                    Task { @MainActor in
+                        await model.fetchQuestions(for: type)
+                    }
+                })
+            }
+            if model.isError {
+                ErrorView(retryAction: {
+                    Task { @MainActor in
+                        await model.fetchQuestions(for: type)
+                    }
+                })
             }
         }
     }
@@ -73,7 +80,7 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
         .padding(.bottom, 20)
     }
 
-    private let type: InterviewType
+    private let type: Professions
     @ObservedObject private var model: Model
 
 }
