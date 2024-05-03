@@ -9,35 +9,70 @@ import SwiftUI
 import UIComponents
 
 struct AuthNewPasswordView<Model: AuthViewModel>: View {
+    @EnvironmentObject var auth: Authentication
     
     public init(model: Model) {
         self._model = ObservedObject(wrappedValue: model)
     }
             
     public var body: some View {
-        VStack(alignment: .leading) {
-            BackButton()
-            VStack(alignment: .leading, spacing: Constants.defSpacing){
-                Text("Восстановление пароля")
-                    .font(Fonts.heading)
-                    .foregroundColor(.black)
-                TextFieldView(model: .password, input: $inputPassword, inputState: $inputPasswordState)
-                TextFieldView(model: .repPassword, input: $inputRep, inputState: $inputRepState)
-                Spacer()
-                button
+        ZStack {
+            VStack(alignment: .leading) {
+                BackButton()
+                VStack(alignment: .leading, spacing: Constants.defSpacing){
+                    Text("Восстановление пароля")
+                        .font(Fonts.heading)
+                        .foregroundColor(.black)
+                    TextFieldView(model: .password, input: $inputPassword, inputState: $inputPasswordState)
+                    TextFieldView(model: .repPassword, input: $inputRep, inputState: $inputRepState)
+                    Spacer()
+                    VStack {
+                        if incorrect {
+                            IncorrectView(text: message)
+                        }
+                        button
+                    }
+                }
+                .padding(.top, Constants.topPadding)
             }
-            .padding(.top, Constants.topPadding)
+            .padding(.horizontal, Constants.horizontal)
+            .padding(.bottom, Constants.bottom)
+            if model.isLoading {
+                ZStack {
+                    SplashScreen()
+                }
+            }
         }
-        .padding(.horizontal, Constants.horizontal)
-        .padding(.bottom, Constants.bottom)
     }
     
     private var button: some View {
         MainButton(action: {
-            if !model.updatePassword(newPassword: inputPassword, repeatPassword: inputRep) {
-                //TODO: обработка некорректности
+            if inputPassword != inputRep {
+                message = "пароли не совпадают"
+                showIncorrect()
+            } else {
+                Task { @MainActor in
+                    let success = await model.updatePassword(password: inputPassword)
+                    if success {
+                        auth.updateStatus(success: true)
+                    } else {
+                        message = "ошибка при смене пароля"
+                        showIncorrect()
+                    }
+                }
             }
         }, label: "Войти")
+    }
+    
+    func showIncorrect() {
+        withAnimation {
+            incorrect = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+            withAnimation {
+                incorrect = false
+            }
+        })
     }
 
     @ObservedObject private var model: Model
@@ -47,5 +82,8 @@ struct AuthNewPasswordView<Model: AuthViewModel>: View {
 
     @State private var inputRep: String = ""
     @State private var inputRepState: TextFieldView.InputState = .correct
+    
+    @State private var incorrect: Bool = false
+    @State private var message: String = "ошибка смены пароля"
     
 }

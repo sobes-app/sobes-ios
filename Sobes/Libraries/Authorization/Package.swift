@@ -14,13 +14,14 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "Sobes/Sources/Libraries/UIComponents"),
+        .package(path: "Sobes/Sources/Libraries/Providers"),
         .package(path: "Sobes/Sources/Libraries/NetworkLayer"),
         .package(url: "https://github.com/andriyslyusar/SwiftyKeychainKit", from: "1.0.0-beta.2"),
     ],
     targets: [
         .target(
             name: "Authorization",
-            dependencies: ["UIComponents", "NetworkLayer", "SwiftyKeychainKit"],
+            dependencies: ["UIComponents", "NetworkLayer", "SwiftyKeychainKit", "Providers"],
             sources: ["Sources"],
             resources: [.process("Resources")]
         ),

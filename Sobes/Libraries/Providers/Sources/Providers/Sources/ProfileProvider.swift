@@ -6,18 +6,20 @@ import SwiftyKeychainKit
 public protocol ProfileProvider {
     var profile: Profile? {get set}
     
-    func getProfile(onFinish: @escaping ((Result<Profile, ClientError>) -> Void))
+    func getProfile() async -> Profile
     func getCurrentUser() -> Profile
     func updateProfileInfo(id: Int, companies: [Companies], level: Levels, professions: [Professions])
-    func setNewName(name: String)
     func getProfiles() -> [Types.Profile]
     
     func sendEmail(email: String) async -> Bool
-    func verifyCode(code: String) async -> Bool
-    func registerUser(name: String, password: String) async -> Bool
+    func verifyCode(email: String, code: String) async -> Bool
+    func registerUser(email: String, name: String, password: String) async -> Bool
     func authUser(email: String, password: String) async -> Bool
-    func createProfile() async -> Bool
+    func createProfile(exp: String, comp: [String], prof: [String]) async -> Bool
     func changePassword(oldPassword: String, newPassword: String) async -> Bool
+    func recoverAccount(email: String) async -> Bool
+    func forgotPassword(email: String, password: String) async -> Bool
+    func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Bool
     func logout()
 }
 
@@ -27,7 +29,7 @@ public final class ProfileProviderImpl: ProfileProvider {
     
     private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
     private let accessTokenKey = KeychainKey<String>(key: "accessToken")
-    private var email: String = ""
+    private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
         
     public init() { }
     
@@ -36,14 +38,13 @@ public final class ProfileProviderImpl: ProfileProvider {
         let result = await authClient.sendEmail(email: email)
         switch result {
         case .success:
-            self.email = email
             return true
         case .failure:
             return false
         }
     }
     
-    public func verifyCode(code: String) async -> Bool {
+    public func verifyCode(email: String, code: String) async -> Bool {
         let authClient = AuthClient(token: try? self.keychain.get(accessTokenKey))
         let result = await authClient.verifyCode(email: email, code: code)
         switch result {
@@ -54,12 +55,13 @@ public final class ProfileProviderImpl: ProfileProvider {
         }
     }
     
-    public func registerUser(name: String, password: String) async -> Bool {
+    public func registerUser(email: String, name: String, password: String) async -> Bool {
         let authClient = AuthClient(token: try? self.keychain.get(accessTokenKey))
         let result = await authClient.registerUser(email: email, password: password, username: name)
         switch result {
         case .success(let success):
             try? self.keychain.set(success.token, for: self.accessTokenKey)
+            try? self.keychain.set(success.refreshToken, for: self.refreshTokenKey)
             self.profile = Profile(signUpResponse: success)
             return true
         case .failure:
@@ -73,6 +75,7 @@ public final class ProfileProviderImpl: ProfileProvider {
         switch result {
         case .success(let success):
             try? self.keychain.set(success.token, for: self.accessTokenKey)
+            try? self.keychain.set(success.refreshToken, for: self.refreshTokenKey)
             self.profile = Profile(signUpResponse: success)
             return true
         case .failure:
@@ -80,32 +83,38 @@ public final class ProfileProviderImpl: ProfileProvider {
         }
     }
     
-    public func getProfile(onFinish: @escaping ((Result<Profile, ClientError>) -> Void)) {
+    public func getProfile() async -> Profile {
         let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey))
-        profileClient.getProfile(completion: { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let resp):
-                    let p = Profile(profileResponse: resp)
-                    self.profile = p
-                    onFinish(.success(p))
-                case .failure(let fail):
-                    onFinish(.failure(fail))
-                }
-            }
-        })
-    }
-
-    public func createProfile() async -> Bool {
-        let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey))
-        let result = await profileClient.createProfile()
+        let result = await profileClient.getProfile()
         switch result {
         case .success(let success):
-            profile?.level = Levels(rawValue: success.level) ?? .no
-            profile?.professions = Profile.setProfessions(array: success.professions)
-            profile?.companies = Profile.setCompanies(array: success.companies)
+            let refresh = (try? self.keychain.get(refreshTokenKey)) ?? ""
+            let profile = Profile(profileResponse: success, refreshToken: refresh)
+            setProfile(profile: profile)
+            return profile
+        case .failure(let failure):
+            print(failure)
+            return Profile()
+        }
+    }
+    
+    func updateProfile(response: ProfileResponse) {
+        self.profile?.level = Levels(rawValue: response.level ?? "") ?? .no
+        self.profile?.companies = Profile.setCompanies(array: Array(response.companies ?? []))
+        self.profile?.professions = Profile.setProfessions(array: Array(response.professions ?? []))
+    }
+
+    public func createProfile(exp: String, comp: [String], prof: [String]) async -> Bool {
+        let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey))
+        let result = await profileClient.createProfile(exp: exp, prof: prof, comp: comp)
+        switch result {
+        case .success(let success):
+            profile?.level = Levels(rawValue: success.level ?? "") ?? .no
+            profile?.professions = Profile.setProfessions(array: Array(success.professions ?? []))
+            profile?.companies = Profile.setCompanies(array: Array(success.companies ?? []))
             return true
-        case .failure:
+        case .failure(let failure):
+            print(failure)
             return false
         }
     }
@@ -117,8 +126,8 @@ public final class ProfileProviderImpl: ProfileProvider {
         case .success:
             print("suc")
             return true
-        case .failure:
-            print("f")
+        case .failure(let failure):
+            print(failure)
             return false
         }
     }
@@ -133,7 +142,45 @@ public final class ProfileProviderImpl: ProfileProvider {
     
     public func logout() {
         try? keychain.remove(accessTokenKey)
+        try? keychain.remove(refreshTokenKey)
         profile = nil
+    }
+    
+    public func recoverAccount(email: String) async -> Bool {
+        let authClient = AuthClient(token: try? self.keychain.get(accessTokenKey))
+        let result = await authClient.recoverAccountRequest(email: email)
+        switch result {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
+    }
+    
+    public func forgotPassword(email: String, password: String) async -> Bool {
+        let authClient = AuthClient(token: try? self.keychain.get(accessTokenKey))
+        let result = await authClient.updatePassword(email: email, password: password)
+        switch result {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
+    }
+    
+    public func updateProfile(level: String? = nil, professions: [String]? = nil, companies: [String]? = nil) async -> Bool {
+        let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey))
+        let result = await profileClient.updateProfile(level: level, professions: professions, companies: companies)
+        switch result {
+        case .success(let success):
+            profile?.level = Levels(rawValue: success.level ?? "") ?? .no
+            profile?.professions = Profile.setProfessions(array: Array(success.professions ?? []))
+            profile?.companies = Profile.setCompanies(array: Array(success.companies ?? []))
+            return true
+        case .failure(let failure):
+            print(failure)
+            return false
+        }
     }
     
     
@@ -143,7 +190,7 @@ public final class ProfileProviderImpl: ProfileProvider {
     
     
     private var profiles: [Types.Profile] = [
-        Profile(id: 500, name: "Алиса Вышегородцева", email: "alisavy2010@gmail.com" ,professions: [], companies: [], level: .no)
+        Profile()
     ]
     
     public func updateProfileInfo(id: Int, companies: [Companies], level: Levels, professions: [Professions]) {

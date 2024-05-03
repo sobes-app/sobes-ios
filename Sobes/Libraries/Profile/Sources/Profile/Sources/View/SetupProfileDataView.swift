@@ -24,52 +24,49 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
     @State private var currentQuestion: Question = .professions
     @State private var step: Double = 1
     @State private var label: String = "Дальше"
-    private var question: Question?
+    
+    private let stepsCount: Double
     
     public init(model: Model, showTabBar: Binding<Bool>, question: Question? = nil) {
         self._model = ObservedObject(wrappedValue: model)
         self._showTabBar = showTabBar
-        self.question = question
+        self.currentQuestion = question ?? .professions
+        if question != nil {
+            self.stepsCount = 1
+        } else {
+            self.stepsCount = 3
+        }
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: Constants.defSpacing) {
-            Spacer()
-            if question != nil {
-                switch question {
-                case .professions:
-                    professions
-                        .transition(.move(edge: .trailing))
-                case .levels:
-                    levels
-                        .transition(.move(edge: .trailing))
-                case .companies:
-                    companies
-                        .transition(.move(edge: .trailing))
-                case nil:
-                    Text("")
-                }
-            } else {
-                switch currentQuestion {
-                case .professions:
-                    professions
-                        .transition(.move(edge: .trailing))
-                case .levels:
-                    levels
-                        .transition(.move(edge: .trailing))
-                case .companies:
-                    companies
-                        .transition(.move(edge: .trailing))
-                }
+            backButton
+            switch currentQuestion {
+            case .professions:
+                professions
+                    .transition(.move(edge: .trailing))
+            case .levels:
+                levels
+                    .transition(.move(edge: .trailing))
+            case .companies:
+                companies
+                    .transition(.move(edge: .trailing))
             }
             Spacer()
             VStack(spacing: Constants.defSpacing) {
-                ProgressView(value: step/3)
-                    .padding(.horizontal, 20)
-                    .tint(Color(.accent))
-                    .scaleEffect(x: 1, y: 3, anchor: .center)
-                    .animation(.easeInOut, value: step)
-                button
+                if stepsCount != 1 {
+                    ProgressView(value: step/(stepsCount))
+                        .padding(.horizontal, 20)
+                        .tint(Color(.accent))
+                        .scaleEffect(x: 1, y: 3, anchor: .center)
+                        .animation(.easeInOut, value: step)
+                }
+                VStack {
+                    if incorrect {
+                        IncorrectView(text: "ошибка сохранения данных")
+                    }
+                    button
+                }
             }
             
         }
@@ -82,30 +79,25 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
         }
     }
     
+    var backButton: some View {
+        BackButton(onTap: {
+            if step == 1 {
+                presentationMode.wrappedValue.dismiss()
+                withAnimation {
+                    showTabBar = true
+                }
+            } else {
+                step -= 1
+                currentQuestion = Question(rawValue: Int(step)) ?? .companies
+            }
+        })
+    }
+    
     var button: some View {
         Button (action: {
-            switch step {
-            case 1:
-                updateSpecs()
-            case 2:
-                break
-            case 3:
-                updateComp()
-                model.saveInfo()
-                presentationMode.wrappedValue.dismiss()
-                showTabBar = true
-            default:
-                break
-            }
-            if isAvailable(step: step) {
-                step += 1
-                currentQuestion = Question(rawValue: Int(step)) ?? .companies
-                if currentQuestion == .companies {
-                    label = "Закончить!"
-                }
-            }
+            buttonPressed()
         }) {
-            Text(label)
+            Text(stepsCount == 3 ? label : "Сохранить")
                 .bold()
                 .font(Fonts.mainBold)
                 .foregroundColor(.white)
@@ -259,23 +251,92 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
     }
     
     func isAvailable(step: Double) -> Bool {
-        switch step {
-        case 1:
+        switch currentQuestion {
+        case .professions:
             if isAnal || isProd || isProj {
                 return true
             }
-        case 2:
+        case .levels:
             if inter || jun || mid || sen {
                 return true
             }
-        case 3:
+        case .companies:
             if yandex || tinkoff || other {
                 return true
             }
-        default:
-            return false
         }
         return false
+    }
+    
+    func buttonPressed() {
+        switch currentQuestion {
+        case .professions:
+            updateSpecs()
+        case .levels:
+            break
+        case .companies:
+            updateComp()
+        }
+        if isAvailable(step: step) {
+            if step == stepsCount {
+                if stepsCount == 3 {
+                    createProfile()
+                } else {
+                    updateProfile()
+                }
+            } else {
+                step += 1
+                currentQuestion = Question(rawValue: Int(step)) ?? .companies
+                if step == stepsCount {
+                    label = "Закончить!"
+                }
+            }
+        }
+    }
+    
+    func createProfile() {
+        Task { @MainActor in
+            let success = await model.setProfileInfo()
+            if success {
+                presentationMode.wrappedValue.dismiss()
+                showTabBar = true
+            } else {
+                showIncorrect()
+            }
+        }
+    }
+    
+    func updateProfile() {
+        Task { @MainActor in
+            var success = true
+            switch currentQuestion {
+            case .professions:
+                success = await model.updateProfile(level: nil, professions: Profile.stringArrayProf(of: model.professions), companies: nil)
+            case .levels:
+                success = await model.updateProfile(level: model.level.rawValue, professions: nil, companies: nil)
+            case .companies:
+                success = await model.updateProfile(level: nil, professions: nil, companies: Profile.stringArrayComp(of: model.companies))
+            }
+            if success {
+                presentationMode.wrappedValue.dismiss()
+                withAnimation {
+                    showTabBar = true
+                }
+            } else {
+                showIncorrect()
+            }
+        }
+    }
+    
+    func showIncorrect() {
+        withAnimation {
+            incorrect = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+            withAnimation {
+                incorrect = false
+            }
+        })
     }
     
     @State private var isProd: Bool = false
@@ -290,4 +351,6 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
     @State private var jun: Bool = false
     @State private var mid: Bool = false
     @State private var sen: Bool = false
+    
+    @State private var incorrect: Bool = false
 }

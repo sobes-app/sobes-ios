@@ -13,11 +13,11 @@ public protocol ProfileViewModel: ObservableObject {
     func getProfileName() -> String
     func getProfileLevel() -> String
     func changePassword(oldPassword: String, newPassword: String) async -> Bool
+    func setProfileInfo() async -> Bool
+    func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Bool
     
-    func onViewAppear() 
+    func onViewAppear() async
     func onLogoutTap()
-    func saveInfo()
-    func saveNewName(newName: String)
     func createStringProf() -> String
     func createStringComp() -> String
 }
@@ -38,7 +38,6 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         
     public init(profileProvider: ProfileProvider) {
         self.profileProvider = profileProvider
-        setProfile()
     }
     
     public func changePassword(oldPassword: String, newPassword: String) async -> Bool {
@@ -49,44 +48,45 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     }
     
     public func getProfileName() -> String {
-        return profile?.name ?? "123"
+        return profile?.name ?? ""
     }
     
     public func getProfileLevel() -> String {
-        return profile?.level.rawValue ?? "123"
+        return profile?.level.rawValue ?? ""
     }
     
-    public func onViewAppear() {
+    public func onViewAppear() async {
         if profile == nil {
-            setProfile()
+            await setProfile()
         }
     }
     
-    func setProfile() {
-        profileProvider.getProfile(onFinish: { [weak self] result in
-            switch result {
-            case .success(let success):
-                print("success")
-                self?.profile = success
-            case .failure:
-                print("fail")
-                break
-            }
-        })
+    func setProfile() async {
+        profile = await profileProvider.getProfile()
     }
     
     public func onLogoutTap() {
-        isLoading = true
         profileProvider.logout()
+        profile = nil
+    }
+    
+    public func setProfileInfo() async -> Bool {
+        isLoading = true
+        let com = Profile.stringArrayComp(of: companies)
+        let pro = Profile.stringArrayProf(of: professions)
+        let success = await profileProvider.createProfile(exp: level.rawValue, comp: com, prof: pro)
+        await setProfile()
         isLoading = false
+        return success
     }
     
-    public func saveInfo() {
-        
-    }
     
-    public func saveNewName(newName: String) {
-
+    public func updateProfile(level: String? = nil, professions: [String]? = nil, companies: [String]? = nil) async -> Bool {
+        isLoading = true
+        let success = await profileProvider.updateProfile(level: level, professions: professions, companies: companies)
+        await setProfile()
+        isLoading = false
+        return success
     }
     
     public func createStringProf() -> String {
