@@ -2,11 +2,10 @@ import Foundation
 
 public struct InterviewQuestion: Identifiable {
 
-    public enum QuestionType {
-        case project
-        case product
-        case ba
-        case general
+    public enum QuestionType: String {
+        case project = "Менеджер проекта"
+        case product = "Менеджер продукта"
+        case ba = "Бизнес-аналитик"
     }
 
     public let id: Int

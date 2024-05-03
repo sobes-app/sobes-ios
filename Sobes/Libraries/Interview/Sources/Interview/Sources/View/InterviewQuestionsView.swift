@@ -18,15 +18,14 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
         NavigationStack {
             VStack(spacing: Constants.topPadding) {
                 navBar
-                heading
-                questions
+                questionsBlock
                 Spacer()
                 changeQuestionsButton
             }
             .padding(.horizontal, Constants.horizontal)
         }
-        .onAppear {
-            model.fetchQuestions(for: type)
+        .task {
+            await model.fetchQuestions(for: type)
         }
     }
 
@@ -39,21 +38,25 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
         }
     }
 
-    private var heading: some View {
-        Text("Подготовили список вопросов на сегодня")
-            .font(Fonts.heading)
-            .multilineTextAlignment(.leading)
-            .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private var questions: some View {
-        ScrollView {
-            VStack(spacing: Constants.defSpacing) {
-                ForEach(model.questions) { question in
-                    NavigationLink(destination: InterviewChatView(model: model, question: question)) {
-                        ChevronButton(model: .question(question))
+    private var questionsBlock: some View {
+        VStack(spacing: Constants.topPadding) {
+            Text("Подготовили список вопросов на сегодня")
+                .font(Fonts.heading)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            ScrollView {
+                VStack(spacing: Constants.defSpacing) {
+                    ForEach(model.questions) { question in
+                        NavigationLink(destination: InterviewChatView(model: model, question: question)) {
+                            ChevronButton(model: .question(question))
+                        }
                     }
                 }
+            }
+        }
+        .overlay {
+            if model.areQuestionsLoading {
+                LoadingQuestionsScreen(placeholder: "Подготавливаем вам вопросы...")
             }
         }
     }
@@ -61,7 +64,9 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
     private var changeQuestionsButton: some View {
         MainButton(
             action: {
-                model.fetchQuestions(for: type)
+                Task { @MainActor in
+                    await model.fetchQuestions(for: type)
+                }
             },
             label: "Поменять вопросы"
         )
