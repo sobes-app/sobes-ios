@@ -20,6 +20,7 @@ public struct InterviewMessageBubble: View {
         HStack {
             Spacer()
             Text(message.text)
+                .foregroundStyle(.black)
                 .multilineTextAlignment(.trailing)
                 .font(Fonts.main)
                 .padding(Constants.smallStack)
@@ -38,23 +39,28 @@ public struct InterviewMessageBubble: View {
                 .scaledToFit()
                 .frame(height: 26)
                 .foregroundStyle(Color(.accent))
-            Text(message.text)
-                .font(Fonts.main)
-                .multilineTextAlignment(.leading)
-                .padding(Constants.smallStack)
-                .background {
-                    RoundedRectangle(cornerRadius: Constants.corner)
-                        .foregroundStyle(Color(.bubble))
+            HStack(spacing: 20) {
+                Text(message.text)
+                    .foregroundStyle(.black)
+                    .font(Fonts.main)
+                    .multilineTextAlignment(.leading)
+                    .padding(Constants.smallStack)
+                    .background {
+                        RoundedRectangle(cornerRadius: Constants.corner)
+                            .foregroundStyle(Color(.bubble))
+                    }
+                if isAssessment {
+                    Image(systemName: "chevron.right")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 20)
+                        .foregroundStyle(Color(.grey))
+                        .bold()
+                        .padding(.leading, 4)
                 }
-                .frame(maxWidth: Constants.messageMaxWidth, alignment: .leading)
-            if isAssessment {
-                Image(systemName: "chevron.right")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 16)
-                    .foregroundStyle(Color(.grey))
-                    .padding(.leading, 4)
+                Spacer()
             }
+            .frame(maxWidth: 266, alignment: .leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

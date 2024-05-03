@@ -15,13 +15,13 @@ public struct InterviewChatView<Model: InterviewViewModel>: View {
             messageBubbles
             Spacer()
             TextFieldView(model: .chat, input: $input, inputState: $inputState, onSend: {
-                model.onUserMessageSent(text: input)
+                model.onUserMessageSent(question: question.text, text: input)
             })
         }
         .navigationBarBackButtonHidden()
         .padding(Constants.horizontal)
-        .onAppear {
-            model.startDialogueForQuestion(questionId: question.id, text: question.text)
+        .task {
+            await model.startDialogueForQuestion(question: question.text, questionId: question.id, text: question.text)
         }
     }
 
@@ -35,7 +35,19 @@ public struct InterviewChatView<Model: InterviewViewModel>: View {
             ScrollView {
                 VStack(spacing: Constants.smallStack) {
                     ForEach(model.messages) { message in
-                        InterviewMessageBubble(message: message)
+                        if case .gpt(let assessment) = message.sender {
+                            if assessment {
+                                NavigationLink(
+                                    destination: InterviewAssessmentView(model: model, question: question.text, answer: model.messages[message.id - 1].text)
+                                ) {
+                                    InterviewMessageBubble(message: message)
+                                }
+                            } else {
+                                InterviewMessageBubble(message: message)
+                            }
+                        } else {
+                            InterviewMessageBubble(message: message)
+                        }
                     }
                 }
                 Spacer()

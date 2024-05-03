@@ -20,8 +20,8 @@ public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
             .padding(.horizontal, Constants.horizontal)
         }
         .navigationBarBackButtonHidden()
-        .onAppear {
-            model.fetchUserQuestions()
+        .task {
+            await model.fetchUserQuestions(profession: "Менеджер проекта")
         }
     }
 
