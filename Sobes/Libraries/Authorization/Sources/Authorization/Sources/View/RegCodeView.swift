@@ -48,16 +48,9 @@ public struct RegCodeView<Model: AuthViewModel>: View {
     private var button: some View {
         MainButton(action: {
             Task { @MainActor in
-                present = await model.validateCode(code: input)
+                present = await model.validateCode(email: model.email, code: input)
                 if !present {
-                    withAnimation {
-                        incorrect = true
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                        withAnimation {
-                            incorrect = false
-                        }
-                    })
+                    showIncorrect()
                 }
             }
         }, label: "Дальше")
@@ -76,6 +69,17 @@ public struct RegCodeView<Model: AuthViewModel>: View {
                 .foregroundColor(Color(.accent))
                 .font(Fonts.small)
         }
+    }
+    
+    func showIncorrect() {
+        withAnimation {
+            incorrect = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+            withAnimation {
+                incorrect = false
+            }
+        })
     }
     
     @ObservedObject private var model: Model

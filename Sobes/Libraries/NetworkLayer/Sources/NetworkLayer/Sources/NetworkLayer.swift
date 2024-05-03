@@ -18,8 +18,10 @@ public enum ClientError: Error {
 public struct EmptyRequest: Encodable {
 }
 
-public struct MessageResponse: Decodable {
-    public var message: String
+public struct ErrorResponse: Decodable {
+    var statusCode: Int
+    var message: String
+    var description: String
 }
 
 public final class NetworkLayer {
@@ -39,7 +41,8 @@ public final class NetworkLayer {
             let url = URL(string: baseUrl + urlPattern)!
             var request = URLRequest(url: url)
             if let token = token {
-                request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
+                print(token)
+                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpMethod = method
@@ -65,6 +68,7 @@ public final class NetworkLayer {
                         NotificationCenter.default.post(name: .unauthNetworkNotificationName, object: nil)
                         return
                     case 400...599:
+                        print(httpResponse.statusCode)
                         completion(.failure(.httpError(httpResponse.statusCode)))
                         return
                     default:
@@ -84,14 +88,15 @@ public final class NetworkLayer {
                 
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
-                guard let resp = try? decoder.decode(T.self, from: data) else {
-                    completion(.failure(.jsonDecodeError))
-                    return
-                }
                 
-                completion(.success(resp))
+                do {
+                    let resp = try decoder.decode(T.self, from: data)
+                    completion(.success(resp))
+                } catch {
+                    print(error)
+                    completion(.failure(.jsonDecodeError))
+                }
             }
-            
             task.resume()
         }
 }

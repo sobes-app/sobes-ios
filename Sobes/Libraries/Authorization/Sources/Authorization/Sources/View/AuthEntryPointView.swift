@@ -63,6 +63,7 @@ public struct AuthEntryPointView<Model: AuthViewModel>: View {
         .navigationDestination(isPresented: $presentPasswordRecreate) {
             AuthPasswordRecreateView(model: model)
                 .navigationBarBackButtonHidden()
+                .environmentObject(auth)
         }
     }
     
@@ -70,31 +71,28 @@ public struct AuthEntryPointView<Model: AuthViewModel>: View {
         MainButton(action: {
             if TextFieldValidator.isInputValid(.email(inputEmail)) && TextFieldValidator.isInputValid(.password(inputPass)) {
                 Task { @MainActor in
-                    if !(await model.onLoginTap(email: inputEmail, password: inputPass)) {
+                    if !(await model.authUser(email: inputEmail, password: inputPass)) {
                         auth.updateStatus(success: false)
-                        withAnimation {
-                            incorrect = true
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                            withAnimation {
-                                incorrect = false
-                            }
-                        })
+                        showIncorrect()
                     } else {
                         auth.updateStatus(success: true)
                     }
                 }
             } else {
-                withAnimation {
-                    incorrect = true
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                    withAnimation {
-                        incorrect = false
-                    }
-                })
+                showIncorrect()
             }
         }, label: "Войти")
+    }
+    
+    func showIncorrect() {
+        withAnimation {
+            incorrect = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+            withAnimation {
+                incorrect = false
+            }
+        })
     }
     
     @StateObject private var model: Model

@@ -41,16 +41,12 @@ public struct RegEmailView<Model: AuthViewModel>: View {
             if TextFieldValidator.isInputValid(.email(input)) {
                 Task { @MainActor in
                     presentCode = await model.sendCodetoEmail(email: input)
+                    if !presentCode {
+                        showIncorrect()
+                    }
                 }
             } else {
-                withAnimation {
-                    incorrect = true
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                    withAnimation {
-                        incorrect = false
-                    }
-                })
+               showIncorrect()
             }
         }, label: "Дальше")
         .navigationDestination(isPresented: $presentCode) {
@@ -58,6 +54,17 @@ public struct RegEmailView<Model: AuthViewModel>: View {
                 .environmentObject(auth)
                 .navigationBarBackButtonHidden()
         }
+    }
+    
+    func showIncorrect() {
+        withAnimation {
+            incorrect = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+            withAnimation {
+                incorrect = false
+            }
+        })
     }
     
     @ObservedObject private var model: Model

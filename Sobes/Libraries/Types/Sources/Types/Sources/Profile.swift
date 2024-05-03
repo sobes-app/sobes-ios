@@ -31,14 +31,16 @@ public struct Profile: Identifiable, Hashable {
     public var professions: [Professions]
     public var companies: [Companies]
     public var level: Levels
+    public var refreshToken: String
     
-    public init(id: Int = 0, name: String = "", email: String = "", professions: [Professions] = [], companies: [Companies] = [], level: Levels = .no) {
-        self.id = id
-        self.name = name
-        self.professions = professions
-        self.companies = companies
-        self.level = level
-        self.email = email
+    public init() {
+        self.id = 0
+        self.name = "Example"
+        self.professions = [.no]
+        self.companies = [.no]
+        self.level = .no
+        self.email = "example@ya.ru"
+        self.refreshToken = ""
     }
     
     public init(signUpResponse: SignUpResponse) {
@@ -48,15 +50,17 @@ public struct Profile: Identifiable, Hashable {
         self.professions = []
         self.companies = []
         self.level = Levels.no
+        self.refreshToken = signUpResponse.refreshToken
     }
     
-    public init(profileResponse: ProfileResponse) {
+    public init(profileResponse: ProfileResponse, refreshToken: String) {
         self.id = profileResponse.id
-        self.name = profileResponse.username
+        self.name = profileResponse.username ?? ""
         self.email = profileResponse.email
-        self.professions = []
-        self.companies = []
-        self.level = Levels(rawValue: profileResponse.level) ?? .no
+        self.professions = Profile.setProfessions(array: Array(profileResponse.professions ?? []))
+        self.companies = Profile.setCompanies(array: Array(profileResponse.companies ?? []))
+        self.level = Levels(rawValue: profileResponse.level ?? "") ?? .no
+        self.refreshToken = refreshToken
     }
     
     public static func createStringOfCompanies(of profile: Profile) -> [String] {
@@ -75,8 +79,20 @@ public struct Profile: Identifiable, Hashable {
         return array
     }
     
-    func getUserData() {
-        
+    public static func stringArrayComp(of comp: [Companies]) -> [String] {
+        var array: [String] = []
+        for company in comp {
+            array.append(company.rawValue)
+        }
+        return array
+    }
+    
+    public static func stringArrayProf(of prof: [Professions]) -> [String] {
+        var array: [String] = []
+        for profession in prof {
+            array.append(profession.rawValue)
+        }
+        return array
     }
     
     public static func setProfessions(array: [String]) -> [Professions]{

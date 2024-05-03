@@ -11,6 +11,11 @@ public struct EmailRequest: Encodable {
     var email: String
 }
 
+public struct UpdatePasswordRequest: Encodable {
+    var email: String
+    var password: String
+}
+
 public struct VerifyCodeRequest: Encodable {
     var email: String
     var code: String
@@ -95,11 +100,23 @@ public final class AuthClient {
                                   completion: completion)
     }
     
-    public func recoverAccountRequest(email: String,
-                                      completion: @escaping (Result<SignUpResponse, ClientError>) -> Void) {
-        self.netLayer.makeRequest(method: "POST",
-                                  urlPattern: "/auth/recovery",
-                                  body: EmailRequest(email: email),
-                                  completion: completion)
+    public func recoverAccountRequest(email: String) async -> Result<[String: String], ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "POST",
+                                      urlPattern: "/auth/recovery/email",
+                                      body: EmailRequest(email: email)) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    public func updatePassword(email: String, password: String) async -> Result<[String: String], ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "POST",
+                                      urlPattern: "/auth/recovery",
+                                      body: UpdatePasswordRequest(email: email, password: password)) { result in
+                continuation.resume(returning: result)
+            }
+        }
     }
 }

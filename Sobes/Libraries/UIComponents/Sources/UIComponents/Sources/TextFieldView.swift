@@ -93,6 +93,7 @@ public struct TextFieldView: View {
                 .foregroundColor(Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
+                .textInputAutocapitalization(.never)
         }
         .padding(Constants.elementPadding)
         .background {
@@ -107,6 +108,7 @@ public struct TextFieldView: View {
                 .foregroundColor(Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
+                .textInputAutocapitalization(.never)
         }
         .padding(Constants.elementPadding)
         .background {
@@ -121,6 +123,7 @@ public struct TextFieldView: View {
                 .foregroundColor(Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
+                .textInputAutocapitalization(.never)
         }
         .padding(Constants.elementPadding)
         .background {

@@ -11,6 +11,9 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     @StateObject private var model: Model
     @Binding private var showTabBar: Bool
     
+    @State private var profileParam: Question = .companies
+    @State private var editParam: Bool = false
+    
     public init(model: Model, showTabBar: Binding<Bool>) {
         self._model = StateObject(wrappedValue: model)
         self._showTabBar = showTabBar
@@ -20,13 +23,13 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         NavigationStack(path: $path) {
             ZStack {
                 VStack(alignment: .leading) {
-                    HStack(spacing: Constants.smallStack) {
+                    HStack(alignment: .top, spacing: Constants.smallStack) {
                         nameView
                         Spacer()
                         settingsView
                         logoutView
                     }
-                    if model.getProfileLevel() != "" {
+                    if !model.getProfileLevel().isEmpty {
                         statsView
                         Spacer()
                     } else {
@@ -43,9 +46,15 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                     SplashScreen()
                 }
             }
+            .navigationDestination(isPresented: $editParam, destination: {
+                SetupProfileDataView(model: model, showTabBar: $showTabBar, question: profileParam)
+                    .navigationBarBackButtonHidden()
+            })
         }
         .onAppear {
-            model.onViewAppear()
+            Task { @MainActor in
+               await model.onViewAppear()
+            }
         }
     }
     var button: some View {
@@ -82,6 +91,10 @@ public struct ProfileView<Model: ProfileViewModel>: View {
             RoundedRectangle(cornerRadius: Constants.corner)
                 .foregroundColor(Color(.light))
         }
+        .onTapGesture {
+            editParam = true
+            profileParam = .companies
+        }
     }
     
     var levelView: some View {
@@ -101,6 +114,10 @@ public struct ProfileView<Model: ProfileViewModel>: View {
             RoundedRectangle(cornerRadius: Constants.corner)
                 .foregroundColor(Color(.accent))
         }
+        .onTapGesture {
+            editParam = true
+            profileParam = .levels
+        }
     }
     
     var professionsView: some View {
@@ -115,7 +132,11 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         .padding(Constants.elementPadding)
         .background {
             RoundedRectangle(cornerRadius: Constants.corner)
-                .foregroundColor(Color(.light))
+                .foregroundColor(.white)
+                .shadow(color: Color("grey", bundle: .module), radius: 10)
+        }.onTapGesture {
+            editParam = true
+            profileParam = .professions
         }
     }
     
@@ -134,13 +155,13 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     
     var nameView: some View {
         Text("Привет, ")
-            .font(Fonts.heading)
+            .font(Fonts.mainBold)
             .foregroundColor(.black)
         + Text(model.getProfileName())
-            .font(Fonts.heading)
+            .font(Fonts.mainBold)
             .foregroundColor(Color(.accent))
         + Text("!")
-            .font(Fonts.heading)
+            .font(Fonts.mainBold)
             .foregroundColor(.black)
     }
     

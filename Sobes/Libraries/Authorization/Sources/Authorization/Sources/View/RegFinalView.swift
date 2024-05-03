@@ -43,27 +43,13 @@ struct RegFinalView<Model: AuthViewModel>: View {
             action: {
                 if inputPassword != inputRep {
                     message = "Пароли не совпадают"
-                    withAnimation {
-                        incorrect = true
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                        withAnimation {
-                            incorrect = false
-                        }
-                    })
+                    showIncorrect()
                 }
                 Task { @MainActor in
-                    if !(await model.registerUser(username: inputName, password: inputPassword)) {
+                    if !(await model.registerUser(email: model.email, username: inputName, password: inputPassword)) {
                         auth.updateStatus(success: false)
                         message = "Возникла ошибка при регистрации"
-                        withAnimation {
-                            incorrect = true
-                        }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                            withAnimation {
-                                incorrect = false
-                            }
-                        })
+                        showIncorrect()
                     } else {
                         auth.updateStatus(success: true)
                     }
@@ -71,6 +57,17 @@ struct RegFinalView<Model: AuthViewModel>: View {
             },
             label: "Зарегистрироваться"
         )
+    }
+    
+    func showIncorrect() {
+        withAnimation {
+            incorrect = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+            withAnimation {
+                incorrect = false
+            }
+        })
     }
 
     @ObservedObject private var model: Model

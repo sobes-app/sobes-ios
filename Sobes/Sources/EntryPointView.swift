@@ -32,6 +32,9 @@ struct EntryPointView: View {
             .padding(.horizontal, Constants.horizontal)
             .padding(.bottom, 89)
         }
+        .onAppear {
+            auth.updateStatus(success: false)
+        }
     }
 
     @State private var presentRegistration: Bool = false

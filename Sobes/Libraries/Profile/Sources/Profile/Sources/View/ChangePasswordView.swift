@@ -29,7 +29,7 @@ struct ChangePasswordView<Model: ProfileViewModel>: View {
                     Spacer()
                     VStack {
                         if incorrect {
-                            IncorrectView(text: "ошибка при смене пароля")
+                            IncorrectView(text: message)
                         }
                         button
                     }
@@ -47,22 +47,31 @@ struct ChangePasswordView<Model: ProfileViewModel>: View {
     
     private var button: some View {
         MainButton(action: {
+            if inputNew != inputRep {
+                message = "пароли не совпадают"
+                showIncorrect()
+            }
             Task { @MainActor in
                 let success = await model.changePassword(oldPassword: inputPassword, newPassword: inputNew)
                 if success {
                     presentationMode.wrappedValue.dismiss()
                 } else {
-                    withAnimation {
-                        incorrect = true
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                        withAnimation {
-                            incorrect = false
-                        }
-                    })
+                    message = "ошибка при смене пароля"
+                    showIncorrect()
                 }
             }
         }, label: "Сменить пароль")
+    }
+    
+    func showIncorrect() {
+        withAnimation {
+            incorrect = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+            withAnimation {
+                incorrect = false
+            }
+        })
     }
 
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -78,4 +87,5 @@ struct ChangePasswordView<Model: ProfileViewModel>: View {
     @State private var inputRepState: TextFieldView.InputState = .correct
     
     @State var incorrect: Bool = false
+    @State var message: String = "ошибка при смене пароля"
 }

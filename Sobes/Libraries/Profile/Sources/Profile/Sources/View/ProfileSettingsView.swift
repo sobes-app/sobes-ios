@@ -53,7 +53,7 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
     private var button: some View {
         MainButton(
             action: {
-                model.saveNewName(newName: input)
+               
                 withoutAnimation {
                     presentationMode.wrappedValue.dismiss()
 
