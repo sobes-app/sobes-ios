@@ -6,16 +6,17 @@ import NetworkLayer
 @MainActor
 public protocol ProfileViewModel: ObservableObject {
     var profile: Profile? { get }
-    var professions: [Professions] {get set}
-    var companies: [Companies] {get set}
-    var level: Types.Levels {get set}
-    var stepsCount: Double {get set}
-    var isLoading: Bool {get set}
+    var professions: [Professions] { get set }
+    var companies: [Companies] { get set }
+    var level: Types.Levels { get set }
+    var stepsCount: Double { get }
+    var isLoading: Bool { get }
+    var isError: Bool { get }
 
     func changePassword(oldPassword: String, newPassword: String) async -> Bool
     func setProfileInfo() async -> Bool
     func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Bool
-    
+
     func onViewAppear() async -> Bool
     func onLogoutTap()
 
@@ -26,6 +27,7 @@ public protocol ProfileViewModel: ObservableObject {
 public final class ProfileViewModelImpl: ProfileViewModel {
 
     @Published public var isLoading: Bool = false
+    @Published public var isError: Bool = false
     @Published public var profile: Profile?
     @Published public var professions: [Professions] = []
     @Published public var companies: [Companies] = []
@@ -37,8 +39,10 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     }
     
     @MainActor
-    public func onViewAppear() async {
-        self.profile = await profileProvider.getProfile()
+    public func onViewAppear() async -> Bool {
+        isError = false
+        isLoading = true
+        return await updateProfile()
     }
 
     public func changePassword(oldPassword: String, newPassword: String) async -> Bool {
@@ -46,40 +50,6 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         let success = await profileProvider.changePassword(oldPassword: oldPassword, newPassword: newPassword)
         isLoading = false
         return success
-    }
-    
-    public func onViewAppear() async -> Bool{
-        var success = true
-        if profile == nil {
-            success = await setProfile()
-        }
-        return success
-    }
-    
-    func setProfile() async -> Bool {
-        isLoading = true
-        let result = await profileProvider.getProfile()
-        switch result {
-        case .success(let success):
-            profile = success
-            isLoading = false
-            return true
-        case .failure(let failure):
-            if failure == ClientError.unautharized {
-                let update = await profileProvider.updateToken()
-                if update {
-                    if await setProfile() {
-                        isLoading = false
-                        return true
-                    } else {
-                        isLoading = false
-                        return false
-                    }
-                }
-            }
-            isLoading = false
-            return false
-        }
     }
     
     public func onLogoutTap() {
@@ -96,9 +66,7 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         let com = Profile.stringArrayComp(of: companies)
         let pro = Profile.stringArrayProf(of: professions)
         var success = await profileProvider.createProfile(exp: level.rawValue, comp: com, prof: pro)
-        success = await setProfile()
-        // let success = await profileProvider.createProfile(exp: level.rawValue, comp: com, prof: pro)
-        // profile = await profileProvider.getProfile()
+        success = await updateProfile()
         isLoading = false
         return success
     }
@@ -106,11 +74,25 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     public func updateProfile(level: String? = nil, professions: [String]? = nil, companies: [String]? = nil) async -> Bool {
         isLoading = true
         var success = await profileProvider.updateProfile(level: level, professions: professions, companies: companies)
-        success = await setProfile()
-        // let success = await profileProvider.updateProfile(level: level, professions: professions, companies: companies)
-        // profile = await profileProvider.getProfile()
+        success = await updateProfile()
         isLoading = false
         return success
+    }
+
+    private func updateProfile() async -> Bool {
+        let request = await profileProvider.getProfile()
+        switch request {
+        case .success(let profile):
+            isLoading = false
+            self.profile = profile
+        case .failure(let error):
+            isLoading = false
+            isError = true
+            if error == .unauthorized {
+                return await profileProvider.updateToken()
+            }
+        }
+        return true
     }
 
     private let profileProvider: ProfileProvider

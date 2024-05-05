@@ -2,6 +2,7 @@ import SwiftUI
 import UIComponents
 
 public struct RegEmailView<Model: AuthViewModel>: View {
+    
     @EnvironmentObject var auth: Authentication
     
     public init(model: Model) {
@@ -43,14 +44,15 @@ public struct RegEmailView<Model: AuthViewModel>: View {
     
     private var button: some View {
         MainButton(
-			action: {
-            	if TextFieldValidator.isInputValid(.email(input)) {
-                	Task { @MainActor in
-                    	presentCode = await model.sendCodetoEmail(email: input)
-                    	if !presentCode {
-                        	message = "ошибка отправки кода"
-                        	showIncorrect()
-                    	}
+            action: {
+                if TextFieldValidator.isInputValid(.email(input)) {
+                    Task { @MainActor in
+                        presentCode = await model.sendCodetoEmail(email: input)
+                        if !presentCode {
+                            message = "ошибка отправки кода"
+                            showIncorrect()
+                        }
+                    }
                 } else {
                     showIncorrect()
                 }
@@ -58,7 +60,7 @@ public struct RegEmailView<Model: AuthViewModel>: View {
             label: "Дальше"
         )
     }
-    
+
     func showIncorrect() {
         withAnimation {
             incorrect = true

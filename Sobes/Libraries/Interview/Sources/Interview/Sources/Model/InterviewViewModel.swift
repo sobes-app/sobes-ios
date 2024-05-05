@@ -39,9 +39,22 @@ public final class InterviewViewModelImpl: InterviewViewModel {
 
     @MainActor
     public func onViewAppear() async {
+        isError = false
         isLoading = true
-        professions = await profileProvider.getUserProfessions()
-        isLoading = false
+        let professionsRequest = await profileProvider.getUserProfessions()
+        switch professionsRequest {
+        case .success(let professions):
+            isLoading = false
+            self.professions = professions
+        case .failure(let error):
+            isLoading = false
+            switch error {
+            case .empty:
+                self.professions = []
+            case .error, .unauthorized:
+                isError = true
+            }
+        }
     }
 
     public func fetchQuestions(for interviewType: Professions) async {

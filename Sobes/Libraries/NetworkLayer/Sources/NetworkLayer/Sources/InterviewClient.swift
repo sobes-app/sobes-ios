@@ -40,8 +40,8 @@ public struct GeneratedQuestionsResponse: Decodable {
 
 public final class InterviewClient {
 
-    public init(token: String?) {
-        self.netLayer = NetworkLayer(token: token)
+    public init(token: String?, tokenType: String?) {
+        self.netLayer = NetworkLayer(token: token, tokenType: tokenType)
     }
 
     /// Get all questions that user has answered to specified by profession.

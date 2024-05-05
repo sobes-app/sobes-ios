@@ -6,13 +6,12 @@ import SwiftyKeychainKit
 public protocol ProfileProvider {
     var profile: Profile? {get set}
     
-    func getProfile() async -> Result<Profile, ClientError>
-    // func getProfile() async -> Profile?
+    func getProfile() async -> Result<Profile?, CustomError>
     func getCurrentUser() -> Profile
     func getProfiles() -> [Types.Profile]
 
-    func getUserProfessions() async -> [Professions]
-    func getUserLevel() async -> Levels
+    func getUserProfessions() async -> Result<[Professions], CustomError>
+    func getUserLevel() async -> Result<Levels, CustomError>
 
     func sendEmail(email: String) async -> Bool
     func verifyCode(email: String, code: String) async -> Bool
@@ -25,26 +24,32 @@ public protocol ProfileProvider {
     func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Bool
     func updateToken() async -> Bool
     func logout()
-    func requestProfile() async -> Profile?
 }
 
 public final class ProfileProviderImpl: ProfileProvider {
     
     public var profile: Types.Profile?
     
-    private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
-    private let accessTokenKey = KeychainKey<String>(key: "accessToken")
-    private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
-    private let tokenType = KeychainKey<String>(key: "tokenType")
-    
     public init() { }
 
-    public func getUserProfessions() async -> [Professions] {
-        return await getProfile()?.professions ?? []
+    public func getUserProfessions() async -> Result<[Professions], CustomError> {
+        let req = await getProfile()
+        switch req {
+        case .success(let profile):
+            return .success(profile?.professions ?? [])
+        case .failure(let error):
+            return .failure(error)
+        }
     }
 
-    public func getUserLevel() async -> Levels {
-        return await getProfile()?.level ?? .jun
+    public func getUserLevel() async -> Result<Levels, CustomError> {
+        let req = await getProfile()
+        switch req {
+        case .success(let profile):
+            return .success(profile?.level ?? .no)
+        case .failure(let error):
+            return .failure(error)
+        }
     }
 
     public func sendEmail(email: String) async -> Bool {
@@ -99,26 +104,12 @@ public final class ProfileProviderImpl: ProfileProvider {
         }
     }
     
-    public func getProfile() async -> Profile? {
-        if profile == nil {
+    public func getProfile() async -> Result<Profile?, CustomError> {
+        guard let profile else {
             return await requestProfile()
-        } else {
-            return profile
-		}
-	}
-
-    public func getProfile() async -> Result<Profile, ClientError> {
-        let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
-        let result = await profileClient.getProfile()
-        switch result {
-        case .success(let success):
-            let profile = Profile(profileResponse: success)
-            setProfile(profile: profile)
-            return .success(profile)
-        case .failure(let failure):
-            return .failure(failure)
         }
-    }
+        return .success(profile)
+	}
     
     public func createProfile(exp: String, comp: [String], prof: [String]) async -> Bool {
         let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
@@ -142,20 +133,6 @@ public final class ProfileProviderImpl: ProfileProvider {
             return true
         case .failure:
             return false
-        }
-    }
-    
-    public func requestProfile() async -> Profile? {
-        let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey))
-        let result = await profileClient.getProfile()
-        switch result {
-        case .success(let success):
-            let refresh = (try? self.keychain.get(refreshTokenKey)) ?? ""
-            self.profile = Profile(profileResponse: success, refreshToken: refresh)
-            return profile
-        case .failure:
-            self.profile = nil
-            return profile
         }
     }
     
@@ -221,13 +198,46 @@ public final class ProfileProviderImpl: ProfileProvider {
         }
     }
     
-    
     public func getProfiles() -> [Types.Profile] {
         return profiles
     }
-    
+
+    private func requestProfile() async -> Result<Profile?, CustomError> {
+        let profileClient = ProfileClient(
+            token: try? self.keychain.get(accessTokenKey),
+            tokenType: try? self.keychain.get(tokenType)
+        )
+        let result = await profileClient.getProfile()
+        switch result {
+        case .success(let success):
+            self.profile = Profile(profileResponse: success)
+            return .success(profile)
+        case .failure(let error):
+            self.profile = nil
+            switch error {
+            case .jsonEncodeError, .jsonDecodeError, .responseError:
+                return .failure(.error)
+            case .noDataError:
+                return .failure(.empty)
+            case .unautharized:
+                return .failure(.unauthorized)
+            case .httpError(let code):
+                if code == 404 {
+                    return .failure(.empty)
+                } else {
+                    return .failure(.error)
+                }
+            }
+        }
+    }
     
     private var profiles: [Types.Profile] = [
         Profile()
     ]
+
+    private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
+    private let accessTokenKey = KeychainKey<String>(key: "accessToken")
+    private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
+    private let tokenType = KeychainKey<String>(key: "tokenType")
+
 }

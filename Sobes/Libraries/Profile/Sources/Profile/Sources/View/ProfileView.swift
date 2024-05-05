@@ -42,7 +42,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                         feedbackButton
                             .padding(.bottom, Constants.defSpacing)
                     }
-                    if model.getProfileLevel().isEmpty {
+                    if !model.isInfoNotEmpty() {
                         button
                     }
                 }
