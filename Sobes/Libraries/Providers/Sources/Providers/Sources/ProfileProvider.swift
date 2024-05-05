@@ -105,10 +105,7 @@ public final class ProfileProviderImpl: ProfileProvider {
     }
     
     public func getProfile() async -> Result<Profile?, CustomError> {
-        guard let profile else {
-            return await requestProfile()
-        }
-        return .success(profile)
+        return await requestProfile()
 	}
     
     public func createProfile(exp: String, comp: [String], prof: [String]) async -> Bool {
