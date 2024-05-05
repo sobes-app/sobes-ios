@@ -27,7 +27,6 @@ public struct ResetPasswordRequest: Encodable {
 }
 
 public final class ProfileClient {
-    let netLayer: NetworkLayer
     
     public init(token: String?, tokenType: String?) {
         self.netLayer = NetworkLayer(token: token, tokenType: tokenType)
@@ -35,9 +34,11 @@ public final class ProfileClient {
     
     public func getProfile() async -> Result<ProfileResponse, ClientError>{
         await withCheckedContinuation { continuation in
-            self.netLayer.makeRequest(method: "GET",
-                                      urlPattern: "/user/profile",
-                                      body: EmptyRequest()) { result in
+            self.netLayer.makeRequest(
+                method: "GET",
+                urlPattern: "/user/profile",
+                body: EmptyRequest()
+            ) { result in
                 continuation.resume(returning: result)
             }
         }
@@ -45,9 +46,11 @@ public final class ProfileClient {
     
     public func createProfile(exp: String, prof: [String], comp: [String]) async -> Result<ProfileResponse, ClientError> {
         await withCheckedContinuation { continuation in
-            self.netLayer.makeRequest(method: "POST",
-                                      urlPattern: "/user/profile",
-                                      body: CreateProfileRequest(experience: exp, professions:prof, companies: comp)) { result in
+            self.netLayer.makeRequest(
+                method: "POST",
+                urlPattern: "/user/profile",
+                body: CreateProfileRequest(experience: exp, professions:prof, companies: comp)
+            ) { result in
                 continuation.resume(returning: result)
             }
         }
@@ -55,9 +58,11 @@ public final class ProfileClient {
     
     public func resetPassword(oldPassword: String, newPassword: String) async -> Result<[String:String], ClientError> {
         await withCheckedContinuation { continuation in
-            self.netLayer.makeRequest(method: "POST",
-                                      urlPattern: "/auth/reset",
-                                      body: ResetPasswordRequest(oldPassword: oldPassword, newPassword: newPassword)) { result in
+            self.netLayer.makeRequest(
+                method: "POST",
+                urlPattern: "/auth/reset",
+                body: ResetPasswordRequest(oldPassword: oldPassword, newPassword: newPassword)
+            ) { result in
                 continuation.resume(returning: result)
             }
         }
@@ -68,11 +73,16 @@ public final class ProfileClient {
                               companies: [String]? = nil) async -> Result<ProfileResponse, ClientError> {
         
         await withCheckedContinuation { continuation in
-            self.netLayer.makeRequest(method: "PUT",
-                                      urlPattern: "/user/profile",
-                                      body: UpdateProfile(experience: level, companies: companies, professions: professions)) { result in
+            self.netLayer.makeRequest(
+                method: "PUT",
+                urlPattern: "/user/profile",
+                body: UpdateProfile(experience: level, companies: companies, professions: professions)
+            ) { result in
                 continuation.resume(returning: result)
             }
         }
     }
+
+    private let netLayer: NetworkLayer
+
 }

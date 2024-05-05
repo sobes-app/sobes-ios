@@ -13,20 +13,19 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
         NavigationStack {
             VStack(spacing: Constants.defSpacing) {
                 headline
-                filters
-                materials
+                loadedView
+                    .overlay {
+                        if model.isError {
+                            ErrorView(retryAction: {
+                                Task { @MainActor in
+                                    await model.onViewAppear()
+                                }
+                            })
+                        }
+                    }
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, Constants.horizontal)
-            .overlay {
-                if model.isError {
-                    ErrorView(retryAction: {
-                        Task { @MainActor in
-                            await model.onViewAppear()
-                        }
-                    })
-                }
-            }
         }
         .navigationBarBackButtonHidden()
         .task {
@@ -35,10 +34,17 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
     }
     
     private var headline: some View {
-        Text("Материалы для подготовки")
+        Text("Материалы для\nподготовки")
             .frame(maxWidth: .infinity, alignment: .leading)
             .font(Fonts.heading)
             .foregroundStyle(.black)
+    }
+
+    private var loadedView: some View {
+        VStack(spacing: Constants.defSpacing) {
+            filters
+            materials
+        }
     }
 
     @ViewBuilder

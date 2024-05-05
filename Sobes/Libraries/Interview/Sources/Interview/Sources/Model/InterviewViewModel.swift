@@ -4,13 +4,14 @@ import Providers
 
 @MainActor
 public protocol InterviewViewModel: ObservableObject {
-    var areQuestionsLoading: Bool { get }
-    var isAssessmentLoading: Bool { get }
     var messages: [InterviewMessage] { get }
     var questions: [InterviewQuestion] { get }
+    var professions: [Professions] { get }
     var assessment: InterviewAssessment? { get }
     var isError: Bool { get }
-    func onViewAppear()
+    var isLoading: Bool { get }
+
+    func onViewAppear() async
     func fetchUserQuestions(profession: String) async
     func fetchQuestions(for interviewType: Professions) async
     func getQuestionsInProgress() -> String
@@ -24,49 +25,53 @@ public protocol InterviewViewModel: ObservableObject {
 @MainActor
 public final class InterviewViewModelImpl: InterviewViewModel {
 
-    @Published public var areQuestionsLoading: Bool = false
-    @Published public var isAssessmentLoading: Bool = false
+    @Published public var isLoading: Bool = false
     @Published public var isError: Bool = false
     @Published public var messages: [InterviewMessage] = []
     @Published public var questions: [InterviewQuestion] = []
+    @Published public var professions: [Professions] = []
     @Published public var assessment: InterviewAssessment?
 
-    public init(questionsProvider: QuestionsProvider) {
+    public init(questionsProvider: QuestionsProvider, profileProvider: ProfileProvider) {
         self.questionsProvider = questionsProvider
+        self.profileProvider = profileProvider
     }
 
-    public func onViewAppear() {
+    @MainActor
+    public func onViewAppear() async {
+        isLoading = true
+        professions = await profileProvider.getUserProfessions()
+        isLoading = false
     }
 
     public func fetchQuestions(for interviewType: Professions) async {
         isError = false
-        areQuestionsLoading = true
+        isLoading = true
         let result = await questionsProvider.getInterviewQuestions(for: interviewType)
         switch result {
         case .success(let interviewQuestions):
-            areQuestionsLoading = false
+            isLoading = false
             self.questions = interviewQuestions
         case .failure(let error):
-            areQuestionsLoading = false
+            isLoading = false
             if error == .empty {
                 self.questions = []
             } else {
                 isError = true
             }
-
         }
     }
 
     public func fetchUserQuestions(profession: String) async {
         isError = false
-        areQuestionsLoading = true
+        isLoading = true
         let result = await questionsProvider.getUserQuestions(profession: profession)
         switch result {
         case .success(let questions):
-            areQuestionsLoading = false
+            isLoading = false
             self.questions = questions
         case .failure(let error):
-            areQuestionsLoading = false
+            isLoading = false
             if error == .empty {
                 self.questions = []
             } else {
@@ -104,16 +109,16 @@ public final class InterviewViewModelImpl: InterviewViewModel {
 
     public func fetchAssessment(question: String, answer: String) async {
         isError = false
-        isAssessmentLoading = true
+        isLoading = true
         let result = await questionsProvider.getAnswerAssessment(
             question: question, answer: answer, profession: "Менеджер проекта"
         )
         switch result {
         case .success(let assessment):
-            isAssessmentLoading = false
+            isLoading = false
             self.assessment = assessment
         case .failure:
-            isAssessmentLoading = false
+            isLoading = false
             isError = true
         }
     }
@@ -132,5 +137,6 @@ public final class InterviewViewModelImpl: InterviewViewModel {
 
     private var currentQuestionId: Int = 0
     private let questionsProvider: QuestionsProvider
+    private let profileProvider: ProfileProvider
 
 }

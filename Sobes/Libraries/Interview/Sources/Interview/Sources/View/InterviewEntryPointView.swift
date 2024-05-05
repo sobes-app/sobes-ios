@@ -30,8 +30,8 @@ public struct InterviewEntryPointView<Model: InterviewViewModel>: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, Constants.horizontal)
-        .onAppear {
-            model.onViewAppear()
+        .task {
+            await model.onViewAppear()
         }
     }
 
@@ -67,27 +67,40 @@ public struct InterviewEntryPointView<Model: InterviewViewModel>: View {
             }
     }
 
+    @ViewBuilder
     private var interviewButtons: some View {
-        VStack(spacing: Constants.defSpacing) {
-            ChevronButton(model: .button(text: "Менеджер проектов"))
-                .onTapGesture {
-                    withoutAnimation {
-                        isPresentingProjectManagerInterview = true
+        if model.isLoading {
+            LoadingScreen(placeholder: "Готовим для вас интервью...")
+        } else {
+            VStack(spacing: Constants.defSpacing) {
+                if model.professions.isEmpty {
+                    Spacer()
+                    Text("Для начала необходимо заполнить информацию о профессиях в профиле")
+                        .font(Fonts.main)
+                        .foregroundStyle(.gray)
+                        .multilineTextAlignment(.center)
+                    Spacer()
+                } else {
+                    ForEach(model.professions, id: \.self) { profession in
+                        ChevronButton(model: .button(text: profession.rawValue))
+                            .onTapGesture {
+                                withoutAnimation {
+                                    switch profession {
+                                    case .analyst:
+                                        isPresentingBAInterview = true
+                                    case .product:
+                                        isPresentingProductManagerInterview = true
+                                    case .project:
+                                        isPresentingProjectManagerInterview = true
+                                    case .no:
+                                        break
+                                    }
+
+                                }
+                            }
                     }
                 }
-            ChevronButton(model: .button(text: "Менеджер продукта"))
-                .onTapGesture {
-                    withoutAnimation {
-                        isPresentingProductManagerInterview = true
-                    }
-                }
-            ChevronButton(model: .button(text: "Бизнес-аналитик"))
-                .onTapGesture {
-                    withoutAnimation {
-                        isPresentingBAInterview = true
-                    }
-                }
+            }
         }
     }
-
 }

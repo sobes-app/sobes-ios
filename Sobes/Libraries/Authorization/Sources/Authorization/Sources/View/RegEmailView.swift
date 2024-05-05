@@ -29,7 +29,12 @@ public struct RegEmailView<Model: AuthViewModel>: View {
             }
             .padding(.horizontal, Constants.horizontal)
             .padding(.bottom, Constants.bottom)
-            
+            .navigationDestination(isPresented: $presentCode) {
+                RegCodeView(model: model)
+                    .environmentObject(auth)
+                    .navigationBarBackButtonHidden()
+            }
+
             if model.isLoading {
                 SplashScreen()
             }
@@ -37,24 +42,21 @@ public struct RegEmailView<Model: AuthViewModel>: View {
     }
     
     private var button: some View {
-        MainButton(action: {
-            if TextFieldValidator.isInputValid(.email(input)) {
-                Task { @MainActor in
-                    presentCode = await model.sendCodetoEmail(email: input)
-                    if !presentCode {
-                        message = "ошибка отправки кода"
-                        showIncorrect()
-                    }
+        MainButton(
+			action: {
+            	if TextFieldValidator.isInputValid(.email(input)) {
+                	Task { @MainActor in
+                    	presentCode = await model.sendCodetoEmail(email: input)
+                    	if !presentCode {
+                        	message = "ошибка отправки кода"
+                        	showIncorrect()
+                    	}
+                } else {
+                    showIncorrect()
                 }
-            } else {
-               showIncorrect()
-            }
-        }, label: "Дальше")
-        .navigationDestination(isPresented: $presentCode) {
-            RegCodeView(model: model)
-                .environmentObject(auth)
-                .navigationBarBackButtonHidden()
-        }
+            },
+            label: "Дальше"
+        )
     }
     
     func showIncorrect() {

@@ -7,11 +7,12 @@ public protocol ProfileProvider {
     var profile: Profile? {get set}
     
     func getProfile() async -> Result<Profile, ClientError>
+    // func getProfile() async -> Profile?
     func getCurrentUser() -> Profile
     func getProfiles() -> [Types.Profile]
 
-    func getUserProfessions() -> [Professions]
-    func getUserLevel() -> Levels
+    func getUserProfessions() async -> [Professions]
+    func getUserLevel() async -> Levels
 
     func sendEmail(email: String) async -> Bool
     func verifyCode(email: String, code: String) async -> Bool
@@ -24,6 +25,7 @@ public protocol ProfileProvider {
     func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Bool
     func updateToken() async -> Bool
     func logout()
+    func requestProfile() async -> Profile?
 }
 
 public final class ProfileProviderImpl: ProfileProvider {
@@ -37,12 +39,12 @@ public final class ProfileProviderImpl: ProfileProvider {
     
     public init() { }
 
-    public func getUserProfessions() -> [Professions] {
-        return profile?.professions ?? []
+    public func getUserProfessions() async -> [Professions] {
+        return await getProfile()?.professions ?? []
     }
 
-    public func getUserLevel() -> Levels {
-        return profile?.level ?? .jun
+    public func getUserLevel() async -> Levels {
+        return await getProfile()?.level ?? .jun
     }
 
     public func sendEmail(email: String) async -> Bool {
@@ -97,6 +99,14 @@ public final class ProfileProviderImpl: ProfileProvider {
         }
     }
     
+    public func getProfile() async -> Profile? {
+        if profile == nil {
+            return await requestProfile()
+        } else {
+            return profile
+		}
+	}
+
     public func getProfile() async -> Result<Profile, ClientError> {
         let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
         let result = await profileClient.getProfile()
@@ -135,8 +145,18 @@ public final class ProfileProviderImpl: ProfileProvider {
         }
     }
     
-    public func setProfile(profile: Profile) {
-        self.profile = profile
+    public func requestProfile() async -> Profile? {
+        let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey))
+        let result = await profileClient.getProfile()
+        switch result {
+        case .success(let success):
+            let refresh = (try? self.keychain.get(refreshTokenKey)) ?? ""
+            self.profile = Profile(profileResponse: success, refreshToken: refresh)
+            return profile
+        case .failure:
+            self.profile = nil
+            return profile
+        }
     }
     
     public func getCurrentUser() -> Profile {
