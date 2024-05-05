@@ -50,13 +50,8 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
             changeQuestionsButton
         }
         .overlay {
-            if model.areQuestionsLoading {
-//                LoadingQuestionsScreen(placeholder: "Подготавливаем вам вопросы...")
-                ErrorView(retryAction: {
-                    Task { @MainActor in
-                        await model.fetchQuestions(for: type)
-                    }
-                })
+            if model.isLoading {
+                LoadingScreen(placeholder: "Подготавливаем вам вопросы...")
             }
             if model.isError {
                 ErrorView(retryAction: {

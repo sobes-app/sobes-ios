@@ -40,8 +40,8 @@ public struct GeneratedQuestionsResponse: Decodable {
 
 public final class InterviewClient {
 
-    public init(token: String?) {
-        self.netLayer = NetworkLayer(token: token)
+    public init(token: String?, tokenType: String?) {
+        self.netLayer = NetworkLayer(token: token, tokenType: tokenType)
     }
 
     /// Get all questions that user has answered to specified by profession.
@@ -87,7 +87,7 @@ public final class InterviewClient {
     /// - Parameters:
     ///     - question: Question that has dialog.
     ///
-    /// - Returns: Array of five question generated for specified profession and level of proficiency.
+    /// - Returns: Array of all messages-assessments from LLM for the specified question.
     public func getDialogAssessments(question: String) async -> Result<[AnswerResponse], ClientError> {
         await withCheckedContinuation { continuation in
             self.netLayer.makeRequest(
@@ -107,7 +107,7 @@ public final class InterviewClient {
     ///     - answer: Answer user provided.
     ///     - profession: Profession of the interview.
     ///
-    /// - Returns: Array of five question generated for specified profession and level of proficiency.
+    /// - Returns: Assessment for the provided answer.
     public func getAssessment(
         question: String, answer: String, profession: String
     ) async -> Result<AnswerResponse, ClientError> {

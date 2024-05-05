@@ -31,6 +31,13 @@ struct EntryPointView: View {
             }
             .padding(.horizontal, Constants.horizontal)
             .padding(.bottom, 89)
+            .navigationDestination(isPresented: $presentRegistration) {
+                RegEmailView(model: AuthViewModelImpl(onRegistrationComplete: {
+                    selectedTab = .materials
+                }, provider: provider))
+                .environmentObject(auth)
+                .navigationBarBackButtonHidden()
+            }
         }
         .onAppear {
             auth.updateStatus(success: false)
@@ -67,12 +74,5 @@ struct EntryPointView: View {
             },
             label: "Регистрация"
         )
-        .navigationDestination(isPresented: $presentRegistration) {
-            RegEmailView(model: AuthViewModelImpl(onRegistrationComplete: {
-                selectedTab = .profile
-            }, provider: provider))
-            .environmentObject(auth)
-            .navigationBarBackButtonHidden()
-        }
     }
 }

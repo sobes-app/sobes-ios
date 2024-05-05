@@ -6,12 +6,13 @@ import UIComponents
 import Materials
 import Providers
 import Interview
+import Types
 
 public struct MainView: View {
+    
     @EnvironmentObject var auth: Authentication
-
-    @State private var showTabBar = true
     @Binding var selectedTab: TabItem
+    let profileProvider: ProfileProvider
 
     public var body: some View {
         VStack {
@@ -23,7 +24,8 @@ public struct MainView: View {
                     model: InterviewViewModelImpl(
                         questionsProvider: QuestionsProviderImpl(
                             profileProvider: profileProvider
-                        )
+                        ), 
+                        profileProvider: profileProvider
                     )
                 )
             case .chat:
@@ -38,6 +40,7 @@ public struct MainView: View {
             }
         }
     }
-    
-    let profileProvider: ProfileProvider
+
+    @State private var showTabBar = true
+
 }
