@@ -60,6 +60,7 @@ public final class InterviewViewModelImpl: InterviewViewModel {
     public func fetchQuestions(for interviewType: Professions) async {
         isError = false
         isLoading = true
+        currentChatProfession = interviewType
         let result = await questionsProvider.getInterviewQuestions(for: interviewType)
         switch result {
         case .success(let interviewQuestions):
@@ -123,13 +124,22 @@ public final class InterviewViewModelImpl: InterviewViewModel {
     public func fetchAssessment(question: String, answer: String) async {
         isError = false
         isLoading = true
+        if let assessment = assessments[answer] {
+            isLoading = false
+            self.assessment = assessment
+            return
+        }
         let result = await questionsProvider.getAnswerAssessment(
-            question: question, answer: answer, profession: "Менеджер проекта"
+            question: question,
+            answer: answer,
+            profession: currentChatProfession?.rawValue ?? ""
         )
         switch result {
         case .success(let assessment):
+            isError = false
             isLoading = false
             self.assessment = assessment
+            assessments[answer] = assessment
         case .failure:
             isLoading = false
             isError = true
@@ -151,5 +161,7 @@ public final class InterviewViewModelImpl: InterviewViewModel {
     private var currentQuestionId: Int = 0
     private let questionsProvider: QuestionsProvider
     private let profileProvider: ProfileProvider
+    private var currentChatProfession: Professions?
+    private var assessments: [String : InterviewAssessment] = [:]
 
 }

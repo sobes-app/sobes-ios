@@ -38,7 +38,11 @@ public struct InterviewChatView<Model: InterviewViewModel>: View {
                         if case .gpt(let assessment) = message.sender {
                             if assessment {
                                 NavigationLink(
-                                    destination: InterviewAssessmentView(model: model, question: question.text, answer: model.messages[message.id - 1].text)
+                                    destination: InterviewAssessmentView(
+                                        model: model,
+                                        question: question.text,
+                                        answer: model.messages[message.id - 1].text
+                                    )
                                 ) {
                                     InterviewMessageBubble(message: message)
                                 }
