@@ -21,6 +21,9 @@ public struct InterviewAssessmentView<Model: InterviewViewModel>: View {
                 } else {
                     Spacer()
                     Text("Извините, не смогли оценить ваш ответ, попробуйте еще раз!")
+                        .font(Fonts.main)
+                        .foregroundStyle(.gray)
+                        .multilineTextAlignment(.center)
                     Spacer()
                 }
             }

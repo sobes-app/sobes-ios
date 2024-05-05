@@ -74,9 +74,9 @@ public struct TextFieldView: View {
     var name: some View {
         HStack(spacing: Constants.smallStack) {
             Image(systemName: "person.fill")
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(isFocused ? .black : Static.Colors.grey)
             TextField("введите фио...", text: $input)
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(isFocused ? .black : Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
         }
@@ -85,12 +85,13 @@ public struct TextFieldView: View {
             roundedRec
         }
     }
+
     var password: some View {
         HStack(spacing: Constants.smallStack) {
             Image(systemName: "lock")
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(isFocused ? .black : Static.Colors.grey)
             SecureField("введите пароль...", text: $input)
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(isFocused ? .black : Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
                 .textInputAutocapitalization(.never)
@@ -100,12 +101,13 @@ public struct TextFieldView: View {
             roundedRec
         }
     }
+
     var repPassword: some View {
         HStack(spacing: Constants.smallStack) {
             Image(systemName: "lock")
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(isFocused ? .black : Static.Colors.grey)
             SecureField("повторите пароль...", text: $input)
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(isFocused ? .black : Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
                 .textInputAutocapitalization(.never)
@@ -115,12 +117,13 @@ public struct TextFieldView: View {
             roundedRec
         }
     }
+
     var email: some View {
         HStack(spacing: Constants.smallStack) {
             Image(systemName: "envelope")
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(isFocused ? .black : Static.Colors.grey)
             TextField("введите почту...", text: $input)
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(isFocused ? .black : Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
                 .textInputAutocapitalization(.never)
@@ -130,10 +133,11 @@ public struct TextFieldView: View {
             roundedRec
         }
     }
+
     var code: some View {
         HStack(spacing: Constants.smallStack) {
             TextField("введите код...", text: $input)
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(.black)
                 .focused($isFocused)
                 .disableAutocorrection(true)
         }
@@ -146,7 +150,7 @@ public struct TextFieldView: View {
     var search: some View {
         HStack(spacing: 5) {
             TextField("поиск...", text: $input, axis: .vertical)
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(isFocused ? .black : Static.Colors.grey)
                 .focused($isFocused)
                 .disableAutocorrection(true)
                 .onSubmit {
@@ -163,7 +167,7 @@ public struct TextFieldView: View {
                 }
             ) {
                 Image(systemName: "arrow.up")
-                    .foregroundColor(input.count == 0 ? Static.Colors.grey : .white)
+                    .foregroundColor(input.isEmpty ? Static.Colors.grey : .white)
                     .onTapGesture {
                         onFilter?()
                     }
@@ -197,7 +201,7 @@ public struct TextFieldView: View {
                 }
             ) {
                 Image(systemName: "arrow.up")
-                    .foregroundColor(input.count == 0 ? Static.Colors.grey : .white)
+                    .foregroundColor(input.isEmpty ? Static.Colors.grey : .white)
                     .background {
                         Circle()
                             .frame(width: 40, height: 40)
