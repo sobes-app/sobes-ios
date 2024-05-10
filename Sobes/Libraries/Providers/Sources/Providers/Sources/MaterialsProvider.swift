@@ -44,7 +44,7 @@ public final class MaterialsProviderImpl: MaterialsProvider {
                 return .failure(.error)
             case .unautharized:
                 return .failure(.error)
-                // TODO: add unauthorized
+     // TODO: add unauthorized
             }
         }
     }

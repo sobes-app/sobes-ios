@@ -48,7 +48,6 @@ public final class QuestionsProviderImpl: QuestionsProvider {
         guard case .success(let level) = userLevelResult else {
             return .failure(.error)
         }
-
         let result = await interviewClient.generateQuestions(
             profession: type.rawValue,
             level: level.rawValue
@@ -88,8 +87,20 @@ public final class QuestionsProviderImpl: QuestionsProvider {
                 satisfaction: assessment.satisfaction,
                 score: assessment.score
             ))
-        case .failure:
-            return .failure(.error)
+        case .failure(let error):
+            switch error {
+            case .httpError(let code):
+                if code == 404 {
+                    return .failure(.empty)
+                }
+                return .failure(.error)
+            case .noDataError:
+                return .failure(.empty)
+            case .jsonDecodeError, .jsonEncodeError, .responseError:
+                return .failure(.error)
+            case .unautharized:
+                return .failure(.error)
+            }
         }
     }
 

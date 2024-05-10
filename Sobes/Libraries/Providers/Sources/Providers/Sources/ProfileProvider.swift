@@ -6,7 +6,7 @@ import SwiftyKeychainKit
 public protocol ProfileProvider {
     var profile: Profile? {get set}
     
-    func getProfile() async -> Result<Profile?, CustomError>
+    func getProfile() async -> Result<Profile, CustomError>
     func getCurrentUser() -> Profile
     func getProfiles() -> [Types.Profile]
 
@@ -17,11 +17,11 @@ public protocol ProfileProvider {
     func verifyCode(email: String, code: String) async -> Bool
     func registerUser(email: String, name: String, password: String) async -> Bool
     func authUser(email: String, password: String) async -> Bool
-    func createProfile(exp: String, comp: [String], prof: [String]) async -> Bool
+    func createProfile(exp: String, comp: [String], prof: [String]) async -> Result<Bool, CustomError>
     func changePassword(oldPassword: String, newPassword: String) async -> Bool
     func recoverAccount(email: String) async -> Bool
     func forgotPassword(email: String, password: String) async -> Bool
-    func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Bool
+    func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Result<Bool, CustomError>
     func updateToken() async -> Bool
     func logout()
 }
@@ -104,11 +104,20 @@ public final class ProfileProviderImpl: ProfileProvider {
         }
     }
     
-    public func getProfile() async -> Result<Profile?, CustomError> {
-        return await requestProfile()
-	}
+    public func getProfile() async -> Result<Profile, CustomError> {
+        let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
+        let result = await profileClient.getProfile()
+        switch result {
+        case .success(let success):
+            let profile = Profile(profileResponse: success)
+            setProfile(profile: profile)
+            return .success(profile)
+        case .failure(let failure):
+            return .failure(getError(failure: failure))
+        }
+    }
     
-    public func createProfile(exp: String, comp: [String], prof: [String]) async -> Bool {
+    public func createProfile(exp: String, comp: [String], prof: [String]) async -> Result<Bool, CustomError> {
         let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
         let result = await profileClient.createProfile(exp: exp, prof: prof, comp: comp)
         switch result {
@@ -116,9 +125,9 @@ public final class ProfileProviderImpl: ProfileProvider {
             profile?.level = Levels(rawValue: success.level ?? "") ?? .no
             profile?.professions = Profile.setProfessions(array: Array(success.professions ?? []))
             profile?.companies = Profile.setCompanies(array: Array(success.companies ?? []))
-            return true
-        case .failure:
-            return false
+            return .success(true)
+        case .failure (let failure):
+            return .failure(getError(failure: failure))
         }
     }
     
@@ -167,7 +176,7 @@ public final class ProfileProviderImpl: ProfileProvider {
         }
     }
     
-    public func updateProfile(level: String? = nil, professions: [String]? = nil, companies: [String]? = nil) async -> Bool {
+    public func updateProfile(level: String? = nil, professions: [String]? = nil, companies: [String]? = nil) async -> Result<Bool, CustomError> {
         let profileClient = ProfileClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
         let result = await profileClient.updateProfile(level: level, professions: professions, companies: companies)
         switch result {
@@ -175,9 +184,9 @@ public final class ProfileProviderImpl: ProfileProvider {
             profile?.level = Levels(rawValue: success.level ?? "") ?? .no
             profile?.professions = Profile.setProfessions(array: Array(success.professions ?? []))
             profile?.companies = Profile.setCompanies(array: Array(success.companies ?? []))
-            return true
-        case .failure:
-            return false
+            return .success(true)
+        case .failure(let failure):
+            return .failure(getError(failure: failure))
         }
     }
     
@@ -200,35 +209,6 @@ public final class ProfileProviderImpl: ProfileProvider {
         return profiles
     }
 
-    private func requestProfile() async -> Result<Profile?, CustomError> {
-        let profileClient = ProfileClient(
-            token: try? self.keychain.get(accessTokenKey),
-            tokenType: try? self.keychain.get(tokenType)
-        )
-        let result = await profileClient.getProfile()
-        switch result {
-        case .success(let success):
-            self.profile = Profile(profileResponse: success)
-            return .success(profile)
-        case .failure(let error):
-            self.profile = nil
-            switch error {
-            case .jsonEncodeError, .jsonDecodeError, .responseError:
-                return .failure(.error)
-            case .noDataError:
-                return .failure(.empty)
-            case .unautharized:
-                return .failure(.unauthorized)
-            case .httpError(let code):
-                if code == 404 {
-                    return .failure(.empty)
-                } else {
-                    return .failure(.error)
-                }
-            }
-        }
-    }
-
     private func clearUserDefaultsData() {
         let domain = Bundle.main.bundleIdentifier!
         UserDefaults.standard.removePersistentDomain(forName: domain)
@@ -238,10 +218,25 @@ public final class ProfileProviderImpl: ProfileProvider {
     private var profiles: [Types.Profile] = [
         Profile()
     ]
+    
+    func getError(failure: ClientError) -> CustomError {
+        switch failure {
+        case .httpError(let code):
+            if code == 404 {
+                return .empty
+            }
+            return .error
+        case .noDataError:
+            return .empty
+        case .jsonDecodeError, .jsonEncodeError, .responseError:
+            return .error
+        case .unautharized:
+            return .unauth
+        }
+    }
 
     private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
     private let accessTokenKey = KeychainKey<String>(key: "accessToken")
     private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
     private let tokenType = KeychainKey<String>(key: "tokenType")
-
 }

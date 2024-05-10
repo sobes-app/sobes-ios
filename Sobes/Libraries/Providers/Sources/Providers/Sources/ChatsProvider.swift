@@ -10,7 +10,7 @@ public protocol ChatsProvider {
     func addMessageToChat(chatId: Int, text: String)
     func createNewChat(responderId: Int)
     
-    func getProfiles() async -> Result<[Profile], ClientError>
+    func getProfiles() async -> Result<[Profile], CustomError>
 }
 
 public final class ChatsProviderImpl: ChatsProvider {
@@ -26,21 +26,33 @@ public final class ChatsProviderImpl: ChatsProvider {
         self.profileProvider = profileProvider
     }
     
-    public func getProfiles() async -> Result<[Profile], ClientError> {
+    public func getProfiles() async -> Result<[Profile], CustomError> {
         let chatsClient = ChatsClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
         let result = await chatsClient.getProfiles()
         switch result {
         case .success(let success):
             var arrayProfiles: [Profile] = []
             for i in success.indices {
-                if success[i].id != profileProvider.profile?.id {
+                if success[i].id != profileProvider.profile?.id && success[i].username != nil  {
                     arrayProfiles.append(Profile(profileResponse: success[i]))
                 }
             }
             profiles = arrayProfiles
             return .success(arrayProfiles)
         case .failure(let failure):
-            return .failure(failure)
+            switch failure {
+            case .httpError(let code):
+                if code == 404 {
+                    return .failure(.empty)
+                }
+                return .failure(.error)
+            case .noDataError:
+                return .failure(.empty)
+            case .jsonDecodeError, .jsonEncodeError, .responseError:
+                return .failure(.error)
+            case .unautharized:
+                return .failure(.unauth)
+            }
         }
         
     }

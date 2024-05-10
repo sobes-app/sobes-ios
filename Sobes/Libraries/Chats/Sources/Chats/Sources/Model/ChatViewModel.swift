@@ -15,6 +15,7 @@ public protocol ChatViewModel: ObservableObject {
     var profiles: [Profile]? {get}
     var messageId: Int {get set}
     var isLoading: Bool {get set}
+    var isError: Bool {get set}
     
     var expFilter: [Filter] {get set}
     var desFilter: [Filter] {get set}
@@ -22,10 +23,10 @@ public protocol ChatViewModel: ObservableObject {
     var filters: [Types.Filter] { get set }
     
     func onViewAppear() async
+    func getProfiles() async
     func clearFilters() async
     func createNewChat(reponder: Profile)
     func onFilterTapped(id: Int, type: FilterType)
-    func getCurrentUser() -> Profile
     func getResponder(chat: Chat) -> Profile
     func addMessageToChat(chatId: Int, text: String)
     func checkChatExistance(responder: Profile) -> Bool
@@ -39,6 +40,7 @@ public final class ChatViewModelImpl: ChatViewModel {
     let chatProvider: ChatsProvider
     
     @Published public var isLoading: Bool = false
+    @Published public var isError: Bool = false
     
     @Published public var chats: [Chat]?
     @Published public var profiles: [Profile]?
@@ -109,27 +111,30 @@ public final class ChatViewModelImpl: ChatViewModel {
         return true
     }
     
-    public func getCurrentUser() -> Profile {
-        return profilesProvider.getCurrentUser()
-    }
-    
-    func getProfiles() async {
+    public func getProfiles() async {
         isLoading = true
+        defer { isLoading = false }
+        
         let result = await chatProvider.getProfiles()
         switch result {
         case .success(let success):
             profiles = success
-        case .failure(let failure):
-            if failure == ClientError.unautharized {
+        case .failure(let error):
+            switch error {
+            case .empty:
+                profiles = []
+            case .error:
+                isError = true
+            case .unauth:
                 let update = await profilesProvider.updateToken()
                 if update {
                     _ = await profilesProvider.getProfile()
                     await getProfiles()
+                } else {
+                    isError = true
                 }
             }
-            isLoading = false
         }
-        isLoading = false
     }
     
     public func onViewAppear() async {
@@ -168,55 +173,49 @@ public final class ChatViewModelImpl: ChatViewModel {
         return chats?.first(where: {$0.firstResponderId == responder.id  || $0.secondResponderId == responder.id}) ?? chats![0]
     }
     
+    
     func fetchChats() {
         chats = chatProvider.getChats()
     }
     
     func initFilters() {
-        comFilter = [
-            Filter(id: 0, name: Companies.yandex.rawValue),
-            Filter(id: 1, name: Companies.tinkoff.rawValue),
-            Filter(id: 2, name: Companies.other.rawValue),
-        ]
+        let companyNames = Companies.allCases
+        let levelNames = Levels.allCases
+        let professionNames = Professions.allCases
         
-        expFilter = [
-            Filter(id: 3, name: Levels.inter.rawValue),
-            Filter(id: 4, name: Levels.jun.rawValue),
-            Filter(id: 5, name: Levels.mid.rawValue),
-            Filter(id: 6, name: Levels.sen.rawValue)
-        ]
+        let companies = companyNames.enumerated().map { index, company in
+            Filter(id: index, name: company.rawValue)
+        }
         
-        desFilter = [
-            Filter(id: 7, name: Professions.project.rawValue),
-            Filter(id: 8, name: Professions.product.rawValue),
-            Filter(id: 9, name: Professions.analyst.rawValue)
-        ]
+        let levels = levelNames.enumerated().map { index, level in
+            Filter(id: companyNames.count + index, name: level.rawValue)
+        }
         
-        filters.append(contentsOf: comFilter)
-        filters.append(contentsOf: expFilter)
-        filters.append(contentsOf: desFilter)
+        let professions = professionNames.enumerated().map { index, profession in
+            Filter(id: companyNames.count + levelNames.count + index, name: profession.rawValue)
+        }
+        
+        comFilter = companies
+        expFilter = levels
+        desFilter = professions
+        
+        filters = [comFilter, expFilter, desFilter].flatMap { $0 }
     }
     
     func toggleProfileFilter(type: FilterType, id: Int) {
         switch type {
-        case .company:
-            for i in 0...comFilter.count - 1 {
-                if comFilter[i].id == id {
-                    comFilter[i].isActive.toggle()
+            case .company:
+                if let index = comFilter.firstIndex(where: { $0.id == id }) {
+                    comFilter[index].isActive.toggle()
                 }
-            }
-        case .profession:
-            for i in 0...desFilter.count - 1 {
-                if desFilter[i].id == id {
-                    desFilter[i].isActive.toggle()
+            case .profession:
+                if let index = desFilter.firstIndex(where: { $0.id == id }) {
+                    desFilter[index].isActive.toggle()
                 }
-            }
-        case .level:
-            for i in 0...expFilter.count - 1 {
-                if expFilter[i].id == id {
-                    expFilter[i].isActive.toggle()
+            case .level:
+                if let index = expFilter.firstIndex(where: { $0.id == id }) {
+                    expFilter[index].isActive.toggle()
                 }
-            }
         }
     }
 }

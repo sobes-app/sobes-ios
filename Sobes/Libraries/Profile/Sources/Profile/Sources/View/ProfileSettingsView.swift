@@ -11,12 +11,7 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
     
     public var body: some View {
         VStack(alignment: .leading) {
-            BackButton(onTap: {
-                presentationMode.wrappedValue.dismiss()
-                withAnimation {
-                    showTabBar = true
-                }
-            })
+            BackButton()
             VStack(alignment: .leading, spacing: Constants.defSpacing) {
                 Text("Настройки")
                     .font(Fonts.heading)
@@ -29,8 +24,15 @@ public struct ProfileSettingsView<Model: ProfileViewModel>: View {
         .padding(.horizontal, Constants.horizontal)
         .padding(.bottom, Constants.bottom)
         .onAppear {
-            withoutAnimation {
+            withAnimation {
                 showTabBar = false
+            }
+        }
+        .onDisappear {
+            if !presentChangePassword {
+                withAnimation {
+                    showTabBar = true
+                }
             }
         }
     }

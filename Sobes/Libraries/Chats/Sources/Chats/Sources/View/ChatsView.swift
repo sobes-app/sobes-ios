@@ -29,36 +29,28 @@ public struct ChatsView<Model: ChatViewModel>: View {
     
     public var body: some View {
         NavigationStack {
-            ZStack {
-                VStack(alignment: .leading, spacing: Constants.defSpacing) {
-                    Text("Чаты")
-                        .font(Fonts.heading)
-                        .foregroundColor(.black)
-                        .padding(.horizontal, Constants.horizontal)
-                    select
-                        .padding(.horizontal, Constants.horizontal)
-                    switch page {
-                    case .chats:
-                        chats
-                    case .search:
-                        search
-                    }
-                    Spacer()
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
+                Text("Чаты")
+                    .font(Fonts.heading)
+                    .foregroundColor(.black)
+                    .padding(.horizontal, Constants.horizontal)
+                select
+                    .padding(.horizontal, Constants.horizontal)
+                switch page {
+                case .chats:
+                    chats
+                case .search:
+                    search
                 }
-                .navigationDestination(isPresented: $filterPresent, destination: {
-                    FilterView(model: model, showTabBar: $showTabBar)
-                        .navigationBarBackButtonHidden()
-                })
-                .onAppear {
-                    Task { @MainActor in
-                        await model.onViewAppear()
-                    }
-                }
-                .padding(.bottom, Constants.horizontal)
-                
-                if model.isLoading {
-                    SplashScreen()
-                }
+                Spacer()
+            }
+            .navigationDestination(isPresented: $filterPresent, destination: {
+                FilterView(model: model, showTabBar: $showTabBar)
+                    .navigationBarBackButtonHidden()
+            })
+            .padding(.bottom, Constants.horizontal)
+            .task {
+                await model.onViewAppear()
             }
         }
     }
@@ -70,33 +62,51 @@ public struct ChatsView<Model: ChatViewModel>: View {
     }
     
     var search: some View {
-        VStack(spacing: Constants.defSpacing) {
-            searchTextField
-            ScrollView {
-                VStack(spacing: Constants.defSpacing) {
-                    ForEach(filteredItems) { profile in
-                        ProfileElementView(profile: profile, onChatTapped: {
-                            if !model.checkChatExistance(responder: profile) {
-                                model.createNewChat(reponder: profile)
+        ZStack {
+            VStack(spacing: Constants.defSpacing) {
+                searchTextField
+                if model.profiles != [] && model.profiles != nil {
+                    ScrollView {
+                        VStack(spacing: Constants.defSpacing) {
+                            ForEach(filteredItems) { profile in
+                                ProfileElementView(profile: profile, onChatTapped: {
+                                    if !model.checkChatExistance(responder: profile) {
+                                        model.createNewChat(reponder: profile)
+                                    }
+                                    withAnimation {
+                                        page = .chats
+                                    }
+                                })
                             }
-                            withAnimation {
-                                page = .chats
-                            }
-                        })
+                        }
                     }
+                    .scrollDismissesKeyboard(.immediately)
+                    .scrollIndicators(.hidden)
+                } else {
+                    Spacer()
+                    EmptyDataView(text: "Тут пока нет профилей")
+                    Spacer()
                 }
             }
-            .refreshable {
-                Task { @MainActor in
-                    await model.onViewAppear()
-                }
-            }
-            .scrollDismissesKeyboard(.immediately)
-            .scrollIndicators(.hidden)
+            .padding(.horizontal, Constants.horizontal)
+            .background(.white)
+            .transition(.move(edge: .trailing))
+            viewStates()
         }
-        .padding(.horizontal, Constants.horizontal)
-        .background(.white)
-        .transition(.move(edge: .trailing))
+    }
+    
+    @ViewBuilder
+    func viewStates() -> some View {
+        if model.isLoading {
+            SplashScreen()
+        }
+        if model.isError {
+            ErrorView(retryAction: {
+                Task { @MainActor in
+                    await model.getProfiles()
+                }
+            })
+        }
     }
     
     var searchTextField: some View {
@@ -108,38 +118,51 @@ public struct ChatsView<Model: ChatViewModel>: View {
     }
     
     var chats: some View {
-        ScrollView {
-            ForEach(model.chats ?? []) { chat in
-                NavigationLink(destination: ChatDetailView(showTabBar: $showTabBar,
-                                                           chat: chat,
-                                                           model: model)) {
-                    VStack(spacing: Constants.defSpacing) {
-                        HStack {
-                            Circle()
-                                .frame(width: 50)
-                                .foregroundColor(Color(.light))
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text(model.getResponder(chat: chat).name)
-                                    .font(Fonts.mainBold)
-                                    .foregroundColor(.black)
-                                Text(chat.messages.last?.text ?? "")
-                                    .font(Fonts.small)
-                                    .foregroundColor(Color("grey", bundle: .module))
-                                    .lineLimit(1)
+        ZStack {
+            VStack(spacing: Constants.defSpacing) {
+                if model.chats != [] && model.chats != nil {
+                    ScrollView {
+                        ForEach(model.chats ?? []) { chat in
+                            NavigationLink(destination: ChatDetailView(showTabBar: $showTabBar, chat: chat, model: model)) {
+                                chatView(chat: chat)
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        Rectangle()
-                            .foregroundColor(Color(.light))
-                            .frame(height: 1)
                     }
+                } else {
+                    Spacer()
+                    EmptyDataView(text: "У вас пока нет чатов")
+                    Spacer()
                 }
             }
+            .padding(.horizontal, Constants.horizontal)
+            .background(.white)
+            .transition(.move(edge: .leading))
+            .refreshable {}
+            viewStates()
         }
-        .padding(.horizontal, Constants.horizontal)
-        .background(.white)
-        .transition(.move(edge: .leading))
-        .refreshable {}
+    }
+    
+    func chatView(chat: Chat) -> some View {
+        VStack(spacing: Constants.defSpacing) {
+            HStack {
+                Circle()
+                    .frame(width: 50)
+                    .foregroundColor(Color(.light))
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(model.getResponder(chat: chat).name)
+                        .font(Fonts.mainBold)
+                        .foregroundColor(.black)
+                    Text(chat.messages.last?.text ?? "")
+                        .font(Fonts.small)
+                        .foregroundColor(Color("grey", bundle: .module))
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            Rectangle()
+                .foregroundColor(Color(.light))
+                .frame(height: 1)
+        }
     }
     
     var select: some View {

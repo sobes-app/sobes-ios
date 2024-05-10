@@ -16,7 +16,7 @@ struct AuthPasswordRecreateView<Model: AuthViewModel>: View {
                     Text("Восстановление пароля")
                         .font(Fonts.heading)
                         .foregroundColor(.black)
-                    TextFieldView(model: .email, input: $inputEmail, inputState: $inputEmailState)
+                    TextFieldView(model: .email, input: $inputEmail)
                     Spacer()
                     VStack {
                         if incorrect {
@@ -68,7 +68,6 @@ struct AuthPasswordRecreateView<Model: AuthViewModel>: View {
     @ObservedObject private var model: Model
 
     @State private var inputEmail: String = ""
-    @State private var inputEmailState: TextFieldView.InputState = .correct
 
     @State private var presentCode: Bool = false
     @State private var incorrect: Bool = false

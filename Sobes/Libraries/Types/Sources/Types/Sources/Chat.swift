@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct Chat: Identifiable {
+public struct Chat: Identifiable, Equatable {
 
     public let id: Int
     public let firstResponderId: Int

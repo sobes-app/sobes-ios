@@ -7,6 +7,9 @@ public struct ProfileView<Model: ProfileViewModel>: View {
 
     @State private var presentSettings: Bool = false
     @State private var presentFill: Bool = false
+    @State private var presentFeedback: Bool = false
+    @State private var presentVacancies: Bool = false
+    
     @State private var path = NavigationPath()
     @StateObject private var model: Model
     @Binding private var showTabBar: Bool
@@ -34,7 +37,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                         Spacer()
                     } else {
                         Spacer()
-                        emptyView
+                        EmptyDataView(text: "Расскажите нам о себе")
                         Spacer()
                     }
                     HStack {
@@ -53,13 +56,14 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                     SplashScreen()
                 }
             }
-            .navigationDestination(
-                isPresented: $editParam,
-                destination: {
-                    SetupProfileDataView(model: model, showTabBar: $showTabBar, question: profileParam)
-                        .navigationBarBackButtonHidden()
-                }
-            )
+            .navigationDestination(isPresented: $editParam, destination: {
+                SetupProfileDataView(model: model, showTabBar: $showTabBar, question: profileParam)
+                    .navigationBarBackButtonHidden()
+            })
+            .navigationDestination(isPresented: $presentVacancies, destination: {
+                VacanciesView(model: model, showTabBar: $showTabBar)
+                    .navigationBarBackButtonHidden()
+            })
         }
         .onAppear {
             Task { @MainActor in
@@ -72,8 +76,14 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     }
     
     private var feedbackButton: some View {
-        Button(action: {}, label: {
+        Button(action: {
+            presentFeedback = true
+        }, label: {
             CircularTextView(title: "обратная связь * обратная связь *".uppercased(), radius: 61)
+        })
+        .navigationDestination(isPresented: $presentFeedback, destination: {
+            FeedbackView(model: model, showTabBar: $showTabBar)
+                .navigationBarBackButtonHidden()
         })
     }
     
@@ -95,6 +105,13 @@ public struct ProfileView<Model: ProfileViewModel>: View {
             professionsView
             levelView
             companiesView
+            if model.companies.contains(.other) && model.companies.count <= 1 { }
+            else {
+                ChevronButton(model: .button(text: "Найти подходящие вакансии"))
+                    .onTapGesture {
+                        presentVacancies = true
+                    }
+            }
             Text("Для изменения данных нажмите на нужную ячейку")
                 .font(Fonts.small)
                 .foregroundColor(Static.Colors.grey)
@@ -110,11 +127,12 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
+        .foregroundColor(Color(.accent))
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Constants.elementPadding)
         .background {
             RoundedRectangle(cornerRadius: Constants.corner)
-                .foregroundColor(Color(.light))
+                .stroke(Color(.accent))
         }
         .onTapGesture {
             editParam = true
@@ -165,18 +183,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         }
     }
     
-    private var emptyView: some View {
-        VStack(alignment: .center) {
-            Image("empty_view", bundle: .module)
-            Text("Расскажите нам о себе")
-                .font(Fonts.small)
-                .multilineTextAlignment(.center)
-                .foregroundColor(Static.Colors.grey)
-        }
-        .frame(maxWidth: .infinity)
-    }
-    
-    private var nameView: some View {
+    var nameView: some View {
         Text("Привет, ")
             .font(Fonts.mainBold)
             .foregroundColor(.black)

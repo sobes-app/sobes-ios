@@ -9,36 +9,34 @@ public struct AuthEntryPointView<Model: AuthViewModel>: View {
     }
     
     public var body: some View {
-        NavigationStack {
-            ZStack {
-                VStack(alignment: .leading) {
-                    BackButton()
-                    VStack(alignment: .leading, spacing: Constants.defSpacing) {
-                        Text("Вход в аккаунт")
-                            .font(Fonts.heading)
-                            .foregroundColor(.black)
-                        TextFieldView(model: .email, input: $inputEmail, inputState: $inputEmailState)
-                        TextFieldView(model: .password, input: $inputPass, inputState: $inputPassState)
-                        HStack {
-                            Spacer()
-                            forgotPasswordButton
-                        }
+        ZStack {
+            VStack(alignment: .leading) {
+                BackButton()
+                VStack(alignment: .leading, spacing: Constants.defSpacing) {
+                    Text("Вход в аккаунт")
+                        .font(Fonts.heading)
+                        .foregroundColor(.black)
+                    TextFieldView(model: .email, input: $inputEmail)
+                    TextFieldView(model: .password, input: $inputPass, passwordText: "введите пароль...")
+                    HStack {
                         Spacer()
-                        VStack {
-                            if incorrect {
-                                IncorrectView(text: "неверная почта или пароль")
-                            }
-                            button
-                        }
+                        forgotPasswordButton
                     }
-                    .padding(.top, Constants.topPadding)
+                    Spacer()
+                    VStack {
+                        if incorrect {
+                            IncorrectView(text: "неверная почта или пароль")
+                        }
+                        button
+                    }
                 }
-                .padding(.horizontal, Constants.horizontal)
-                .padding(.bottom, Constants.bottom)
-                
-                if model.isLoading {
-                    SplashScreen()
-                }
+                .padding(.top, Constants.topPadding)
+            }
+            .padding(.horizontal, Constants.horizontal)
+            .padding(.bottom, Constants.bottom)
+            
+            if model.isLoading {
+                SplashScreen()
             }
         }
     }
@@ -87,10 +85,8 @@ public struct AuthEntryPointView<Model: AuthViewModel>: View {
     @StateObject private var model: Model
     
     @State private var inputEmail: String = ""
-    @State private var inputEmailState: TextFieldView.InputState = .correct
     
     @State private var inputPass: String = ""
-    @State private var inputPassState: TextFieldView.InputState = .correct
     
     @State private var presentMain: Bool = false
     @State private var presentPasswordRecreate: Bool = false
