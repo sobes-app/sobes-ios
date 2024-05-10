@@ -21,9 +21,8 @@ public struct ErrorResponse: Decodable {
 public final class NetworkLayer {
     let token: String?
     let tokenType: String?
-    
-    //TODO: путь до бека
-    let baseUrl = "http://localhost:8080"
+
+    let baseUrl = "http://158.160.165.222:8080"
     public init(token: String?, tokenType: String?) {
         self.token = token
         self.tokenType = tokenType
