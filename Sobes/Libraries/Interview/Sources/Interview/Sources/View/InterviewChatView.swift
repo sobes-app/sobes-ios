@@ -14,7 +14,7 @@ public struct InterviewChatView<Model: InterviewViewModel>: View {
             BackButton()
             messageBubbles
             Spacer()
-            TextFieldView(model: .chat, input: $input, inputState: $inputState, onSend: {
+            TextFieldView(model: .chat, input: $input, onSend: {
                 model.onUserMessageSent(question: question.text, text: input)
             })
         }
@@ -26,7 +26,6 @@ public struct InterviewChatView<Model: InterviewViewModel>: View {
     }
 
     @State private var input: String = ""
-    @State private var inputState: TextFieldView.InputState = .correct
     @ObservedObject private var model: Model
     private let question: InterviewQuestion
 

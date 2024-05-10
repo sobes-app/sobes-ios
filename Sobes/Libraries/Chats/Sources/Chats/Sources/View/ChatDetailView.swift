@@ -8,7 +8,6 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     @ObservedObject private var model: Model
     
     @State private var input: String = ""
-    @State private var inputState: TextFieldView.InputState = .correct
     @State private var isPopoverPresented: Bool = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Binding private var showTabBar: Bool
@@ -40,7 +39,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
                         }
                     }
                 
-                TextFieldView(model: .chat, input: $input, inputState: $inputState, onSend: {
+                TextFieldView(model: .chat, input: $input, onSend: {
                     model.addMessageToChat(chatId: chat.id, text: input)
                     input = ""
                 })

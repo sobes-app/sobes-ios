@@ -23,9 +23,9 @@ struct ChangePasswordView<Model: ProfileViewModel>: View {
                     Text("Смена пароля")
                         .font(Fonts.heading)
                         .foregroundColor(.black)
-                    TextFieldView(model: .password, input: $inputPassword, inputState: $inputPasswordState)
-                    TextFieldView(model: .password, input: $inputNew, inputState: $inputNewState)
-                    TextFieldView(model: .repPassword, input: $inputRep, inputState: $inputRepState)
+                    TextFieldView(model: .password, input: $inputPassword, passwordText: "старый пароль...")
+                    TextFieldView(model: .password, input: $inputNew, passwordText: "новый пароль...")
+                    TextFieldView(model: .password, input: $inputRep, passwordText: "повторите пароль...")
                     Spacer()
                     VStack {
                         if incorrect {
@@ -78,13 +78,8 @@ struct ChangePasswordView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
 
     @State private var inputPassword: String = ""
-    @State private var inputPasswordState: TextFieldView.InputState = .correct
-
     @State private var inputNew: String = ""
-    @State private var inputNewState: TextFieldView.InputState = .correct
-    
     @State private var inputRep: String = ""
-    @State private var inputRepState: TextFieldView.InputState = .correct
     
     @State var incorrect: Bool = false
     @State var message: String = "ошибка при смене пароля"

@@ -42,6 +42,8 @@ public final class MaterialsProviderImpl: MaterialsProvider {
                 return .failure(.empty)
             case .jsonDecodeError, .jsonEncodeError, .responseError:
                 return .failure(.error)
+            case .unautharized:
+                return .failure(.error)
             }
         }
     }
@@ -64,6 +66,8 @@ public final class MaterialsProviderImpl: MaterialsProvider {
             case .noDataError:
                 return .failure(.empty)
             case .jsonDecodeError, .jsonEncodeError, .responseError:
+                return .failure(.error)
+            case .unautharized:
                 return .failure(.error)
             }
         }

@@ -22,6 +22,7 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     @State private var currentQuestion: Question = .professions
+    @State private var backToMain: Bool = false
     @State private var step: Double = 1
     @State private var label: String = "Дальше"
     
@@ -73,8 +74,15 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
         .padding(.horizontal, Constants.horizontal)
         .padding(.bottom, Constants.bottom)
         .onAppear {
-            withoutAnimation {
+            withAnimation {
                 showTabBar = false
+            }
+        }
+        .onDisappear {
+            if backToMain {
+                withAnimation {
+                    showTabBar = true
+                }
             }
         }
     }
@@ -83,9 +91,7 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
         BackButton(onTap: {
             if step == 1 {
                 presentationMode.wrappedValue.dismiss()
-                withAnimation {
-                    showTabBar = true
-                }
+                backToMain = true
             } else {
                 step -= 1
                 currentQuestion = Question(rawValue: Int(step)) ?? .companies
@@ -279,6 +285,7 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
         }
         if isAvailable(step: step) {
             if step == stepsCount {
+                backToMain = true
                 if stepsCount == 3 {
                     createProfile()
                 } else {
@@ -298,8 +305,10 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
         Task { @MainActor in
             let success = await model.setProfileInfo()
             if success {
-                presentationMode.wrappedValue.dismiss()
-                showTabBar = true
+                withAnimation {
+                    presentationMode.wrappedValue.dismiss()
+                    showTabBar = true
+                }
             } else {
                 showIncorrect()
             }

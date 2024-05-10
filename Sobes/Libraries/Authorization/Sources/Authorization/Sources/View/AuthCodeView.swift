@@ -6,7 +6,6 @@ struct AuthCodeView<Model:AuthViewModel>: View {
     @EnvironmentObject var auth: Authentication
     
     @State private var input: String = ""
-    @State private var inputState: TextFieldView.InputState = .correct
     @State private var present: Bool = false
     @State private var incorrect: Bool = false
 
@@ -23,10 +22,16 @@ struct AuthCodeView<Model:AuthViewModel>: View {
                     Text("Код")
                         .font(Fonts.heading)
                         .foregroundColor(.black)
-                    Text("На вашу электронную почту было отправлено письмо с кодом подтверждения")
+                    Text("На вашу электронную почту ")
                         .font(Fonts.main)
                         .foregroundColor(.black)
-                    TextFieldView(model: .code, input: $input, inputState: $inputState)
+                    + Text(model.email)
+                        .font(Fonts.mainBold)
+                        .foregroundColor(.black)
+                    + Text(" было отправлено письмо с кодом подтверждения")
+                        .font(Fonts.main)
+                        .foregroundColor(.black)
+                    TextFieldView(model: .code, input: $input)
                     HStack {
                         Spacer()
                         repeatCode

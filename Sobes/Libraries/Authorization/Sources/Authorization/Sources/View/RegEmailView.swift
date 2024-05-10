@@ -16,7 +16,7 @@ public struct RegEmailView<Model: AuthViewModel>: View {
                     Text("Поехали!")
                         .font(Fonts.heading)
                         .foregroundColor(.black)
-                    TextFieldView(model: .email, input: $input, inputState: $inputState)
+                    TextFieldView(model: .email, input: $input)
                     Spacer()
                     VStack {
                         if incorrect {
@@ -71,7 +71,6 @@ public struct RegEmailView<Model: AuthViewModel>: View {
     @ObservedObject private var model: Model
     
     @State private var input: String = ""
-    @State private var inputState: TextFieldView.InputState = .correct
     @State private var presentCode: Bool = false
     @State private var incorrect: Bool = false
     @State private var message: String = "неверный формат почты"

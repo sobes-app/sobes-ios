@@ -23,7 +23,7 @@ public final class QuestionsProviderImpl: QuestionsProvider {
     }
 
     public func areQuestionMessagesEmpty(question: String) async -> Bool {
-        let interviewClient = InterviewClient(token: try? self.keychain.get(accessTokenKey))
+        let interviewClient = InterviewClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
         let result = await interviewClient.getDialogAssessments(question: question)
         switch result {
         case .success(let dialog):
@@ -40,7 +40,7 @@ public final class QuestionsProviderImpl: QuestionsProvider {
     public func getInterviewQuestions(
         for type: Professions
     ) async -> Result<[Types.InterviewQuestion], CustomError> {
-        let interviewClient = InterviewClient(token: try? self.keychain.get(accessTokenKey))
+        let interviewClient = InterviewClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
         let result = await interviewClient.generateQuestions(
             profession: type.rawValue,
             level: profileProvider.getUserLevel().rawValue
@@ -61,6 +61,8 @@ public final class QuestionsProviderImpl: QuestionsProvider {
                 return .failure(.empty)
             case .jsonDecodeError, .jsonEncodeError, .responseError:
                 return .failure(.error)
+            case .unautharized:
+                return .failure(.error)
             }
         }
     }
@@ -68,7 +70,7 @@ public final class QuestionsProviderImpl: QuestionsProvider {
     public func getAnswerAssessment(
         question: String, answer: String, profession: String
     ) async -> Result<InterviewAssessment, CustomError> {
-        let interviewClient = InterviewClient(token: try? self.keychain.get(accessTokenKey))
+        let interviewClient = InterviewClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
         let result = await interviewClient.getAssessment(question: question, answer: answer, profession: profession)
         switch result {
         case .success(let assessment):
@@ -89,12 +91,14 @@ public final class QuestionsProviderImpl: QuestionsProvider {
                 return .failure(.empty)
             case .jsonDecodeError, .jsonEncodeError, .responseError:
                 return .failure(.error)
+            case .unautharized:
+                return .failure(.error)
             }
         }
     }
 
     public func getUserQuestions(profession: String) async -> Result<[Types.InterviewQuestion], CustomError> {
-        let interviewClient = InterviewClient(token: try? self.keychain.get(accessTokenKey))
+        let interviewClient = InterviewClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
         let result = await interviewClient.getAnsweredQuestion(profession: profession, level: "Junior")
         switch result {
         case .success(let questions):
@@ -116,6 +120,8 @@ public final class QuestionsProviderImpl: QuestionsProvider {
                 return .failure(.empty)
             case .jsonDecodeError, .jsonEncodeError, .responseError:
                 return .failure(.error)
+            case .unautharized:
+                return .failure(.error)
             }
         }
     }
@@ -129,6 +135,7 @@ public final class QuestionsProviderImpl: QuestionsProvider {
 
     private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
     private let accessTokenKey = KeychainKey<String>(key: "accessToken")
+    private let tokenType = KeychainKey<String>(key: "tokenType")
     private var chats: [String : [InterviewMessage]] = [:]
     private let profileProvider: ProfileProvider
 

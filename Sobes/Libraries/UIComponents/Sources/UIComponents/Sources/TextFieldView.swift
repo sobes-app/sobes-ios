@@ -13,31 +13,24 @@ public struct TextFieldView: View {
     public enum Model {
         case name
         case password
-        case repPassword
         case email
         case code
         case chat
         case search
     }
     
-    public enum InputState {
-        case correct
-        case incorrect
-        case passwords
-    }
-    
     public init(
         model: Model,
         input: Binding<String>,
-        inputState: Binding<InputState>,
         onSend: (() -> Void)? = nil,
-        onFilter: (() -> Void)? = nil
+        onFilter: (() -> Void)? = nil,
+        passwordText: String? = nil
     ) {
         self.model = model
         self._input = input
-        self._inputState = inputState
         self.onSend = onSend
         self.onFilter = onFilter
+        self.passwordText = passwordText
     }
     
     public var body: some View {
@@ -46,8 +39,6 @@ public struct TextFieldView: View {
             name
         case .password:
             password
-        case .repPassword:
-            repPassword
         case .email:
             email
         case .code:
@@ -76,7 +67,7 @@ public struct TextFieldView: View {
             Image(systemName: "person.fill")
                 .foregroundColor(Static.Colors.grey)
             TextField("введите фио...", text: $input)
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(.black)
                 .focused($isFocused)
                 .disableAutocorrection(true)
         }
@@ -85,27 +76,13 @@ public struct TextFieldView: View {
             roundedRec
         }
     }
+    
     var password: some View {
         HStack(spacing: Constants.smallStack) {
             Image(systemName: "lock")
                 .foregroundColor(Static.Colors.grey)
-            SecureField("введите пароль...", text: $input)
-                .foregroundColor(Static.Colors.grey)
-                .focused($isFocused)
-                .disableAutocorrection(true)
-                .textInputAutocapitalization(.never)
-        }
-        .padding(Constants.elementPadding)
-        .background {
-            roundedRec
-        }
-    }
-    var repPassword: some View {
-        HStack(spacing: Constants.smallStack) {
-            Image(systemName: "lock")
-                .foregroundColor(Static.Colors.grey)
-            SecureField("повторите пароль...", text: $input)
-                .foregroundColor(Static.Colors.grey)
+            SecureField(passwordText ?? "", text: $input)
+                .foregroundColor(.black)
                 .focused($isFocused)
                 .disableAutocorrection(true)
                 .textInputAutocapitalization(.never)
@@ -120,7 +97,7 @@ public struct TextFieldView: View {
             Image(systemName: "envelope")
                 .foregroundColor(Static.Colors.grey)
             TextField("введите почту...", text: $input)
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(.black)
                 .focused($isFocused)
                 .disableAutocorrection(true)
                 .textInputAutocapitalization(.never)
@@ -133,7 +110,7 @@ public struct TextFieldView: View {
     var code: some View {
         HStack(spacing: Constants.smallStack) {
             TextField("введите код...", text: $input)
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(.black)
                 .focused($isFocused)
                 .disableAutocorrection(true)
         }
@@ -146,7 +123,7 @@ public struct TextFieldView: View {
     var search: some View {
         HStack(spacing: 5) {
             TextField("поиск...", text: $input, axis: .vertical)
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(.black)
                 .focused($isFocused)
                 .disableAutocorrection(true)
                 .onSubmit {
@@ -210,10 +187,10 @@ public struct TextFieldView: View {
     
     @FocusState private var isFocused: Bool
     @Binding private var input: String
-    @Binding private var inputState: InputState
     private let model: Model
     private let onSend: (()-> Void)?
     private let onFilter: (()-> Void)?
+    private let passwordText: String?
 }
 
 private enum Static {

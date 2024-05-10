@@ -9,7 +9,9 @@ public protocol ProfileViewModel: ObservableObject {
     var companies: [Companies] {get set}
     var level: Types.Levels {get set}
     var stepsCount: Double {get set}
+    
     var isLoading: Bool {get set}
+    var isError: Bool {get set}
     
     func getProfileName() -> String
     func getProfileLevel() -> String
@@ -28,6 +30,7 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     let profileProvider: ProfileProvider
     
     @Published public var isLoading: Bool = false
+    @Published public var isError: Bool = false
     
     @Published var profile: Profile?
     
@@ -66,27 +69,19 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     
     func setProfile() async -> Bool {
         isLoading = true
+        isError = false
+        defer { isLoading = false }
+        
         let result = await profileProvider.getProfile()
         switch result {
         case .success(let success):
             profile = success
-            isLoading = false
+            companies = profile?.companies ?? []
+            professions = profile?.professions ?? []
+            level = profile?.level ?? .no
             return true
         case .failure(let failure):
-            if failure == ClientError.unautharized {
-                let update = await profileProvider.updateToken()
-                if update {
-                    if await setProfile() {
-                        isLoading = false
-                        return true
-                    } else {
-                        isLoading = false
-                        return false
-                    }
-                }
-            }
-            isLoading = false
-            return false
+            return await setError(failure: failure)
         }
     }
     
@@ -97,21 +92,35 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     
     public func setProfileInfo() async -> Bool {
         isLoading = true
+        isError = false
+        defer { isLoading = false }
+        
         let com = Profile.stringArrayComp(of: companies)
         let pro = Profile.stringArrayProf(of: professions)
-        var success = await profileProvider.createProfile(exp: level.rawValue, comp: com, prof: pro)
-        success = await setProfile()
-        isLoading = false
-        return success
+        let result = await profileProvider.createProfile(exp: level.rawValue, comp: com, prof: pro)
+        
+        switch result {
+        case .success:
+            let success = await setProfile()
+            return success
+        case .failure(let failure):
+            return await setError(failure: failure)
+        }
     }
-    
     
     public func updateProfile(level: String? = nil, professions: [String]? = nil, companies: [String]? = nil) async -> Bool {
         isLoading = true
-        var success = await profileProvider.updateProfile(level: level, professions: professions, companies: companies)
-        success = await setProfile()
-        isLoading = false
-        return success
+        isError = false
+        defer { isLoading = false }
+        
+        let result = await profileProvider.updateProfile(level: level, professions: professions, companies: companies)
+        switch result {
+        case .success:
+            let success = await setProfile()
+            return success
+        case .failure(let failure):
+            return await setError(failure: failure)
+        }
     }
     
     public func createStringProf() -> String {
@@ -128,5 +137,26 @@ public final class ProfileViewModelImpl: ProfileViewModel {
             a.append(i.rawValue)
         }
         return a.joined(separator: ", ")
+    }
+    
+    func setError(failure: CustomError) async -> Bool {
+        switch failure {
+        case .error, .empty:
+            isError = true
+            return false
+        case .unauth:
+            let update = await profileProvider.updateToken()
+            if update {
+                if await setProfile() {
+                    return true
+                } else {
+                    isError = true
+                    return false
+                }
+            } else {
+                isError = true
+                return false
+            }
+        }
     }
 }
