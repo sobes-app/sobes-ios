@@ -14,9 +14,7 @@ public protocol InterviewViewModel: ObservableObject {
     func onViewAppear() async
     func fetchUserQuestions(profession: String) async
     func fetchQuestions(for interviewType: Professions) async
-    func getQuestionsInProgress() -> String
-    func getQuestionsWithIdealResult() -> String
-    func getMeanQuestionsResult() -> String
+    func getPublicStatistics(type: PublicStatisticsField, profession: Professions) -> Int
     func onUserMessageSent(question: String, text: String)
     func startDialogueForQuestion(question: String, questionId: Int, text: String) async
     func fetchAssessment(question: String, answer: String) async
@@ -96,7 +94,6 @@ public final class InterviewViewModelImpl: InterviewViewModel {
 
     public func startDialogueForQuestion(question: String, questionId: Int, text: String) async {
         messages = []
-        currentQuestionId = questionId
         guard await questionsProvider.areQuestionMessagesEmpty(question: question) else {
             messages = questionsProvider.getMessagesForQuestion(question: question)
             return
@@ -119,6 +116,11 @@ public final class InterviewViewModelImpl: InterviewViewModel {
         let gptMessage = InterviewMessage(id: gptMessageId, text: "Подготовил оценку вашего ответа", sender: .gpt(isAssessment: true))
         messages.append(gptMessage)
         questionsProvider.addMessageToInterviewChat(question: question, message: gptMessage)
+
+        // If this dialogue is just started, update statistics
+        if messageId == 2 {
+            updateStaticticsValues()
+        }
     }
 
     public func fetchAssessment(question: String, answer: String) async {
@@ -140,28 +142,130 @@ public final class InterviewViewModelImpl: InterviewViewModel {
             isLoading = false
             self.assessment = assessment
             assessments[answer] = assessment
+            updateStatisticsValues(assessment: assessment)
         case .failure:
             isLoading = false
             isError = true
         }
     }
 
-    public func getQuestionsInProgress() -> String {
-        return "\(1)"
+    public func getPublicStatistics(type: PublicStatisticsField, profession: Professions) -> Int {
+        switch profession {
+        case .no:
+            return 0
+        case .product:
+            return UserDefaults.standard.integer(forKey: type.rawValue + "Product")
+        case .project:
+            return UserDefaults.standard.integer(forKey: type.rawValue + "Project")
+        case .analyst:
+            return UserDefaults.standard.integer(forKey: type.rawValue + "BA")
+        }
     }
 
-    public func getQuestionsWithIdealResult() -> String {
-        return "\(8)"
+    private func updateStatisticsValues(assessment: InterviewAssessment) {
+        guard let currentChatProfession else { return }
+        if assessment.completeness > 95 && assessment.satisfaction > 95 {
+            let idealStored = getPublicStatistics(type: .ideal, profession: currentChatProfession) + 1
+            let inWorkStored = getPublicStatistics(type: .inWork, profession: currentChatProfession) - 1
+
+            let predicate = PublicStatisticsField.ideal.rawValue
+            setValue(predicate: predicate, value: idealStored)
+
+            if inWorkStored >= 0 {
+                let predicate = PublicStatisticsField.inWork.rawValue
+                setValue(predicate: predicate, value: inWorkStored)
+            }
+        }
+
+        var allAssessments = getAllAssessments(profession: currentChatProfession)
+        allAssessments.append(Int(assessment.score))
+        var predicate = "questionsAllAssessments"
+        setValue(predicate: predicate, value: allAssessments)
+
+        let newMeanRes = getAllAssessments(profession: currentChatProfession).sum() / getAllQuestionsAnswered(profession: currentChatProfession)
+        predicate = PublicStatisticsField.meanResult.rawValue
+        setValue(predicate: predicate, value: newMeanRes)
     }
 
-    public func getMeanQuestionsResult() -> String {
-        return "\(74.5)"
+    private func getAllAssessments(profession: Professions) -> [Int] {
+        let predicate = "questionsAllAssessments"
+        switch profession {
+        case .no: return []
+        case .product: return UserDefaults.standard.array(forKey: predicate + "Product") as? [Int] ?? []
+        case .project: return UserDefaults.standard.array(forKey: predicate + "Project") as? [Int] ?? []
+        case .analyst: return UserDefaults.standard.array(forKey: predicate + "BA") as? [Int] ?? []
+        }
     }
 
-    private var currentQuestionId: Int = 0
+    private func getAllQuestionsAnswered(profession: Professions) -> Int {
+        let predicate = "questionsAll"
+        switch profession {
+        case .no: return 0
+        case .product: return UserDefaults.standard.integer(forKey: predicate + "Product")
+        case .project: return UserDefaults.standard.integer(forKey: predicate + "Project")
+        case .analyst: return UserDefaults.standard.integer(forKey: predicate + "BA")
+        }
+    }
+
+    private func updateStaticticsValues() {
+        guard let currentChatProfession else { return }
+        let allQuestionsAnswered = getAllQuestionsAnswered(profession: currentChatProfession) + 1
+        var predicate = "questionsAll"
+        setValue(predicate: predicate, value: allQuestionsAnswered)
+
+        let inProgressQuestions = getPublicStatistics(type: .inWork, profession: currentChatProfession) + 1
+        predicate = PublicStatisticsField.inWork.rawValue
+        setValue(predicate: predicate, value: inProgressQuestions)
+    }
+
+    private func setValue(predicate: String, value: Int) {
+        guard let currentChatProfession else { return }
+        switch currentChatProfession {
+        case .no:
+            break
+        case .product:
+            UserDefaults.standard.set(value, forKey: predicate + "Product")
+        case .project:
+            UserDefaults.standard.set(value, forKey: predicate + "Project")
+        case .analyst:
+            UserDefaults.standard.set(value, forKey: predicate + "BA")
+        }
+    }
+
+    private func setValue(predicate: String, value: [Int]) {
+        guard let currentChatProfession else { return }
+        switch currentChatProfession {
+        case .no:
+            break
+        case .product:
+            UserDefaults.standard.set(value, forKey: predicate + "Product")
+        case .project:
+            UserDefaults.standard.set(value, forKey: predicate + "Project")
+        case .analyst:
+            UserDefaults.standard.set(value, forKey: predicate + "BA")
+        }
+    }
+
     private let questionsProvider: QuestionsProvider
     private let profileProvider: ProfileProvider
     private var currentChatProfession: Professions?
     private var assessments: [String : InterviewAssessment] = [:]
 
+}
+
+public enum PublicStatisticsField: String {
+    case inWork = "questionsInWork"
+    case ideal = "questionsIdealResult"
+    case meanResult = "questionsMeanResult"
+}
+
+extension Array where Element == Int {
+    func sum() -> Int {
+        var sum = 0
+        for x in 0..<self.count{
+           sum += self[x]
+        }
+
+        return sum
+    }
 }
