@@ -10,8 +10,8 @@ public protocol ProfileProvider {
     func getCurrentUser() -> Profile
     func getProfiles() -> [Types.Profile]
 
-    func getUserProfessions() -> [Professions]
-    func getUserLevel() -> Levels
+    func getUserProfessions() async -> Result<[Professions], CustomError>
+    func getUserLevel() async -> Result<Levels, CustomError>
 
     func sendEmail(email: String) async -> Bool
     func verifyCode(email: String, code: String) async -> Bool
@@ -30,19 +30,26 @@ public final class ProfileProviderImpl: ProfileProvider {
     
     public var profile: Types.Profile?
     
-    private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
-    private let accessTokenKey = KeychainKey<String>(key: "accessToken")
-    private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
-    private let tokenType = KeychainKey<String>(key: "tokenType")
-    
     public init() { }
 
-    public func getUserProfessions() -> [Professions] {
-        return profile?.professions ?? []
+    public func getUserProfessions() async -> Result<[Professions], CustomError> {
+        let req = await getProfile()
+        switch req {
+        case .success(let profile):
+            return .success(profile?.professions ?? [])
+        case .failure(let error):
+            return .failure(error)
+        }
     }
 
-    public func getUserLevel() -> Levels {
-        return profile?.level ?? .jun
+    public func getUserLevel() async -> Result<Levels, CustomError> {
+        let req = await getProfile()
+        switch req {
+        case .success(let profile):
+            return .success(profile?.level ?? .no)
+        case .failure(let error):
+            return .failure(error)
+        }
     }
 
     public func sendEmail(email: String) async -> Bool {
@@ -135,10 +142,6 @@ public final class ProfileProviderImpl: ProfileProvider {
         }
     }
     
-    public func setProfile(profile: Profile) {
-        self.profile = profile
-    }
-    
     public func getCurrentUser() -> Profile {
         return profile ?? Profile()
     }
@@ -148,6 +151,7 @@ public final class ProfileProviderImpl: ProfileProvider {
         try? keychain.remove(refreshTokenKey)
         try? keychain.remove(tokenType)
         profile = nil
+        clearUserDefaultsData()
     }
     
     public func recoverAccount(email: String) async -> Bool {
@@ -201,12 +205,16 @@ public final class ProfileProviderImpl: ProfileProvider {
         }
     }
     
-    
     public func getProfiles() -> [Types.Profile] {
         return profiles
     }
-    
-    
+
+    private func clearUserDefaultsData() {
+        let domain = Bundle.main.bundleIdentifier!
+        UserDefaults.standard.removePersistentDomain(forName: domain)
+        UserDefaults.standard.synchronize()
+    }
+
     private var profiles: [Types.Profile] = [
         Profile()
     ]
@@ -226,4 +234,9 @@ public final class ProfileProviderImpl: ProfileProvider {
             return .unauth
         }
     }
+
+    private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
+    private let accessTokenKey = KeychainKey<String>(key: "accessToken")
+    private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
+    private let tokenType = KeychainKey<String>(key: "tokenType")
 }

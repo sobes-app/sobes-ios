@@ -18,32 +18,37 @@ public protocol ProfileViewModel: ObservableObject {
     func changePassword(oldPassword: String, newPassword: String) async -> Bool
     func setProfileInfo() async -> Bool
     func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Bool
-    
+
     func onViewAppear() async -> Bool
     func onLogoutTap()
-    func createStringProf() -> String
-    func createStringComp() -> String
+
+    func isInfoNotEmpty() -> Bool
 }
 
 @MainActor
 public final class ProfileViewModelImpl: ProfileViewModel {
-    let profileProvider: ProfileProvider
-    
+
     @Published public var isLoading: Bool = false
     @Published public var isError: Bool = false
     
     @Published var profile: Profile?
-    
+
     @Published public var professions: [Professions] = []
     @Published public var companies: [Companies] = []
     @Published public var level: Types.Levels = .no
-    
     @Published public var stepsCount: Double = 3
-        
+
     public init(profileProvider: ProfileProvider) {
         self.profileProvider = profileProvider
     }
     
+    @MainActor
+    public func onViewAppear() async -> Bool {
+        isError = false
+        isLoading = true
+        return await updateProfile()
+    }
+
     public func changePassword(oldPassword: String, newPassword: String) async -> Bool {
         isLoading = true
         let success = await profileProvider.changePassword(oldPassword: oldPassword, newPassword: newPassword)
@@ -89,7 +94,11 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         profileProvider.logout()
         profile = nil
     }
-    
+
+    public func isInfoNotEmpty() -> Bool {
+        profile?.level.rawValue.isEmpty == false
+    }
+
     public func setProfileInfo() async -> Bool {
         isLoading = true
         isError = false
@@ -122,21 +131,21 @@ public final class ProfileViewModelImpl: ProfileViewModel {
             return await setError(failure: failure)
         }
     }
-    
-    public func createStringProf() -> String {
-        var a: [String] = []
-        for i in profile?.professions ?? [] {
-            a.append(i.rawValue)
+
+    private func updateProfile() async -> Bool {
+        let request = await profileProvider.getProfile()
+        switch request {
+        case .success(let profile):
+            isLoading = false
+            self.profile = profile
+        case .failure(let error):
+            isLoading = false
+            isError = true
+            if error == .unauthorized {
+                return await profileProvider.updateToken()
+            }
         }
-        return a.joined(separator: ", ")
-    }
-    
-    public func createStringComp() -> String {
-        var a: [String] = []
-        for i in profile?.companies ?? [] {
-            a.append(i.rawValue)
-        }
-        return a.joined(separator: ", ")
+        return true
     }
     
     func setError(failure: CustomError) async -> Bool {
@@ -159,4 +168,7 @@ public final class ProfileViewModelImpl: ProfileViewModel {
             }
         }
     }
+
+    private let profileProvider: ProfileProvider
+
 }

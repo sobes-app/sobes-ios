@@ -65,7 +65,7 @@ public struct TextFieldView: View {
     var name: some View {
         HStack(spacing: Constants.smallStack) {
             Image(systemName: "person.fill")
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(isFocused ? .black : Static.Colors.grey)
             TextField("введите фио...", text: $input)
                 .foregroundColor(.black)
                 .focused($isFocused)
@@ -92,10 +92,11 @@ public struct TextFieldView: View {
             roundedRec
         }
     }
+
     var email: some View {
         HStack(spacing: Constants.smallStack) {
             Image(systemName: "envelope")
-                .foregroundColor(Static.Colors.grey)
+                .foregroundColor(isFocused ? .black : Static.Colors.grey)
             TextField("введите почту...", text: $input)
                 .foregroundColor(.black)
                 .focused($isFocused)
@@ -107,6 +108,7 @@ public struct TextFieldView: View {
             roundedRec
         }
     }
+
     var code: some View {
         HStack(spacing: Constants.smallStack) {
             TextField("введите код...", text: $input)
@@ -140,7 +142,7 @@ public struct TextFieldView: View {
                 }
             ) {
                 Image(systemName: "arrow.up")
-                    .foregroundColor(input.count == 0 ? Static.Colors.grey : .white)
+                    .foregroundColor(input.isEmpty ? Static.Colors.grey : .white)
                     .onTapGesture {
                         onFilter?()
                     }
@@ -174,7 +176,7 @@ public struct TextFieldView: View {
                 }
             ) {
                 Image(systemName: "arrow.up")
-                    .foregroundColor(input.count == 0 ? Static.Colors.grey : .white)
+                    .foregroundColor(input.isEmpty ? Static.Colors.grey : .white)
                     .background {
                         Circle()
                             .frame(width: 40, height: 40)

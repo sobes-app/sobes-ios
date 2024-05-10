@@ -4,4 +4,5 @@ public enum CustomError: Error {
     case empty
     case error
     case unauth
+    case unauthorized
 }

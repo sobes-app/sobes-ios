@@ -4,7 +4,7 @@ import Authorization
 
 public struct ProfileView<Model: ProfileViewModel>: View {
     @EnvironmentObject var auth: Authentication
-    
+
     @State private var presentSettings: Bool = false
     @State private var presentFill: Bool = false
     @State private var presentFeedback: Bool = false
@@ -32,7 +32,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                         settingsView
                         logoutView
                     }
-                    if !model.getProfileLevel().isEmpty {
+                    if model.isInfoNotEmpty() {
                         statsView
                         Spacer()
                     } else {
@@ -45,7 +45,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                         feedbackButton
                             .padding(.bottom, Constants.defSpacing)
                     }
-                    if model.getProfileLevel().isEmpty {
+                    if !model.isInfoNotEmpty() {
                         button
                     }
                 }
@@ -88,14 +88,19 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     }
     
     var button: some View {
-        MainButton(action: {presentFill=true}, label: "Рассказать о себе")
+        MainButton(
+			action: {
+				presentFill=true
+			}, 
+			label: "Рассказать о себе"
+		)
             .navigationDestination(isPresented: $presentFill) {
                 SetupProfileDataView(model: model, showTabBar: $showTabBar)
                     .navigationBarBackButtonHidden()
             }
     }
     
-    var statsView: some View {
+    private var statsView: some View {
         VStack(alignment: .leading, spacing: Constants.defSpacing) {
             professionsView
             levelView
@@ -114,11 +119,11 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         }
     }
     
-    var companiesView: some View {
+    private var companiesView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Хочет работать в:")
                 .font(Fonts.mainBold)
-            Text(model.createStringComp())
+            Text(model.profile?.companies.map { $0.rawValue }.joined(separator: ", ") ?? "")
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
@@ -135,13 +140,13 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         }
     }
     
-    var levelView: some View {
+    private var levelView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Желаемая позиция")
                 .font(Fonts.mainBold)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
-            Text(model.getProfileLevel())
+            Text(model.profile?.level.rawValue ?? "")
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
@@ -158,11 +163,11 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         }
     }
     
-    var professionsView: some View {
+    private var professionsView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Желаемые должности:")
                 .font(Fonts.mainBold)
-            Text(model.createStringProf())
+            Text(model.profile?.professions.map { $0.rawValue }.joined(separator: ", ") ?? "")
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
@@ -182,7 +187,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         Text("Привет, ")
             .font(Fonts.mainBold)
             .foregroundColor(.black)
-        + Text(model.getProfileName())
+        + Text(model.profile?.name ?? "")
             .font(Fonts.mainBold)
             .foregroundColor(Color(.accent))
         + Text("!")
@@ -190,8 +195,10 @@ public struct ProfileView<Model: ProfileViewModel>: View {
             .foregroundColor(.black)
     }
     
-    var settingsView: some View {
-        Button(action: {presentSettings = true}) {
+    private var settingsView: some View {
+        Button {
+            presentSettings = true
+        } label: {
             Image(systemName: "gearshape.fill")
                 .foregroundColor(.black)
                 .padding(Constants.elementPadding)
@@ -206,11 +213,11 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         }
     }
     
-    var logoutView: some View {
-        Button(action: {
+    private var logoutView: some View {
+        Button {
             model.onLogoutTap()
             auth.updateStatus(success: false)
-        }) {
+        } label: {
             Image(systemName: "rectangle.portrait.and.arrow.right.fill")
                 .foregroundColor(.black)
                 .padding(Constants.elementPadding)

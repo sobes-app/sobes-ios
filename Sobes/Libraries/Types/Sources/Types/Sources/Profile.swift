@@ -60,50 +60,26 @@ public struct Profile: Identifiable, Hashable {
     }
     
     public static func createStringOfCompanies(of profile: Profile) -> [String] {
-        var array: [String] = []
-        for company in profile.companies {
-            array.append(company.rawValue)
-        }
-        return array
+        return profile.companies.map { $0.rawValue }
     }
     
     public static func createStringOfProfessions(of profile: Profile) -> [String] {
-        var array: [String] = []
-        for profession in profile.professions {
-            array.append(profession.rawValue)
-        }
-        return array
+        return profile.professions.map { $0.rawValue }
     }
     
     public static func stringArrayComp(of comp: [Companies]) -> [String] {
-        var array: [String] = []
-        for company in comp {
-            array.append(company.rawValue)
-        }
-        return array
+        return comp.map { $0.rawValue }
     }
     
     public static func stringArrayProf(of prof: [Professions]) -> [String] {
-        var array: [String] = []
-        for profession in prof {
-            array.append(profession.rawValue)
-        }
-        return array
+        return prof.map { $0.rawValue }
     }
     
-    public static func setProfessions(array: [String]) -> [Professions]{
-        var profArray: [Professions] = []
-        for i in array {
-            profArray.append(Professions(rawValue: i) ?? .no)
-        }
-        return profArray
+    public static func setProfessions(array: [String]) -> [Professions] {
+        return array.map { Professions(rawValue: $0) ?? .no }
     }
     
     public static func setCompanies(array: [String]) -> [Companies] {
-        var compArray: [Companies] = []
-        for i in array {
-            compArray.append(Companies(rawValue: i) ?? .no)
-        }
-        return compArray
+        return array.map { Companies(rawValue: $0) ?? .no }
     }
 }

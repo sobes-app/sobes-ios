@@ -44,7 +44,12 @@ public struct RegCodeView<Model: AuthViewModel>: View {
             }
             .padding(.horizontal, Constants.horizontal)
             .padding(.bottom, Constants.bottom)
-            
+            .navigationDestination(isPresented: $present) {
+                RegFinalView(model: model)
+                    .navigationBarBackButtonHidden()
+                    .environmentObject(auth)
+            }
+
             if model.isLoading {
                 SplashScreen()
             }
@@ -52,19 +57,17 @@ public struct RegCodeView<Model: AuthViewModel>: View {
     }
     
     private var button: some View {
-        MainButton(action: {
-            Task { @MainActor in
-                present = await model.validateCode(email: model.email, code: input)
-                if !present {
-                    showIncorrect()
+        MainButton(
+            action: {
+                Task { @MainActor in
+                    present = await model.validateCode(email: model.email, code: input)
+                    if !present {
+                        showIncorrect()
+                    }
                 }
-            }
-        }, label: "Дальше")
-        .navigationDestination(isPresented: $present) {
-            RegFinalView(model: model)
-                .navigationBarBackButtonHidden()
-                .environmentObject(auth)
-        }
+            },
+            label: "Дальше"
+        )
     }
     
     private var repeatCode: some View {

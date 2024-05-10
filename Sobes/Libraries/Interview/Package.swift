@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "Interview",
     defaultLocalization: "ru",
-    platforms: [.iOS(.v16)],
+    platforms: [.iOS(.v17)],
     products: [
         .library(
             name: "Interview",
@@ -17,11 +17,12 @@ let package = Package(
         .package(path: "Sobes/Sources/Libraries/Types"),
         .package(path: "Sobes/Sources/Libraries/Toolbox"),
         .package(path: "Sobes/Sources/Libraries/Providers"),
+        .package(path: "Sobes/Sources/Libraries/Profile"),
     ],
     targets: [
         .target(
             name: "Interview",
-            dependencies: ["UIComponents", "Types", "Toolbox", "Providers"],
+            dependencies: ["UIComponents", "Types", "Toolbox", "Providers", "Profile"],
             sources: ["Sources"],
             resources: [.process("Resources")]
         ),
