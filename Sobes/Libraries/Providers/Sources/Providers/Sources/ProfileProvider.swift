@@ -142,6 +142,7 @@ public final class ProfileProviderImpl: ProfileProvider {
         try? keychain.remove(refreshTokenKey)
         try? keychain.remove(tokenType)
         profile = nil
+        clearUserDefaultsData()
     }
     
     public func recoverAccount(email: String) async -> Bool {
@@ -227,7 +228,13 @@ public final class ProfileProviderImpl: ProfileProvider {
             }
         }
     }
-    
+
+    private func clearUserDefaultsData() {
+        let domain = Bundle.main.bundleIdentifier!
+        UserDefaults.standard.removePersistentDomain(forName: domain)
+        UserDefaults.standard.synchronize()
+    }
+
     private var profiles: [Types.Profile] = [
         Profile()
     ]

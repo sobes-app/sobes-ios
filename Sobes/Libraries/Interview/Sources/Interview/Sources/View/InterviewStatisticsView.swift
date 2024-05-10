@@ -12,17 +12,13 @@ public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
     public var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 32) {
-                if model.questions.isEmpty {
-                    emptyView
-                } else {
-                    VStack(alignment: .leading, spacing: Constants.topPadding) {
-                        BackButton()
-                        professionsPicker
-                        statisticsBubble
-                    }
-                    questions
-                    Spacer()
+                VStack(alignment: .leading, spacing: Constants.topPadding) {
+                    BackButton()
+                    professionsPicker
+                    statisticsBubble
                 }
+                questions
+                Spacer()
             }
             .padding(.horizontal, Constants.horizontal)
         }
@@ -30,23 +26,15 @@ public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
         .task {
             await model.fetchUserQuestions(profession: profession.rawValue)
         }
+        .onChange(of: profession) {
+            Task { @MainActor in
+                await model.fetchUserQuestions(profession: profession.rawValue)
+            }
+        }
     }
 
     @ObservedObject private var model: Model
     @State private var profession: Professions
-
-    private var emptyView: some View {
-        VStack(alignment: .leading, spacing: Constants.topPadding) {
-            BackButton()
-            Spacer()
-            Text("Ты еще не отвечал на вопросы")
-                .font(Fonts.main)
-                .foregroundStyle(Color(.gray))
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity, alignment: .center)
-            Spacer()
-        }
-    }
 
     private var professionsPicker: some View {
         Picker("Pick profession", selection: $profession) {
@@ -67,21 +55,21 @@ public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
                 .font(Fonts.heading)
                 .foregroundStyle(.black)
 
-            Text(model.getQuestionsInProgress())
+            Text("\(model.getPublicStatistics(type: .inWork, profession: profession))")
                 .foregroundColor(Color(.accent))
                 .font(Fonts.mainBold)
             +
             Text(" вопросов в проработке")
                 .font(Fonts.main)
 
-            Text(model.getQuestionsWithIdealResult())
+            Text("\(model.getPublicStatistics(type: .ideal, profession: profession))")
                 .foregroundColor(Color(.accent))
                 .font(Fonts.mainBold)
             +
             Text(" вопросов с идеальным результатом")
                 .font(Fonts.main)
 
-            Text(model.getMeanQuestionsResult())
+            Text("\(model.getPublicStatistics(type: .meanResult, profession: profession))%")
                 .foregroundColor(Color(.accent))
                 .font(Fonts.mainBold)
             +
@@ -101,15 +89,33 @@ public struct InterviewStatisticsView<Model: InterviewViewModel>: View {
         VStack(alignment: .leading, spacing: Constants.defSpacing) {
             Text("Твои вопросы")
                 .font(Fonts.heading)
-            if model.questions.isEmpty {
-
+                .foregroundStyle(.black)
+            if model.isLoading {
+                LoadingScreen(placeholder: "Загружаем вопросы...")
             } else {
-                ScrollView {
-                    VStack(spacing: Constants.defSpacing) {
-                        ForEach(model.questions) { question in
-                            NavigationLink(destination: InterviewChatView(model: model, question: question)) {
-                                ChevronButton(model: .question(question))
-                            }
+                questionsLoaded
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var questionsLoaded: some View {
+        if model.questions.isEmpty {
+            VStack(alignment: .leading, spacing: Constants.topPadding) {
+                Spacer()
+                Text("Ты еще не отвечал на вопросы")
+                    .font(Fonts.main)
+                    .foregroundStyle(Color(.gray))
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                Spacer()
+            }
+        } else {
+            ScrollView {
+                VStack(spacing: Constants.defSpacing) {
+                    ForEach(model.questions) { question in
+                        NavigationLink(destination: InterviewChatView(model: model, question: question)) {
+                            ChevronButton(model: .question(question))
                         }
                     }
                 }
