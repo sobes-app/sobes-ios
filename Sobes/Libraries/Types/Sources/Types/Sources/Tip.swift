@@ -1,11 +1,11 @@
 import SwiftUI
 
-public struct Tip: Identifiable, Equatable, Hashable {
+public enum Company: String {
+    case tinkoff = "Тинькофф"
+    case yandex = "Яндекс"
+}
 
-    public enum Company: String {
-        case tinkoff = "Тинькофф"
-        case yandex = "Яндекс"
-    }
+public struct Tip: Identifiable, Equatable, Hashable {
 
     public let id: Int
     public let logo: Image
