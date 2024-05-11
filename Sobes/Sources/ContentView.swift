@@ -22,17 +22,6 @@ struct ContentView: View {
                      profileProvider: profileProvider)
             .environmentObject(auth)
         }
-//        MainView(selectedTab: $selectedTab,
-//                 profileProvider: profileProvider)
-//        .environmentObject(auth)
-//        .overlay {
-//            if !auth.isAuth {
-//                EntryPointView(
-//                    selectedTab: $selectedTab,
-//                    provider: profileProvider
-//                ).environmentObject(auth)
-//            }
-//        }
     }
     
     @State private var selectedTab: TabItem

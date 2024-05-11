@@ -15,6 +15,8 @@ public protocol ProfileViewModel: ObservableObject {
     
     func getProfileName() -> String
     func getProfileLevel() -> String
+    func getProfileProfessions() -> String
+    func getProfileCompanies() -> String
     func changePassword(oldPassword: String, newPassword: String) async -> Bool
     func setProfileInfo() async -> Bool
     func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Bool
@@ -27,28 +29,21 @@ public protocol ProfileViewModel: ObservableObject {
 
 @MainActor
 public final class ProfileViewModelImpl: ProfileViewModel {
-
+    
     @Published public var isLoading: Bool = false
     @Published public var isError: Bool = false
     
     @Published var profile: Profile?
-
+    
     @Published public var professions: [Professions] = []
     @Published public var companies: [Companies] = []
     @Published public var level: Types.Levels = .no
     @Published public var stepsCount: Double = 3
-
+    
     public init(profileProvider: ProfileProvider) {
         self.profileProvider = profileProvider
     }
     
-    @MainActor
-    public func onViewAppear() async -> Bool {
-        isError = false
-        isLoading = true
-        return await updateProfile()
-    }
-
     public func changePassword(oldPassword: String, newPassword: String) async -> Bool {
         isLoading = true
         let success = await profileProvider.changePassword(oldPassword: oldPassword, newPassword: newPassword)
@@ -61,7 +56,15 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     }
     
     public func getProfileLevel() -> String {
-        return profile?.level.rawValue ?? ""
+        return level.rawValue
+    }
+    
+    public func getProfileProfessions() -> String {
+        return professions.map { $0.rawValue }.joined(separator: ", ")
+    }
+    
+    public func getProfileCompanies() -> String {
+        return companies.map { $0.rawValue }.joined(separator: ", ")
     }
     
     public func onViewAppear() async -> Bool{
@@ -94,11 +97,11 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         profileProvider.logout()
         profile = nil
     }
-
+    
     public func isInfoNotEmpty() -> Bool {
         profile?.level.rawValue.isEmpty == false
     }
-
+    
     public func setProfileInfo() async -> Bool {
         isLoading = true
         isError = false
@@ -131,7 +134,7 @@ public final class ProfileViewModelImpl: ProfileViewModel {
             return await setError(failure: failure)
         }
     }
-
+    
     private func updateProfile() async -> Bool {
         let request = await profileProvider.getProfile()
         switch request {
@@ -153,7 +156,7 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         case .error, .empty:
             isError = true
             return false
-        case .unauth:
+        case .unauthorized:
             let update = await profileProvider.updateToken()
             if update {
                 if await setProfile() {
@@ -167,8 +170,8 @@ public final class ProfileViewModelImpl: ProfileViewModel {
                 return false
             }
         }
+            
     }
-
     private let profileProvider: ProfileProvider
 
 }

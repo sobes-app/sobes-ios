@@ -66,7 +66,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
             })
         }
         .onAppear {
-            Task { @MainActor in
+            Task { @MainActor in 
                 if !(await model.onViewAppear()) {
                     auth.updateStatus(success: false)
                     model.onLogoutTap()
@@ -123,7 +123,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Хочет работать в:")
                 .font(Fonts.mainBold)
-            Text(model.profile?.companies.map { $0.rawValue }.joined(separator: ", ") ?? "")
+            Text(model.getProfileCompanies())
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
@@ -146,7 +146,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
                 .font(Fonts.mainBold)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
-            Text(model.profile?.level.rawValue ?? "")
+            Text(model.getProfileLevel())
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.white)
@@ -167,7 +167,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Желаемые должности:")
                 .font(Fonts.mainBold)
-            Text(model.profile?.professions.map { $0.rawValue }.joined(separator: ", ") ?? "")
+            Text(model.getProfileProfessions())
                 .font(Fonts.main)
                 .multilineTextAlignment(.leading)
         }
@@ -187,7 +187,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         Text("Привет, ")
             .font(Fonts.mainBold)
             .foregroundColor(.black)
-        + Text(model.profile?.name ?? "")
+        + Text(model.getProfileName())
             .font(Fonts.mainBold)
             .foregroundColor(Color(.accent))
         + Text("!")

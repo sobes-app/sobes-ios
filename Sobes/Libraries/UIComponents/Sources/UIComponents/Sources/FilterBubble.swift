@@ -17,7 +17,7 @@ public struct FilterBubble: View {
         switch type {
         case .main:
             Text(filter.name)
-                .font(Fonts.main)
+                .font(Fonts.small)
                 .foregroundStyle(filter.isActive ? .white : Color(.grey))
                 .padding(10)
                 .background {
