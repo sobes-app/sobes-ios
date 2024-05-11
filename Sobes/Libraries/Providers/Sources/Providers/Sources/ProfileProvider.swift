@@ -36,7 +36,7 @@ public final class ProfileProviderImpl: ProfileProvider {
         let req = await getProfile()
         switch req {
         case .success(let profile):
-            return .success(profile?.professions ?? [])
+            return .success(profile.professions)
         case .failure(let error):
             return .failure(error)
         }
@@ -46,7 +46,7 @@ public final class ProfileProviderImpl: ProfileProvider {
         let req = await getProfile()
         switch req {
         case .success(let profile):
-            return .success(profile?.level ?? .no)
+            return .success(profile.level)
         case .failure(let error):
             return .failure(error)
         }
@@ -115,6 +115,10 @@ public final class ProfileProviderImpl: ProfileProvider {
         case .failure(let failure):
             return .failure(getError(failure: failure))
         }
+    }
+    
+    func setProfile(profile: Profile) {
+        self.profile = profile
     }
     
     public func createProfile(exp: String, comp: [String], prof: [String]) async -> Result<Bool, CustomError> {
@@ -231,7 +235,7 @@ public final class ProfileProviderImpl: ProfileProvider {
         case .jsonDecodeError, .jsonEncodeError, .responseError:
             return .error
         case .unautharized:
-            return .unauth
+            return .unauthorized
         }
     }
 

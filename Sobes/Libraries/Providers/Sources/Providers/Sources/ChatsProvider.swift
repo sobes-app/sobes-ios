@@ -33,7 +33,7 @@ public final class ChatsProviderImpl: ChatsProvider {
         case .success(let success):
             var arrayProfiles: [Profile] = []
             for i in success.indices {
-                if success[i].id != profileProvider.profile?.id && success[i].username != nil  {
+                if success[i].id != profileProvider.profile?.id {
                     arrayProfiles.append(Profile(profileResponse: success[i]))
                 }
             }
@@ -51,7 +51,7 @@ public final class ChatsProviderImpl: ChatsProvider {
             case .jsonDecodeError, .jsonEncodeError, .responseError:
                 return .failure(.error)
             case .unautharized:
-                return .failure(.unauth)
+                return .failure(.unauthorized)
             }
         }
         

@@ -125,7 +125,7 @@ public final class ChatViewModelImpl: ChatViewModel {
                 profiles = []
             case .error:
                 isError = true
-            case .unauth:
+            case .unauthorized:
                 let update = await profilesProvider.updateToken()
                 if update {
                     _ = await profilesProvider.getProfile()
@@ -179,9 +179,9 @@ public final class ChatViewModelImpl: ChatViewModel {
     }
     
     func initFilters() {
-        let companyNames = Companies.allCases
-        let levelNames = Levels.allCases
-        let professionNames = Professions.allCases
+        let companyNames = Companies.allCases.filter {$0 != .no}
+        let levelNames = Levels.allCases.filter {$0 != .no}
+        let professionNames = Professions.allCases.filter {$0 != .no}
         
         let companies = companyNames.enumerated().map { index, company in
             Filter(id: index, name: company.rawValue)

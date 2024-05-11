@@ -65,7 +65,7 @@ public struct TextFieldView: View {
     var name: some View {
         HStack(spacing: Constants.smallStack) {
             Image(systemName: "person.fill")
-                .foregroundColor(isFocused ? .black : Static.Colors.grey)
+                .foregroundColor(Static.Colors.grey)
             TextField("введите фио...", text: $input)
                 .foregroundColor(.black)
                 .focused($isFocused)
@@ -96,7 +96,7 @@ public struct TextFieldView: View {
     var email: some View {
         HStack(spacing: Constants.smallStack) {
             Image(systemName: "envelope")
-                .foregroundColor(isFocused ? .black : Static.Colors.grey)
+                .foregroundColor(Static.Colors.grey)
             TextField("введите почту...", text: $input)
                 .foregroundColor(.black)
                 .focused($isFocused)
