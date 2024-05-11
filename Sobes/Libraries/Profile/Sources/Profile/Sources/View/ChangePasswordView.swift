@@ -1,10 +1,3 @@
-//
-//  SwiftUIView.swift
-//  
-//
-//  Created by Алиса Вышегородцева on 30.04.2024.
-//
-
 import SwiftUI
 import Foundation
 import UIComponents

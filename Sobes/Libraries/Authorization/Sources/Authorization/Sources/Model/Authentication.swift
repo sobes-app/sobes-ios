@@ -19,5 +19,4 @@ public class Authentication: ObservableObject {
 
     private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
     private let accessTokenKey = KeychainKey<String>(key: "accessToken")
-
 }

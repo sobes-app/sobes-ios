@@ -5,8 +5,10 @@ import NetworkLayer
 
 @MainActor
 public protocol ProfileViewModel: ObservableObject {
+
     var professions: [Professions] { get set }
     var companies: [Companies] { get set }
+    var vacancies: [Item] { get set }
     var level: Types.Levels { get set }
     var stepsCount: Double { get set }
 
@@ -20,6 +22,7 @@ public protocol ProfileViewModel: ObservableObject {
     func changePassword(oldPassword: String, newPassword: String) async -> Bool
     func setProfileInfo() async -> Bool
     func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Bool
+    func loadAllPages() async
 
     func onViewAppear() async -> Bool
     func onLogoutTap()
@@ -38,6 +41,7 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     @Published public var professions: [Professions] = []
     @Published public var companies: [Companies] = []
     @Published public var level: Types.Levels = .no
+    @Published public var vacancies: [Item] = []
     @Published public var stepsCount: Double = 3
     
     public init(profileProvider: ProfileProvider) {
@@ -156,6 +160,92 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         }
             
     }
+    
+    func fetchEmployerID(withName name: String) async throws -> EmployerSearch {
+        guard let url = URL(string: "https://api.hh.ru/employers?text=\(name)&only_with_vacancies=true") else {
+            throw URLError(.badURL)
+        }
+        
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let decoder = JSONDecoder()
+        
+        let employerList = try decoder.decode(EmployerSearch.self, from: data)
+        return employerList
+    }
+    
+    
+    func loadPage(_ page: Int, company_id: String) async throws -> Vacancy {
+        guard let url = URL(string: "\(baseURL)employer_id=\(company_id)&per_page=100&page=\(page)") else {
+            throw URLError(.badURL)
+        }
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let decoder = JSONDecoder()
+        let vacancies = try decoder.decode(Vacancy.self, from: data)
+        return vacancies
+    }
+    
+    func getCompaniesIds(companies: [Companies]) async throws -> [String] {
+        var idsArray: [String] = []
+        for company in companies {
+            let array = try await fetchEmployerID(withName: company.rawValue)
+            for item in array.items {
+                idsArray.append(item.id)
+            }
+        }
+        return idsArray
+    }
+    
+    public func loadAllPages() async {
+        let companiesIds = try? await getCompaniesIds(companies: companies)
+        for company in companiesIds ?? [] {
+            var page = 0
+            var hasMorePages = true
+            while hasMorePages {
+                do {
+                    let vacancies = try await loadPage(page, company_id: company)
+                    hasMorePages = vacancies.pages > (page + 1)
+                    self.vacancies.append(contentsOf: vacancies.items.filter { item in
+                        existsProfession(array: professions, name: item.name) && existsLevel(exp: item.experience.name, level: level)
+                    })
+                    page += 1
+                    
+                } catch {
+                    hasMorePages = false
+                }
+            }
+        }
+    }
+    
+    let professionNames: [Professions: String] = [
+        .no: "",
+        .product: "Product manager",
+        .project: "Project manager",
+        .analyst: "Business-analyst"
+    ]
+    
+    func existsProfession(array: [Professions], name: String) -> Bool {
+        let lowercasedName = name.lowercased()
+        return array.contains(where: { profession in
+            lowercasedName.contains(profession.rawValue) || lowercasedName.contains(professionNames[profession]?.lowercased() ?? "")
+        })
+    }
+    
+    let levelExperience: [Levels: [String]] = [
+        .no: [],
+        .inter: ["Нет опыта"],
+        .jun: ["От 1 до 3 лет"],
+        .mid: ["От 1 до 3 лет", "От 3 до 6 лет"],
+        .sen: ["От 3 до 6 лет"]
+    ]
+    
+    func existsLevel(exp: String, level: Levels) -> Bool {
+        if let experience = levelExperience[level] {
+            return experience.contains(exp)
+        }
+        return false
+    }
+    
     private let profileProvider: ProfileProvider
+    let baseURL = "https://api.hh.ru/vacancies?"
 
 }

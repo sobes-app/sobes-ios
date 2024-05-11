@@ -132,6 +132,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         .padding(Constants.elementPadding)
         .background {
             RoundedRectangle(cornerRadius: Constants.corner)
+                .fill(.white)
                 .stroke(Color(.accent))
         }
         .onTapGesture {
