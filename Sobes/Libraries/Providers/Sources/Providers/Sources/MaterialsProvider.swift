@@ -28,7 +28,7 @@ public final class MaterialsProviderImpl: MaterialsProvider {
                         logo: $0.company == "Тинькофф"
                             ? Image("tinkoff", bundle: .module)
                             : Image("yandex", bundle: .module),
-                        company: Tip.Company(rawValue: $0.company) ?? .yandex,
+                        company: Company(rawValue: $0.company) ?? .yandex,
                         author: $0.name,
                         role: $0.profession,
                         text: $0.text

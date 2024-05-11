@@ -19,8 +19,8 @@ public protocol MaterialsViewModel: ObservableObject {
     func getParsedArticle(id: Int) async -> ParsedArticle?
 
     // admin mode functions
-    func addArticle(article: Types.Article)
-    func addTip(tip: Types.Tip)
+    func addArticle(link: String)
+    func addTip(company: Company, author: String, text: String)
 }
 
 @MainActor
@@ -100,12 +100,12 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
         return await fetchArticle(from: article.url)
     }
 
-    public func addTip(tip: Types.Tip) {
-        materialsProvider.addTip(tip)
+    public func addTip(company: Company, author: String, text: String) {
+//        materialsProvider.addTip(tip)
     }
 
-    public func addArticle(article: Types.Article) {
-        materialsProvider.addArticle(article)
+    public func addArticle(link: String) {
+//        materialsProvider.addArticle(article)
     }
 
     private let materialsProvider: MaterialsProvider
