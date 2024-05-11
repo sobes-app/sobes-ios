@@ -50,7 +50,7 @@ public final class AuthViewModelImpl: AuthViewModel {
         isLoading = true
         let success = await provider.forgotPassword(email: email, password: password)
         isLoading = false
-        return true
+        return success
     }
     
     public func registerUser(email: String, username: String, password: String) async -> Bool {

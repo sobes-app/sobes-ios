@@ -1,10 +1,3 @@
-//
-//  SwiftUIView.swift
-//
-//
-//  Created by Алиса Вышегородцева on 23.04.2024.
-//
-
 import SwiftUI
 import UIComponents
 import Types
@@ -19,6 +12,7 @@ enum Question: Int {
 struct SetupProfileDataView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
     @Binding private var showTabBar: Bool
+    @State private var isButtonVisible = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     @State private var currentQuestion: Question = .professions
@@ -56,26 +50,30 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
             Spacer()
             VStack(spacing: Constants.defSpacing) {
                 if stepsCount != 1 {
-                    ProgressView(value: step/(stepsCount))
-                        .padding(.horizontal, 20)
-                        .tint(Color(.accent))
-                        .scaleEffect(x: 1, y: 3, anchor: .center)
-                        .animation(.easeInOut, value: step)
+                    progress
                 }
                 VStack {
                     if incorrect {
                         IncorrectView(text: "ошибка сохранения данных")
                     }
-                    button
+                    if isButtonVisible {
+                        button
+                    }
                 }
             }
             
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, Constants.horizontal)
         .padding(.bottom, Constants.bottom)
         .onAppear {
             withAnimation {
                 showTabBar = false
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation {
+                    isButtonVisible = true
+                }
             }
         }
         .onDisappear {
@@ -85,6 +83,14 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
                 }
             }
         }
+    }
+    
+    var progress: some View {
+        ProgressView(value: step/(stepsCount))
+            .padding(.horizontal, 20)
+            .tint(Color(.accent))
+            .scaleEffect(x: 1, y: 3, anchor: .center)
+            .animation(.easeInOut, value: step)
     }
     
     var backButton: some View {

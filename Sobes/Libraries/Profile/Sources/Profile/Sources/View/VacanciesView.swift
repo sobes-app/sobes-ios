@@ -1,10 +1,3 @@
-//
-//  SwiftUIView.swift
-//
-//
-//  Created by Алиса Вышегородцева on 05.05.2024.
-//
-
 import SwiftUI
 import UIComponents
 import PhotosUI
@@ -21,27 +14,21 @@ public struct VacanciesView<Model: ProfileViewModel>: View {
     
     public var body: some View {
         VStack(alignment: .leading) {
-            BackButton()
-            VStack(alignment: .leading, spacing: Constants.defSpacing) {
+            HStack(alignment: .center, spacing: Constants.smallStack) {
+                BackButton()
                 if isLoading {
-                    Spacer()
-                    VStack(alignment: .center, spacing: Constants.smallStack) {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: Color(.accent)))
-                        Text("загружаю для вас\nподходящие вакансии")
-                            .foregroundColor(Color(.accent))
-                            .font(Fonts.small)
-                            .multilineTextAlignment(.center)
-                    }
-                    Spacer()
-                } else if vacanciesArray.isEmpty {
+                    LoadingText(text: "Загружаю")
+                }
+            }
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
+                if model.vacancies.isEmpty && !isLoading {
                     Spacer()
                     EmptyDataView(text: "Пока не нашли подходящие вакансии :(\nПопробуй поискать на сайте компании")
                     Spacer()
                 } else {
                     ScrollView {
                         VStack(spacing: Constants.smallStack) {
-                            ForEach(vacanciesArray) { item in
+                            ForEach(model.vacancies) { item in
                                 VStack {
                                     vacancyView(item: item)
                                     Rectangle()
@@ -64,10 +51,7 @@ public struct VacanciesView<Model: ProfileViewModel>: View {
         .padding(.horizontal, Constants.horizontal)
         .task {
             isLoading = true
-            let loader = VacanciesLoader()
-            vacanciesArray = await loader.loadAllPages(companies: model.companies,
-                                                      level: model.level,
-                                                      professions: model.professions)
+            await model.loadAllPages()
             isLoading = false
         }
         .onAppear {
@@ -118,22 +102,8 @@ public struct VacanciesView<Model: ProfileViewModel>: View {
         }
     }
     
-    @State var vacanciesArray: [Item] = []
     @State var isEmpty: Bool = false
     @State var isLoading: Bool = false
     @ObservedObject private var model: Model
     @Binding private var showTabBar: Bool
 }
-
-//            AsyncImage(
-//                url: URL(string: item.employer.logo_urls?["original"] ?? ""),
-//                content: { image in
-//                    image
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .frame(maxWidth: 50, maxHeight: 50)
-//                },
-//                placeholder: {
-//                    ProgressView()
-//                }
-//            )
