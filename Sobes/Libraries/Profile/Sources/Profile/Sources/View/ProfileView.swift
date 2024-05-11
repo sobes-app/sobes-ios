@@ -24,38 +24,35 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     
     public var body: some View {
         NavigationStack(path: $path) {
-            ZStack {
-                VStack(alignment: .leading) {
-                    HStack(alignment: .top, spacing: Constants.smallStack) {
-                        nameView
-                        Spacer()
-                        settingsView
-                        logoutView
-                    }
-                    if model.isInfoNotEmpty() {
-                        statsView
-                        Spacer()
-                    } else {
-                        Spacer()
-                        EmptyDataView(text: "Расскажите нам о себе")
-                        Spacer()
-                    }
-                    HStack {
-                        Spacer()
-                        feedbackButton
-                            .padding(.bottom, Constants.defSpacing)
-                    }
-                    if !model.isInfoNotEmpty() {
-                        button
-                    }
+            VStack(alignment: .leading) {
+                HStack(alignment: .top, spacing: Constants.smallStack) {
+                    nameView
+                    Spacer()
+                    settingsView
+                    logoutView
                 }
-                .padding(.horizontal, Constants.horizontal)
-                .padding(.bottom, Constants.horizontal)
-                
                 if model.isLoading {
-                    SplashScreen()
+                    LoadingScreen(placeholder: "Загружаем данные...")
+                } else if model.isInfoNotEmpty() {
+                    statsView
+                    Spacer()
+                } else {
+                    Spacer()
+                    EmptyDataView(text: "Расскажите нам о себе")
+                    Spacer()
+                }
+                HStack {
+                    Spacer()
+                    feedbackButton
+                        .padding(.bottom, Constants.defSpacing)
+                }
+                if !model.isInfoNotEmpty() {
+                    button
                 }
             }
+            .padding(.horizontal, Constants.horizontal)
+            .padding(.bottom, Constants.horizontal)
+            
             .navigationDestination(isPresented: $editParam, destination: {
                 SetupProfileDataView(model: model, showTabBar: $showTabBar, question: profileParam)
                     .navigationBarBackButtonHidden()
@@ -66,7 +63,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
             })
         }
         .onAppear {
-            Task { @MainActor in 
+            Task { @MainActor in
                 if !(await model.onViewAppear()) {
                     auth.updateStatus(success: false)
                     model.onLogoutTap()
@@ -216,8 +213,10 @@ public struct ProfileView<Model: ProfileViewModel>: View {
     
     private var logoutView: some View {
         Button {
-            model.onLogoutTap()
             auth.updateStatus(success: false)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                model.onLogoutTap()
+            }
         } label: {
             Image(systemName: "rectangle.portrait.and.arrow.right.fill")
                 .foregroundColor(.black)

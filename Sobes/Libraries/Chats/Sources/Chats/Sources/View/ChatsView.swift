@@ -62,51 +62,42 @@ public struct ChatsView<Model: ChatViewModel>: View {
     }
     
     var search: some View {
-        ZStack {
-            VStack(spacing: Constants.defSpacing) {
-                searchTextField
-                if model.profiles != [] && model.profiles != nil {
-                    ScrollView {
-                        VStack(spacing: Constants.defSpacing) {
-                            ForEach(filteredItems) { profile in
-                                ProfileElementView(profile: profile, onChatTapped: {
-                                    if !model.checkChatExistance(responder: profile) {
-                                        model.createNewChat(reponder: profile)
-                                    }
-                                    withAnimation {
-                                        page = .chats
-                                    }
-                                })
-                            }
+        VStack(spacing: Constants.defSpacing) {
+            searchTextField
+            if model.isLoading {
+                LoadingScreen(placeholder: "Загружаем профили...")
+            } else if model.isError {
+                ErrorView(retryAction: {
+                    Task { @MainActor in
+                        await model.getProfiles()
+                    }
+                })
+            } else if model.profiles != [] && model.profiles != nil {
+                ScrollView {
+                    VStack(spacing: Constants.defSpacing) {
+                        ForEach(filteredItems) { profile in
+                            ProfileElementView(profile: profile, onChatTapped: {
+                                if !model.checkChatExistance(responder: profile) {
+                                    model.createNewChat(reponder: profile)
+                                }
+                                withAnimation {
+                                    page = .chats
+                                }
+                            })
                         }
                     }
-                    .scrollDismissesKeyboard(.immediately)
-                    .scrollIndicators(.hidden)
-                } else {
-                    Spacer()
-                    EmptyDataView(text: "Тут пока нет профилей")
-                    Spacer()
                 }
+                .scrollDismissesKeyboard(.immediately)
+                .scrollIndicators(.hidden)
+            } else {
+                Spacer()
+                EmptyDataView(text: "Тут пока нет профилей")
+                Spacer()
             }
-            .padding(.horizontal, Constants.horizontal)
-            .background(.white)
-            .transition(.move(edge: .trailing))
-            viewStates()
         }
-    }
-    
-    @ViewBuilder
-    func viewStates() -> some View {
-        if model.isLoading {
-            SplashScreen()
-        }
-        if model.isError {
-            ErrorView(retryAction: {
-                Task { @MainActor in
-                    await model.getProfiles()
-                }
-            })
-        }
+        .padding(.horizontal, Constants.horizontal)
+        .background(.white)
+        .transition(.move(edge: .trailing))
     }
     
     var searchTextField: some View {
@@ -138,7 +129,6 @@ public struct ChatsView<Model: ChatViewModel>: View {
             .background(.white)
             .transition(.move(edge: .leading))
             .refreshable {}
-            viewStates()
         }
     }
     

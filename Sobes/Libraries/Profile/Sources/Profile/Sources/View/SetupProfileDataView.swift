@@ -4,15 +4,13 @@ import Types
 import Combine
 
 enum Question: Int {
-    case professions = 1
-    case levels = 2
-    case companies = 3
+    case professions = 1, levels, companies
 }
 
 struct SetupProfileDataView<Model: ProfileViewModel>: View {
     @ObservedObject private var model: Model
     @Binding private var showTabBar: Bool
-    @State private var isButtonVisible = false
+    @State private var viewAppear = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     @State private var currentQuestion: Question = .professions
@@ -34,45 +32,50 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: Constants.defSpacing) {
-            backButton
-            switch currentQuestion {
-            case .professions:
-                professions
-                    .transition(.move(edge: .trailing))
-            case .levels:
-                levels
-                    .transition(.move(edge: .trailing))
-            case .companies:
-                companies
-                    .transition(.move(edge: .trailing))
-            }
-            Spacer()
-            VStack(spacing: Constants.defSpacing) {
-                if stepsCount != 1 {
-                    progress
+        ZStack {
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
+                backButton
+                switch currentQuestion {
+                case .professions:
+                    professions
+                        .transition(.move(edge: .trailing))
+                case .levels:
+                    levels
+                        .transition(.move(edge: .trailing))
+                case .companies:
+                    companies
+                        .transition(.move(edge: .trailing))
                 }
-                VStack {
-                    if incorrect {
-                        IncorrectView(text: "ошибка сохранения данных")
+                Spacer()
+                VStack(spacing: Constants.defSpacing) {
+                    if stepsCount != 1 && viewAppear {
+                        progress
                     }
-                    if isButtonVisible {
-                        button
+                    VStack {
+                        if incorrect {
+                            IncorrectView(text: "ошибка сохранения данных")
+                        }
+                        if viewAppear {
+                            button
+                        }
                     }
                 }
+                
             }
-            
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, Constants.horizontal)
+            .padding(.bottom, Constants.bottom)
+            if model.isLoading {
+                SplashScreen()
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, Constants.horizontal)
-        .padding(.bottom, Constants.bottom)
         .onAppear {
             withAnimation {
                 showTabBar = false
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 withAnimation {
-                    isButtonVisible = true
+                    viewAppear = true
                 }
             }
         }
