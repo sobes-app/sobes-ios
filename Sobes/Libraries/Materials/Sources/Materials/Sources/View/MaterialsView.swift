@@ -1,7 +1,7 @@
 import SwiftUI
-import UIComponents
 import Toolbox
 import Types
+import UIComponents
 
 public struct MaterialsView<Model: MaterialsViewModel>: View {
     
@@ -16,13 +16,18 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
                 loadedView
                     .overlay {
                         if model.isError {
-                            ErrorView(retryAction: {
-                                Task { @MainActor in
-                                    await model.onViewAppear()
+                            ErrorView(
+                                retryAction: {
+                                    Task { @MainActor in
+                                        await model.onViewAppear()
+                                    }
                                 }
-                            })
+                            )
                         }
                     }
+            }
+            .overlay(alignment: .bottom) {
+                adminButtons
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, Constants.horizontal)
@@ -95,9 +100,52 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
                             MaterialBubble(model: material)
                         }
                     }
+                    Spacer()
+                        .frame(height: 50)
                 }
             }
             .scrollIndicators(.hidden)
+        }
+    }
+
+    @ViewBuilder
+    private var adminButtons: some View {
+        if model.appMode == .admin {
+            if model.materialsFilters.isTipsFilterActive {
+                addTipButton
+                    .padding(.horizontal, 20)
+            } else {
+                addArticleButton
+                    .padding(.horizontal, 20)
+            }
+        }
+    }
+
+    private var addArticleButton: some View {
+        NavigationLink(destination: AddMaterialView(model: model, type: .article)) {
+            Text("Добавить статью")
+                .font(Fonts.mainBold)
+                .foregroundStyle(.white)
+                .padding(.vertical, Constants.elementPadding)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .background {
+                    RoundedRectangle(cornerRadius: Constants.corner)
+                        .foregroundStyle(Color(.accent))
+                }
+        }
+    }
+
+    private var addTipButton: some View {
+        NavigationLink(destination: AddMaterialView(model: model, type: .tip)) {
+            Text("Добавить совет")
+                .font(Fonts.mainBold)
+                .foregroundStyle(.white)
+                .padding(.vertical, Constants.elementPadding)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .background {
+                    RoundedRectangle(cornerRadius: Constants.corner)
+                        .foregroundStyle(Color(.accent))
+                }
         }
     }
 

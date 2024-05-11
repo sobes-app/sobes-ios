@@ -45,8 +45,8 @@ public struct SignUpResponse: Decodable {
 public final class AuthClient {
     let netLayer: NetworkLayer
     
-    public init(token: String?, tokenType: String?) {
-        self.netLayer = NetworkLayer(token: token, tokenType: tokenType)
+    public init() {
+        self.netLayer = NetworkLayer()
     }
     
     public func sendEmail(email: String) async -> Result<[String: String], ClientError> {

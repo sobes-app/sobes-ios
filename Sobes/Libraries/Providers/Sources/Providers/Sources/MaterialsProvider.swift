@@ -6,6 +6,10 @@ import SwiftyKeychainKit
 public protocol MaterialsProvider {
     func getTips() async -> Result<[Types.Material], CustomError>
     func getArticles() async -> Result<[Types.Material], CustomError>
+
+    // admin mode functions
+    func addTip(_ tip: Types.Tip)
+    func addArticle(_ article: Types.Article)
 }
 
 public final class MaterialsProviderImpl: MaterialsProvider {
@@ -13,7 +17,7 @@ public final class MaterialsProviderImpl: MaterialsProvider {
     public init() { }
 
     public func getTips() async -> Result<[Types.Material], CustomError> {
-        let materialsClient = MaterialsClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
+        let materialsClient = MaterialsClient()
         let result = await materialsClient.getTips()
         switch result {
         case .success(let tips):
@@ -42,15 +46,12 @@ public final class MaterialsProviderImpl: MaterialsProvider {
                 return .failure(.empty)
             case .jsonDecodeError, .jsonEncodeError, .responseError:
                 return .failure(.error)
-            case .unautharized:
-                return .failure(.error)
-     // TODO: add unauthorized
             }
         }
     }
 
     public func getArticles() async -> Result<[Types.Material], CustomError> {
-        let materialsClient = MaterialsClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
+        let materialsClient = MaterialsClient()
         let result = await materialsClient.getArticles()
         switch result {
         case .success(let articles):
@@ -68,11 +69,16 @@ public final class MaterialsProviderImpl: MaterialsProvider {
                 return .failure(.empty)
             case .jsonDecodeError, .jsonEncodeError, .responseError:
                 return .failure(.error)
-            case .unautharized:
-                return .failure(.error)
-                // TODO: add unauthorized
             }
         }
+    }
+
+    public func addTip(_ tip: Tip) {
+        print("типа добавили совет")
+    }
+
+    public func addArticle(_ tip: Article) {
+        print("типа добавили статью")
     }
 
     private let keychain: Keychain = Keychain(service: "com.swifty.keychain")

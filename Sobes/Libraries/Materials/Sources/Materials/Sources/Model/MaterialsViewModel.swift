@@ -10,12 +10,17 @@ public protocol MaterialsViewModel: ObservableObject {
     var materials: [Types.Material] { get }
     var filters: [Types.Filter] { get }
     var materialsFilters: [Types.Filter] { get }
+    var appMode: ApplicationMode { get }
     var isLoading: Bool { get }
     var isError: Bool { get }
     func onViewAppear() async
     func onFilterTapped(id: Int) async
     func onMaterialsFilterTapped(id: Int) async
     func getParsedArticle(id: Int) async -> ParsedArticle?
+
+    // admin mode functions
+    func addArticle(article: Types.Article)
+    func addTip(tip: Types.Tip)
 }
 
 @MainActor
@@ -24,11 +29,13 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
     @Published public var materials: [Types.Material] = []
     @Published public var filters: [Types.Filter] = []
     @Published public var materialsFilters: [Types.Filter] = []
+    @Published public var appMode: ApplicationMode = .user
     @Published public var isLoading: Bool = false
     @Published public var isError: Bool = false
 
-    public init(materialsProvider: MaterialsProvider) {
+    public init(materialsProvider: MaterialsProvider, profileProvider: ProfileProvider) {
         self.materialsProvider = materialsProvider
+        self.profileProvider = profileProvider
     }
 
     public func onViewAppear() async {
@@ -41,9 +48,9 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
             Filter(id: 0, name: "Советы", isActive: true),
             Filter(id: 1, name: "Статьи")
         ]
-    }
 
-    private let materialsProvider: MaterialsProvider
+        appMode = await profileProvider.getCurrentUserMode()
+    }
 
     public func onFilterTapped(id: Int) async {
         filters[id].isActive.toggle()
@@ -93,6 +100,17 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
         return await fetchArticle(from: article.url)
     }
 
+    public func addTip(tip: Types.Tip) {
+        materialsProvider.addTip(tip)
+    }
+
+    public func addArticle(article: Types.Article) {
+        materialsProvider.addArticle(article)
+    }
+
+    private let materialsProvider: MaterialsProvider
+    private let profileProvider: ProfileProvider
+
     private func filtersNotActive() -> Bool {
         return !filters.contains { $0.isActive }
     }
@@ -112,9 +130,10 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
             return tips
         case .failure(let error):
             isLoading = false
-            if error == .empty {
+            switch error {
+            case .empty:
                 return []
-            } else {
+            case .error:
                 isError = true
             }
         }
@@ -132,9 +151,10 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
             return articles
         case .failure(let error):
             isLoading = false
-            if error == .empty {
+            switch error {
+            case .empty:
                 return []
-            } else {
+            case .error:
                 isError = true
             }
         }

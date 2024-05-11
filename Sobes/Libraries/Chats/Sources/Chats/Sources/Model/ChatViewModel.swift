@@ -125,14 +125,6 @@ public final class ChatViewModelImpl: ChatViewModel {
                 profiles = []
             case .error:
                 isError = true
-            case .unauthorized:
-                let update = await profilesProvider.updateToken()
-                if update {
-                    _ = await profilesProvider.getProfile()
-                    await getProfiles()
-                } else {
-                    isError = true
-                }
             }
         }
     }

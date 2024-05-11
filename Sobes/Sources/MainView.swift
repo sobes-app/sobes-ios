@@ -18,7 +18,12 @@ public struct MainView: View {
         VStack {
             switch selectedTab {
             case .materials:
-                MaterialsView(model: MaterialsViewModelImpl(materialsProvider: MaterialsProviderImpl()))
+                MaterialsView(
+                    model: MaterialsViewModelImpl(
+                        materialsProvider: materialsProvider,
+                        profileProvider: profileProvider
+                    )
+                )
             case .interview:
                 InterviewEntryPointView(
                     model: InterviewViewModelImpl(
@@ -29,10 +34,23 @@ public struct MainView: View {
                     )
                 )
             case .chat:
-                ChatsView(showTabBar: $showTabBar, model: ChatViewModelImpl(profileProvider: profileProvider, chatProvider: ChatsProviderImpl(profileProvider: profileProvider)))
+                ChatsView(
+                    showTabBar: $showTabBar,
+                    model: ChatViewModelImpl(
+                        profileProvider: profileProvider,
+                        chatProvider: ChatsProviderImpl(
+                            profileProvider: profileProvider
+                        )
+                    )
+                )
             case .profile:
-                ProfileView(model: ProfileViewModelImpl(profileProvider: profileProvider), showTabBar: $showTabBar)
-                    .environmentObject(auth)
+                ProfileView(
+                    model: ProfileViewModelImpl(
+                        profileProvider: profileProvider
+                    ),
+                    showTabBar: $showTabBar
+                )
+                .environmentObject(auth)
             }
             Spacer()
             if showTabBar {
@@ -42,5 +60,6 @@ public struct MainView: View {
     }
 
     @State private var showTabBar = true
+    private let materialsProvider: MaterialsProvider = MaterialsProviderImpl()
 
 }

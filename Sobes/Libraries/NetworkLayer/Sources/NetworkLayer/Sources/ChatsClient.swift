@@ -3,8 +3,8 @@ import Foundation
 public final class ChatsClient {
     let netLayer: NetworkLayer
     
-    public init(token: String?, tokenType: String?) {
-        self.netLayer = NetworkLayer(token: token, tokenType: tokenType)
+    public init() {
+        self.netLayer = NetworkLayer()
     }
     
     public func getProfiles() async -> Result<[ProfileResponse], ClientError> {

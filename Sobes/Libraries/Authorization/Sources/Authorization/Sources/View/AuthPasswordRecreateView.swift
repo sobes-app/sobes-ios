@@ -47,11 +47,11 @@ struct AuthPasswordRecreateView<Model: AuthViewModel>: View {
                 }
             }
         }, label: "Дальше")
-            .navigationDestination(isPresented: $presentCode) {
-               AuthCodeView(model: model)
-                    .navigationBarBackButtonHidden()
-                    .environmentObject(auth)
-            }
+        .navigationDestination(isPresented: $presentCode) {
+            AuthCodeView(model: model)
+                .navigationBarBackButtonHidden()
+                .environmentObject(auth)
+        }
     }
     
     func showIncorrect() {

@@ -3,6 +3,7 @@ import SwiftUI
 import SwiftyKeychainKit
 
 public class Authentication: ObservableObject {
+
     @Published public var isAuth: Bool
     
     public init() {

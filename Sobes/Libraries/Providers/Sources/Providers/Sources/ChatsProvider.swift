@@ -27,7 +27,7 @@ public final class ChatsProviderImpl: ChatsProvider {
     }
     
     public func getProfiles() async -> Result<[Profile], CustomError> {
-        let chatsClient = ChatsClient(token: try? self.keychain.get(accessTokenKey), tokenType: try? self.keychain.get(tokenType))
+        let chatsClient = ChatsClient()
         let result = await chatsClient.getProfiles()
         switch result {
         case .success(let success):
@@ -50,8 +50,6 @@ public final class ChatsProviderImpl: ChatsProvider {
                 return .failure(.empty)
             case .jsonDecodeError, .jsonEncodeError, .responseError:
                 return .failure(.error)
-            case .unautharized:
-                return .failure(.unauthorized)
             }
         }
         
