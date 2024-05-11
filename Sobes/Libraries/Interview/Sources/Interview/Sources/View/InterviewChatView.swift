@@ -57,7 +57,7 @@ public struct InterviewChatView<Model: InterviewViewModel>: View {
                     .frame(height: 0)
                     .id("bottom")
             }
-            .onChange(of: model.messages) { message in
+            .onChange(of: model.messages) {
                 withAnimation {
                     proxy.scrollTo("bottom")
                 }

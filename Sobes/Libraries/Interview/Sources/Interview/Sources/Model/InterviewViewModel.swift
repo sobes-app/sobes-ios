@@ -49,7 +49,7 @@ public final class InterviewViewModelImpl: InterviewViewModel {
             switch error {
             case .empty:
                 self.professions = []
-            case .error, .unauthorized:
+            case .error:
                 isError = true
             }
         }
@@ -66,9 +66,10 @@ public final class InterviewViewModelImpl: InterviewViewModel {
             self.questions = interviewQuestions
         case .failure(let error):
             isLoading = false
-            if error == .empty {
+            switch error {
+            case .empty:
                 self.questions = []
-            } else {
+            case .error:
                 isError = true
             }
         }
@@ -84,9 +85,10 @@ public final class InterviewViewModelImpl: InterviewViewModel {
             self.questions = questions
         case .failure(let error):
             isLoading = false
-            if error == .empty {
+            switch error {
+            case .empty:
                 self.questions = []
-            } else {
+            case .error:
                 isError = true
             }
         }
@@ -143,9 +145,12 @@ public final class InterviewViewModelImpl: InterviewViewModel {
             self.assessment = assessment
             assessments[answer] = assessment
             updateStatisticsValues(assessment: assessment)
-        case .failure:
+        case .failure(let error):
             isLoading = false
-            isError = true
+            switch error {
+            case .empty, .error:
+                isError = true
+            }
         }
     }
 

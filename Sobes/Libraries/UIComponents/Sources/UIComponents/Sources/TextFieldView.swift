@@ -11,6 +11,7 @@ extension View {
 public struct TextFieldView: View {
 
     public enum Model {
+        case custom(placeholder: String)
         case name
         case password
         case email
@@ -35,6 +36,8 @@ public struct TextFieldView: View {
     
     public var body: some View {
         switch model {
+        case .custom(let placeholder):
+            custom(placeholder: placeholder)
         case .name:
             name
         case .password:
@@ -61,7 +64,18 @@ public struct TextFieldView: View {
                     .fill(Color(.light))
             )
     }
-    
+
+    func custom(placeholder: String) -> some View {
+        TextField(placeholder, text: $input)
+            .foregroundColor(.black)
+            .focused($isFocused)
+            .disableAutocorrection(true)
+            .padding(Constants.elementPadding)
+            .background {
+                roundedRec
+            }
+    }
+
     var name: some View {
         HStack(spacing: Constants.smallStack) {
             Image(systemName: "person.fill")

@@ -5,14 +5,14 @@ import NetworkLayer
 
 @MainActor
 public protocol ProfileViewModel: ObservableObject {
-    var professions: [Professions] {get set}
-    var companies: [Companies] {get set}
-    var level: Types.Levels {get set}
-    var stepsCount: Double {get set}
-    
-    var isLoading: Bool {get set}
-    var isError: Bool {get set}
-    
+    var professions: [Professions] { get set }
+    var companies: [Companies] { get set }
+    var level: Types.Levels { get set }
+    var stepsCount: Double { get set }
+
+    var isLoading: Bool { get set }
+    var isError: Bool { get set }
+
     func getProfileName() -> String
     func getProfileLevel() -> String
     func getProfileProfessions() -> String
@@ -141,12 +141,9 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         case .success(let profile):
             isLoading = false
             self.profile = profile
-        case .failure(let error):
+        case .failure:
             isLoading = false
             isError = true
-            if error == .unauthorized {
-                return await profileProvider.updateToken()
-            }
         }
         return true
     }
@@ -156,19 +153,6 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         case .error, .empty:
             isError = true
             return false
-        case .unauthorized:
-            let update = await profileProvider.updateToken()
-            if update {
-                if await setProfile() {
-                    return true
-                } else {
-                    isError = true
-                    return false
-                }
-            } else {
-                isError = true
-                return false
-            }
         }
             
     }

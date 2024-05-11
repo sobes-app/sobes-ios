@@ -16,18 +16,17 @@ struct ContentView: View {
             EntryPointView(
                 selectedTab: $selectedTab,
                 provider: profileProvider
-            ).environmentObject(auth)
+            )
+            .environmentObject(auth)
         } else {
-            MainView(selectedTab: $selectedTab,
-                     profileProvider: profileProvider)
+            MainView(
+                selectedTab: $selectedTab,
+                profileProvider: profileProvider
+            )
             .environmentObject(auth)
         }
     }
     
     @State private var selectedTab: TabItem
     let profileProvider: ProfileProvider
-}
-
-#Preview {
-    ContentView()
 }

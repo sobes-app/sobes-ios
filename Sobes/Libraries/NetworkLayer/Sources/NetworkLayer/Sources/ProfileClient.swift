@@ -28,8 +28,8 @@ public struct ResetPasswordRequest: Encodable {
 
 public final class ProfileClient {
     
-    public init(token: String?, tokenType: String?) {
-        self.netLayer = NetworkLayer(token: token, tokenType: tokenType)
+    public init() {
+        self.netLayer = NetworkLayer()
     }
     
     public func getProfile() async -> Result<ProfileResponse, ClientError>{
