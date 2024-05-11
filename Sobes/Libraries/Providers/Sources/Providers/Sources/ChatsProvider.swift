@@ -5,6 +5,7 @@ import SwiftyKeychainKit
 
 public protocol ChatsProvider {
     var profiles: [Profile]? {get set}
+    var chats: [Chat]? {get set}
     
     func getChats() -> [Types.Chat]
     func addMessageToChat(chatId: Int, text: String)
@@ -16,11 +17,7 @@ public protocol ChatsProvider {
 public final class ChatsProviderImpl: ChatsProvider {
     let profileProvider: ProfileProvider
     public var profiles: [Profile]?
-    
-    private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
-    private let accessTokenKey = KeychainKey<String>(key: "accessToken")
-    private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
-    private let tokenType = KeychainKey<String>(key: "tokenType")
+    public var chats: [Chat]?
 
     public init(profileProvider: ProfileProvider) {
         self.profileProvider = profileProvider
@@ -52,16 +49,11 @@ public final class ChatsProviderImpl: ChatsProvider {
                 return .failure(.error)
             }
         }
-        
     }
 
     public func getChats() -> [Types.Chat] {
-       return chats
+       return chats ?? []
     }
-
-    private var chats: [Types.Chat] = [
-
-    ]
     
     public func createNewChat(responderId: Int) {
 

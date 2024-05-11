@@ -2,11 +2,9 @@ import Combine
 import Foundation
 
 final class PasswordViewModel: ObservableObject {
-    // MARK: - Password input
     @Published var password = ""
     @Published var confirmPassword = ""
     
-    // MARK: - Password requirements
     @Published var hasEightChar = false
     @Published var hasOneDigit = false
     @Published var hasOneUpperCaseChar = false
