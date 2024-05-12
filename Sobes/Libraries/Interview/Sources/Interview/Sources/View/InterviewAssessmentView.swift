@@ -4,10 +4,11 @@ import Types
 
 public struct InterviewAssessmentView<Model: InterviewViewModel>: View {
 
-    public init(model: Model, question: String, answer: String) {
+    public init(model: Model, question: String, answer: String, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
         self.question = question
         self.answer = answer
+        self._showTabBar = showTabBar
     }
 
     public var body: some View {
@@ -33,15 +34,15 @@ public struct InterviewAssessmentView<Model: InterviewViewModel>: View {
         .task {
             await model.fetchAssessment(question: question, answer: answer)
         }
-    }
-
-    private func loadedView(assessment: InterviewAssessment) -> some View {
-        VStack(alignment: .leading, spacing: Constants.topPadding) {
-            VStack(alignment: .leading, spacing: Constants.defSpacing) {
-                header
-                statistics(assessment: assessment)
+        .onAppear {
+            withAnimation {
+                showTabBar = false
             }
-            improvement(text: assessment.improvement)
+        }
+        .onDisappear {
+            withAnimation {
+                showTabBar = true
+            }
         }
     }
 
@@ -51,6 +52,21 @@ public struct InterviewAssessmentView<Model: InterviewViewModel>: View {
             .foregroundStyle(Color(.accent))
             .frame(maxWidth: .infinity, alignment: .leading)
             .multilineTextAlignment(.leading)
+    }
+
+    @ObservedObject private var model: Model
+    private let question: String
+    private let answer: String
+    @Binding private var showTabBar: Bool
+
+    private func loadedView(assessment: InterviewAssessment) -> some View {
+        VStack(alignment: .leading, spacing: Constants.topPadding) {
+            VStack(alignment: .leading, spacing: Constants.defSpacing) {
+                header
+                statistics(assessment: assessment)
+            }
+            improvement(text: assessment.improvement)
+        }
     }
 
     private func statistics(assessment: InterviewAssessment) -> some View {
@@ -99,9 +115,5 @@ public struct InterviewAssessmentView<Model: InterviewViewModel>: View {
         }
         .scrollIndicators(.hidden)
     }
-
-    @ObservedObject private var model: Model
-    private let question: String
-    private let answer: String
 
 }

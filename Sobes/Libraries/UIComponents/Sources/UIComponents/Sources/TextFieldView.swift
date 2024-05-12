@@ -12,6 +12,7 @@ public struct TextFieldView: View {
 
     public enum Model {
         case custom(placeholder: String)
+        case customOneLiner(placeholder: String)
         case name
         case password
         case email
@@ -38,6 +39,8 @@ public struct TextFieldView: View {
         switch model {
         case .custom(let placeholder):
             custom(placeholder: placeholder)
+        case .customOneLiner(let placeholder):
+            customOneLiner(placeholder: placeholder)
         case .name:
             name
         case .password:
@@ -65,14 +68,40 @@ public struct TextFieldView: View {
             )
     }
 
+    var customRoundedBackground: some View {
+        RoundedRectangle(cornerRadius: Constants.corner)
+            .stroke(
+                isFocused ? .black : .clear,
+                lineWidth: Constants.strokeWidth
+            )
+            .background(
+                RoundedRectangle(cornerRadius: Constants.corner)
+                    .fill(Color(.light))
+            )
+    }
+
     func custom(placeholder: String) -> some View {
+        TextField(placeholder, text: $input, axis: .vertical)
+            .foregroundColor(.black)
+            .focused($isFocused)
+            .disableAutocorrection(true)
+            .padding(Constants.elementPadding)
+            .lineLimit(5...10)
+            .multilineTextAlignment(.leading)
+            .background {
+                customRoundedBackground
+            }
+    }
+
+    func customOneLiner(placeholder: String) -> some View {
         TextField(placeholder, text: $input)
             .foregroundColor(.black)
             .focused($isFocused)
             .disableAutocorrection(true)
             .padding(Constants.elementPadding)
+            .multilineTextAlignment(.leading)
             .background {
-                roundedRec
+                customRoundedBackground
             }
     }
 

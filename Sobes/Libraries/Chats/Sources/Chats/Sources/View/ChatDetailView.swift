@@ -11,7 +11,6 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     @State private var isPopoverPresented: Bool = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Binding private var showTabBar: Bool
-    private let chat: Chat
     
     public init(showTabBar: Binding<Bool>, chat: Chat, model: Model) {
         self._showTabBar = showTabBar
@@ -66,6 +65,8 @@ struct ChatDetailView<Model: ChatViewModel>: View {
         .onDisappear {
         }
     }
+
+    private let chat: Chat
     
     func messages() -> some View {
         ScrollView {
@@ -87,7 +88,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
             .foregroundColor(.black)
     }
     
-    var description: some View {
+    private var description: some View {
         VStack(alignment: .leading) {
             if !model.getResponder(chat: chat).professions.isEmpty {
                 Text("#\(Profile.createStringOfProfessions(of: model.getResponder(chat: chat)).joined(separator: ", "))")
@@ -108,7 +109,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     
-    var back: some View {
+    private var back: some View {
         Button(action: {
             presentationMode.wrappedValue.dismiss()
             showTabBar = true
@@ -119,7 +120,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
         }
     }
     
-    var info: some View {
+    private var info: some View {
         Button(action: {
             isPopoverPresented = true
         }) {
@@ -133,4 +134,20 @@ struct ChatDetailView<Model: ChatViewModel>: View {
                 .padding()
         }
     }
+
+    private func messages() -> some View {
+        ScrollView {
+            ForEach(chat.messages) { message in
+                VStack(spacing: 5) {
+                    MessageBubble(message: message, isCurrentUser: message.isCurrentUser)
+                        .id(message.id)
+                }
+            }
+            Spacer()
+                .frame(height: 0)
+                .id("bottom")
+        }
+        .scrollIndicators(.hidden)
+    }
+
 }
