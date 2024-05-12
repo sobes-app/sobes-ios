@@ -4,7 +4,8 @@ import Toolbox
 
 public struct InterviewEntryPointView<Model: InterviewViewModel>: View {
 
-    public init(model: Model) {
+    public init(showTabBar: Binding<Bool>, model: Model) {
+        self._showTabBar = showTabBar
         self._model = StateObject(wrappedValue: model)
     }
 
@@ -15,31 +16,16 @@ public struct InterviewEntryPointView<Model: InterviewViewModel>: View {
                 interviewButtons
                 Spacer()
             }
-            .fullScreenCover(isPresented: $isPresentingStatiscticsView) {
-                InterviewStatisticsView(model: model)
-            }
-            .fullScreenCover(isPresented: $isPresentingProjectManagerInterview) {
-                InterviewQuestionsView(model: model, type: .project)
-            }
-            .fullScreenCover(isPresented: $isPresentingProductManagerInterview) {
-                InterviewQuestionsView(model: model, type: .product)
-            }
-            .fullScreenCover(isPresented: $isPresentingBAInterview) {
-                InterviewQuestionsView(model: model, type: .analyst)
-            }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, Constants.horizontal)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, Constants.horizontal)
         .task {
             await model.onViewAppear()
         }
     }
 
     @StateObject private var model: Model
-    @State private var isPresentingStatiscticsView = false
-    @State private var isPresentingBAInterview = false
-    @State private var isPresentingProductManagerInterview = false
-    @State private var isPresentingProjectManagerInterview = false
+    @Binding private var showTabBar: Bool
 
     private var headline: some View {
         HStack {
@@ -53,18 +39,15 @@ public struct InterviewEntryPointView<Model: InterviewViewModel>: View {
     }
 
     private var statisticsButton: some View {
-        Image(systemName: "chart.xyaxis.line")
-            .foregroundColor(.black)
-            .padding(Constants.elementPadding)
-            .background {
-                RoundedRectangle(cornerRadius: Constants.corner)
-                    .foregroundColor(Color(.light))
-            }
-            .onTapGesture {
-                withoutAnimation {
-                    isPresentingStatiscticsView = true
+        NavigationLink(destination: InterviewStatisticsView(model: model, showTabBar: $showTabBar)) {
+            Image(systemName: "chart.xyaxis.line")
+                .foregroundColor(.black)
+                .padding(Constants.elementPadding)
+                .background {
+                    RoundedRectangle(cornerRadius: Constants.corner)
+                        .foregroundColor(Color(.light))
                 }
-            }
+        }
     }
 
     @ViewBuilder
@@ -82,22 +65,9 @@ public struct InterviewEntryPointView<Model: InterviewViewModel>: View {
                     Spacer()
                 } else {
                     ForEach(model.professions, id: \.self) { profession in
-                        ChevronButton(model: .button(text: profession.rawValue))
-                            .onTapGesture {
-                                withoutAnimation {
-                                    switch profession {
-                                    case .analyst:
-                                        isPresentingBAInterview = true
-                                    case .product:
-                                        isPresentingProductManagerInterview = true
-                                    case .project:
-                                        isPresentingProjectManagerInterview = true
-                                    case .no:
-                                        break
-                                    }
-
-                                }
-                            }
+                        NavigationLink(destination: InterviewQuestionsView(model: model, type: profession, showTabBar: $showTabBar)) {
+                            ChevronButton(model: .button(text: profession.rawValue))
+                        }
                     }
                 }
             }

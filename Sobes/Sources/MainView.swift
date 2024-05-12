@@ -26,10 +26,11 @@ public struct MainView: View {
                 )
             case .interview:
                 InterviewEntryPointView(
+                    showTabBar: $showTabBar,
                     model: InterviewViewModelImpl(
                         questionsProvider: QuestionsProviderImpl(
                             profileProvider: profileProvider
-                        ), 
+                        ),
                         profileProvider: profileProvider
                     )
                 )

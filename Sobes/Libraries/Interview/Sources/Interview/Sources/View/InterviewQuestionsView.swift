@@ -4,18 +4,28 @@ import UIComponents
 
 public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
 
-    public init(model: Model, type: Professions) {
+    public init(model: Model, type: Professions, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
         self.type = type
+        self._showTabBar = showTabBar
     }
 
     public var body: some View {
-        NavigationStack {
-            VStack(spacing: Constants.topPadding) {
-                navBar
-                questionsBlock
+        VStack(spacing: Constants.topPadding) {
+            navBar
+            questionsBlock
+        }
+        .padding(.horizontal, Constants.horizontal)
+        .navigationBarBackButtonHidden()
+        .onAppear {
+            withAnimation {
+                showTabBar.toggle()
             }
-            .padding(.horizontal, Constants.horizontal)
+        }
+        .onDisappear {
+            withAnimation {
+                showTabBar.toggle()
+            }
         }
         .task {
             await model.fetchQuestions(for: type)
@@ -37,17 +47,7 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
                 .font(Fonts.heading)
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            ScrollView {
-                VStack(spacing: Constants.defSpacing) {
-                    ForEach(model.questions) { question in
-                        NavigationLink(destination: InterviewChatView(model: model, question: question)) {
-                            ChevronButton(model: .question(question))
-                        }
-                    }
-                }
-            }
-            Spacer()
-            changeQuestionsButton
+            questionsAndButton
         }
         .overlay {
             if model.isLoading {
@@ -60,6 +60,22 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
                     }
                 })
             }
+        }
+    }
+
+    private var questionsAndButton: some View {
+        VStack(spacing: Constants.smallStack) {
+            ScrollView {
+                VStack(spacing: Constants.defSpacing) {
+                    ForEach(model.questions) { question in
+                        NavigationLink(destination: InterviewChatView(model: model, question: question, showTabBar: $showTabBar)) {
+                            ChevronButton(model: .question(question))
+                        }
+                    }
+                }
+            }
+            Spacer()
+            changeQuestionsButton
         }
     }
 
@@ -77,5 +93,6 @@ public struct InterviewQuestionsView<Model: InterviewViewModel>: View {
 
     private let type: Professions
     @ObservedObject private var model: Model
+    @Binding private var showTabBar: Bool
 
 }
