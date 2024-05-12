@@ -50,10 +50,7 @@ public struct ChevronButton: View {
                         Text("результат ")
                             .font(Fonts.main)
                         +
-                        Text(String(format: "%.1f", result))
-                            .font(Fonts.mainBold)
-                        +
-                        Text("%")
+                        Text("\(result)%")
                             .font(Fonts.mainBold)
                     }
                     .foregroundStyle(Color(.accent))

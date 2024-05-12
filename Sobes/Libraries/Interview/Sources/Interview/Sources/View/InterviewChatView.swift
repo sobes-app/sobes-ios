@@ -4,9 +4,10 @@ import UIComponents
 
 public struct InterviewChatView<Model: InterviewViewModel>: View {
 
-    public init(model: Model, question: InterviewQuestion) {
+    public init(model: Model, question: InterviewQuestion, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
         self.question = question
+        self._showTabBar = showTabBar
     }
 
     public var body: some View {
@@ -23,11 +24,22 @@ public struct InterviewChatView<Model: InterviewViewModel>: View {
         .task {
             await model.startDialogueForQuestion(question: question.text, questionId: question.id, text: question.text)
         }
+        .onAppear {
+            withAnimation {
+                showTabBar.toggle()
+            }
+        }
+        .onDisappear {
+            withAnimation {
+                showTabBar.toggle()
+            }
+        }
     }
 
     @State private var input: String = ""
     @ObservedObject private var model: Model
     private let question: InterviewQuestion
+    @Binding private var showTabBar: Bool
 
     private var messageBubbles: some View {
         ScrollViewReader { proxy in
@@ -40,7 +52,8 @@ public struct InterviewChatView<Model: InterviewViewModel>: View {
                                     destination: InterviewAssessmentView(
                                         model: model,
                                         question: question.text,
-                                        answer: model.messages[message.id - 1].text
+                                        answer: model.messages[message.id - 1].text, 
+                                        showTabBar: $showTabBar
                                     )
                                 ) {
                                     InterviewMessageBubble(message: message)
