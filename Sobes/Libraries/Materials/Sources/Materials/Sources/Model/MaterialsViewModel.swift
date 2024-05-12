@@ -12,6 +12,7 @@ public protocol MaterialsViewModel: ObservableObject {
     var materialsFilters: [Types.Filter] { get }
     var appMode: ApplicationMode { get }
     var isLoading: Bool { get }
+    var isAddMaterialLoading: Bool { get }
     var isError: Bool { get }
     func onViewAppear() async
     func onFilterTapped(id: Int) async
@@ -19,8 +20,8 @@ public protocol MaterialsViewModel: ObservableObject {
     func getParsedArticle(id: Int) async -> ParsedArticle?
 
     // admin mode functions
-    func addArticle(link: String)
-    func addTip(company: Company, author: String, text: String)
+    func addArticle(link: String) async -> Bool
+    func addTip(company: Company, author: String, text: String, role: String) async -> Bool
 }
 
 @MainActor
@@ -31,6 +32,7 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
     @Published public var materialsFilters: [Types.Filter] = []
     @Published public var appMode: ApplicationMode = .user
     @Published public var isLoading: Bool = false
+    @Published public var isAddMaterialLoading: Bool = false
     @Published public var isError: Bool = false
 
     public init(materialsProvider: MaterialsProvider, profileProvider: ProfileProvider) {
@@ -100,12 +102,32 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
         return await fetchArticle(from: article.url)
     }
 
-    public func addTip(company: Company, author: String, text: String) {
-//        materialsProvider.addTip(tip)
+    public func addTip(company: Company, author: String, text: String, role: String) async -> Bool {
+        isAddMaterialLoading = true
+        let result = await materialsProvider.addTip(company: company.rawValue, author: author, text: text, role: role)
+        switch result {
+        case .success:
+            isAddMaterialLoading = false
+            return true
+        case .failure:
+            isAddMaterialLoading = false
+            isError = true
+            return false
+        }
     }
 
-    public func addArticle(link: String) {
-//        materialsProvider.addArticle(article)
+    public func addArticle(link: String) async -> Bool {
+        isAddMaterialLoading = true
+        let result = await materialsProvider.addArticle(link: link)
+        switch result {
+        case .success:
+            isAddMaterialLoading = false
+            return true
+        case .failure:
+            isAddMaterialLoading = false
+            isError = true
+            return false
+        }
     }
 
     private let materialsProvider: MaterialsProvider
