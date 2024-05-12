@@ -1,5 +1,23 @@
 import Foundation
 
+
+public struct CreateChatResponse: Decodable {
+    public let id: Int
+    public let participantone: Participant
+    public let participanttwo: Participant
+}
+
+public struct Participant: Decodable {
+    public let id: Int
+}
+
+public struct MessagesResponse: Decodable {
+    public let sender: Participant
+    public let text: String
+    public let date: String
+    public let chatId: Int
+}
+
 public final class ChatsClient {
     let netLayer: NetworkLayer
     
@@ -11,6 +29,36 @@ public final class ChatsClient {
         await withCheckedContinuation { continuation in
             self.netLayer.makeRequest(method: "GET",
                                       urlPattern: "/user/profiles",
+                                      body: EmptyRequest()) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    public func createChat(userId: Int) async -> Result<CreateChatResponse, ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "POST",
+                                      urlPattern: "/chat/\(userId)",
+                                      body: EmptyRequest()) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    public func getChats() async -> Result<[CreateChatResponse], ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "GET",
+                                      urlPattern: "/chat",
+                                      body: EmptyRequest()) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    public func getMessages(chatId: Int) async -> Result<[MessagesResponse], ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "GET",
+                                      urlPattern: "/chat/\(chatId)/messages",
                                       body: EmptyRequest()) { result in
                 continuation.resume(returning: result)
             }

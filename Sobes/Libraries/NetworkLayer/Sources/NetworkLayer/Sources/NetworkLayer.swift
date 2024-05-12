@@ -21,6 +21,8 @@ public struct ErrorResponse: Decodable {
 public final class NetworkLayer {
 
     let baseUrl = "http://158.160.165.222:8080"
+//    let baseUrl = "http://localhost:8080"
+
     private var isRefreshingToken = false
     private let refreshLock = DispatchSemaphore(value: 1)
 
@@ -83,6 +85,7 @@ public final class NetworkLayer {
             let decodedResponse = try JSONDecoder().decode(T.self, from: data)
             completion(.success(decodedResponse))
         } catch {
+            print("JSON decoding error:", error)
             completion(.failure(.jsonDecodeError))
         }
     }

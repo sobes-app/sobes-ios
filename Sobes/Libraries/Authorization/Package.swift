@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "Authorization",
     defaultLocalization: "ru",
-    platforms: [.iOS(.v16)],
+    platforms: [.iOS(.v17)],
     products: [
         .library(
             name: "Authorization",
@@ -24,6 +24,6 @@ let package = Package(
             dependencies: ["UIComponents", "NetworkLayer", "SwiftyKeychainKit", "Providers"],
             sources: ["Sources"],
             resources: [.process("Resources")]
-        ),
+        )
     ]
 )

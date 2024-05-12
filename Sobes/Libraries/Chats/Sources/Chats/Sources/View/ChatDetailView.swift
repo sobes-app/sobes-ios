@@ -30,35 +30,59 @@ struct ChatDetailView<Model: ChatViewModel>: View {
             Rectangle()
                 .foregroundColor(Color(.light))
                 .frame(height: 1)
-            ScrollViewReader { proxy in
-                messages()
-                    .onReceive(Just(chat.messages)) { _ in
-                        withAnimation {
-                            proxy.scrollTo("bottom")
+            if model.isLoading {
+                LoadingScreen(placeholder: "загружаю сообщения...")
+            } else {
+                ScrollViewReader { proxy in
+                    messages()
+                        .onReceive(Just(chat.messages)) { _ in
+                            withAnimation {
+                                proxy.scrollTo("bottom")
+                            }
                         }
+                    
+                    TextFieldView(model: .chat, input: $input, onSend: {
+                        model.sendChatMessage(chatId: chat.id, senderId: model.getCurrentUserId(), text: input)
+                        
+                        input = ""
+                    })
+                    .onTapGesture {
+                        proxy.scrollTo("bottom")
                     }
-                
-                TextFieldView(model: .chat, input: $input, onSend: {
-                    model.addMessageToChat(chatId: chat.id, text: input)
-                    input = ""
-                })
-                .onTapGesture {
-                    proxy.scrollTo("bottom")
+                    .padding(.top, Constants.defSpacing)
                 }
-                .padding(.top, Constants.defSpacing)
             }
         }
         .navigationBarBackButtonHidden()
         .padding(.horizontal, Constants.horizontal)
         .padding(.bottom, Constants.bottom)
+        .task {
+            await model.fetchMessages(chatId: chat.id)
+        }
         .onAppear {
             showTabBar = false
+        }
+        .onDisappear {
         }
     }
 
     private let chat: Chat
     
-    private var responderName: some View {
+    func messages() -> some View {
+        ScrollView {
+            ForEach(model.messages, id:\.self) { message in
+                VStack(spacing: 5) {
+                    MessageBubble(message: message, isCurrentUser: message.isCurrentUser)
+                }
+            }
+            Spacer()
+                .frame(height: 0)
+                .id("bottom")
+        }
+        .scrollIndicators(.hidden)
+    }
+    
+    var responderName: some View {
         Text(model.getResponder(chat: chat).name)
             .font(Fonts.mainBold)
             .foregroundColor(.black)

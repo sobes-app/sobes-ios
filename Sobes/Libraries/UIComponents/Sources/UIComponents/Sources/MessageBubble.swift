@@ -10,16 +10,29 @@ public struct MessageBubble: View {
         self.isCurrentUser = isCurrentUser
     }
     
+    func convertDate(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+        let timeString = dateFormatter.string(from: date)
+        return timeString
+    }
+    
     public var body: some View {
         HStack {
             if isCurrentUser {
                 Spacer()
             }
             VStack {
-                Text(message.text)
-                    .font(Fonts.small)
-                    .foregroundStyle(.black)
-                    .padding(10)
+                VStack(alignment: .trailing) {
+                    Text(message.text)
+                        .font(Fonts.small)
+                        .foregroundStyle(.black)
+                    Text(convertDate(date: message.date))
+                        .font(.system(size: 10))
+                        .foregroundStyle(.gray)
+                    
+                }
+                .padding(10)
             }
             .background {
                 RoundedRectangle(cornerRadius: Constants.corner)

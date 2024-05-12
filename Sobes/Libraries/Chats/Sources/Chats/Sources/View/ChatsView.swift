@@ -2,6 +2,8 @@ import SwiftUI
 import UIComponents
 import Types
 import SwiftUIGIF
+import Foundation
+import Combine
 
 enum Page {
     case chats
@@ -10,6 +12,7 @@ enum Page {
 
 public struct ChatsView<Model: ChatViewModel>: View {
     @StateObject private var model: Model
+    
     @State private var presentDetailChat: Bool = false
     
     @State private var input: String = ""
@@ -53,6 +56,12 @@ public struct ChatsView<Model: ChatViewModel>: View {
                 await model.onViewAppear()
             }
         }
+        .onAppear {
+            model.connect()
+        }
+        .onDisappear {
+            model.disconnect()
+        }
     }
     
     var filteredItems: [Profile] {
@@ -62,51 +71,42 @@ public struct ChatsView<Model: ChatViewModel>: View {
     }
     
     var search: some View {
-        ZStack {
-            VStack(spacing: Constants.defSpacing) {
-                searchTextField
-                if model.profiles != [] && model.profiles != nil {
-                    ScrollView {
-                        VStack(spacing: Constants.defSpacing) {
-                            ForEach(filteredItems) { profile in
-                                ProfileElementView(profile: profile, onChatTapped: {
-                                    if !model.checkChatExistance(responder: profile) {
-                                        model.createNewChat(reponder: profile)
-                                    }
-                                    withAnimation {
-                                        page = .chats
-                                    }
-                                })
-                            }
+        VStack(spacing: Constants.defSpacing) {
+            searchTextField
+            if model.isLoading {
+                LoadingScreen(placeholder: "Загружаем профили...")
+            } else if model.isError {
+                ErrorView(retryAction: {
+                    Task { @MainActor in
+                        await model.getProfiles()
+                    }
+                })
+            } else if model.profiles != [] && model.profiles != nil {
+                ScrollView {
+                    VStack(spacing: Constants.defSpacing) {
+                        ForEach(filteredItems) { profile in
+                            ProfileElementView(profile: profile, onChatTapped: {
+                                Task {
+                                    await model.createNewChat(responder: profile)
+                                }
+                                withAnimation {
+                                    page = .chats
+                                }
+                            }, chatExists: model.checkChatExistance(responder: profile))
                         }
                     }
-                    .scrollDismissesKeyboard(.immediately)
-                    .scrollIndicators(.hidden)
-                } else {
-                    Spacer()
-                    EmptyDataView(text: "Тут пока нет профилей")
-                    Spacer()
                 }
+                .scrollDismissesKeyboard(.immediately)
+                .scrollIndicators(.hidden)
+            } else {
+                Spacer()
+                EmptyDataView(text: "Тут пока нет профилей")
+                Spacer()
             }
-            .padding(.horizontal, Constants.horizontal)
-            .background(.white)
-            .transition(.move(edge: .trailing))
-            viewStates()
         }
-    }
-    
-    @ViewBuilder
-    func viewStates() -> some View {
-        if model.isLoading {
-            SplashScreen()
-        }
-        if model.isError {
-            ErrorView(retryAction: {
-                Task { @MainActor in
-                    await model.getProfiles()
-                }
-            })
-        }
+        .padding(.horizontal, Constants.horizontal)
+        .background(.white)
+        .transition(.move(edge: .trailing))
     }
     
     var searchTextField: some View {
@@ -118,28 +118,43 @@ public struct ChatsView<Model: ChatViewModel>: View {
     }
     
     var chats: some View {
-        ZStack {
-            VStack(spacing: Constants.defSpacing) {
-                if model.chats != [] && model.chats != nil {
-                    ScrollView {
-                        ForEach(model.chats ?? []) { chat in
-                            NavigationLink(destination: ChatDetailView(showTabBar: $showTabBar, chat: chat, model: model)) {
-                                chatView(chat: chat)
-                            }
+        VStack(spacing: Constants.defSpacing) {
+            if model.isLoading {
+                LoadingScreen(placeholder: "Загружаем чаты...")
+            } else if model.isError {
+                ErrorView(retryAction: {
+                    Task { @MainActor in
+                        await model.getChats()
+                    }
+                })
+            } else if model.chats != [] && model.chats != nil {
+                ScrollView {
+                    ForEach(model.chats ?? []) { chat in
+                        NavigationLink(destination: ChatDetailView(showTabBar: $showTabBar, chat: chat, model: model)) {
+                            chatView(chat: chat)
                         }
                     }
-                } else {
-                    Spacer()
-                    EmptyDataView(text: "У вас пока нет чатов")
-                    Spacer()
                 }
+            } else {
+                Spacer()
+                EmptyDataView(text: "У вас пока нет чатов")
+                Spacer()
             }
-            .padding(.horizontal, Constants.horizontal)
-            .background(.white)
-            .transition(.move(edge: .leading))
-            .refreshable {}
-            viewStates()
         }
+        .task {
+            await model.getChats()
+        }
+        .padding(.horizontal, Constants.horizontal)
+        .background(.white)
+        .transition(.move(edge: .leading))
+        .refreshable {}
+    }
+    
+    func convertDate(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+        let timeString = dateFormatter.string(from: date)
+        return timeString
     }
     
     func chatView(chat: Chat) -> some View {
@@ -152,10 +167,15 @@ public struct ChatsView<Model: ChatViewModel>: View {
                     Text(model.getResponder(chat: chat).name)
                         .font(Fonts.mainBold)
                         .foregroundColor(.black)
-                    Text(chat.messages.last?.text ?? "")
-                        .font(Fonts.small)
-                        .foregroundColor(Color("grey", bundle: .module))
-                        .lineLimit(1)
+                    HStack {
+                        Text(chat.messages.last?.text ?? "")
+                            .font(Fonts.small)
+                            .foregroundColor(Color("grey", bundle: .module))
+                            .lineLimit(1)
+                        Text(convertDate(date: (chat.messages.last?.date) ?? Date.now))
+                            .foregroundColor((Color(.light)))
+                            .font(.system(size: 10))
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
