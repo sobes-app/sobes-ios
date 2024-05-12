@@ -6,10 +6,12 @@ public struct ProfileElementView: View {
     
     private let profile: Profile
     private var onChatTapped: () -> Void
+    private let chatExists: Bool
     
-    public init(profile: Profile, onChatTapped: @escaping () -> Void) {
+    public init(profile: Profile, onChatTapped: @escaping () -> Void, chatExists: Bool) {
         self.profile = profile
         self.onChatTapped = onChatTapped
+        self.chatExists = chatExists
     }
     
     func arrayOfStrings(array: [Professions]) -> [String] {
@@ -56,9 +58,13 @@ public struct ProfileElementView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            Button(action: {onChatTapped()}) {
-                Image(systemName: "message.fill")
-                    .accentColor(.black)
+            if chatExists {
+                Spacer()
+            } else {
+                Button(action: {onChatTapped()}) {
+                    Image(systemName: "message.fill")
+                        .accentColor(.black)
+                }
             }
         }
         .padding()

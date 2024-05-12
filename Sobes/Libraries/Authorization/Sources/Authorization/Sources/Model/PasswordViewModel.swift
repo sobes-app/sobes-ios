@@ -45,7 +45,7 @@ final class PasswordViewModel: ObservableObject {
         Publishers.CombineLatest($password, $confirmPassword)
             .map { [weak self] _, _ in
                 guard let self else { return false}
-                return self.hasEightChar && self.hasOneDigit && self.hasOneUpperCaseChar && self.confirmationMatch
+                return self.hasEightChar && self.hasOneDigit && self.hasOneUpperCaseChar
             }
             .assign(to: &$areAllFieldsValid)
     }

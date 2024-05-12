@@ -18,7 +18,10 @@ let project = Project(
         .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.9.1")),
         .package(url: "https://github.com/scinfu/SwiftSoup.git", .upToNextMajor(from: "2.7.2")),
         .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
-        .package(url: "https://github.com/andriyslyusar/SwiftyKeychainKit", .upToNextMajor(from: "1.0.0-beta.2"))
+        .package(url: "https://github.com/andriyslyusar/SwiftyKeychainKit", .upToNextMajor(from: "1.0.0-beta.2")),
+        .package(url: "https://github.com/daltoniam/Starscream.git", .upToNextMajor(from:"4.0.4"))
+//        .package(url: "https://github.com/Romixery/SwiftStomp.git", .upToNextMajor(from: "1.1.1"))
+
     ],
     targets: [
         .target(
@@ -46,6 +49,8 @@ let project = Project(
                 .package(product: "SwiftyKeychainKit", type: .runtime),
                 .package(product: "Alamofire", type: .runtime),
                 .package(product: "SwiftSoup", type: .runtime),
+                .package(product: "Starscream", type: .runtime)
+//                .package(product: "SwiftStomp", type: .runtime),
             ]
         ),
     ]
