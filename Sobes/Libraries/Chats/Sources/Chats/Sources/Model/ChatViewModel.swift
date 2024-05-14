@@ -295,9 +295,6 @@ public final class ChatViewModelImpl: ChatViewModel {
     }
     
     public func fetchMessages(chatId: Int) async -> [Types.Message] {
-        isLoading = true
-        defer { isLoading = false }
-        
         let result = await chatProvider.getChatMessages(chatId: chatId)
         switch result {
         case .success(let success):
@@ -318,7 +315,6 @@ public final class ChatViewModelImpl: ChatViewModel {
         let idsArray = chat.messages.map({ message in
             return message.messageId
         })
-        
         await chatProvider.readMessages(messages: idsArray)
     }
     
@@ -376,7 +372,6 @@ public final class ChatViewModelImpl: ChatViewModel {
         DispatchQueue.main.async {
             do {
                 let messagesResponse = try JSONDecoder().decode(MessagesResponse.self, from: jsonData)
-                print(messagesResponse)
                 let isCurrentUser = messagesResponse.sender.id == self.profilesProvider.getCurrentUser().id
                 let message = Types.Message(messageResponse: messagesResponse, isCurrent: isCurrentUser)
                 

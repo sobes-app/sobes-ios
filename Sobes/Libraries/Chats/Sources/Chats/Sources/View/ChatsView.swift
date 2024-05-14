@@ -5,9 +5,9 @@ import SwiftUIGIF
 import Foundation
 import Combine
 
-enum Page {
-    case chats
-    case search
+enum Page: String, CaseIterable {
+    case chats = "Ваши чаты"
+    case search = "Поиск"
 }
 
 public struct ChatsView<Model: ChatViewModel>: View {
@@ -279,36 +279,35 @@ public struct ChatsView<Model: ChatViewModel>: View {
     }
     
     var select: some View {
-        HStack(spacing: Constants.defSpacing) {
-            VStack {
-                Text("Ваши чаты")
-                    .font(Fonts.main)
-                RoundedRectangle(cornerRadius: Constants.corner)
-                    .foregroundColor(page == .chats ? Color(.accent) : .clear)
-                    .frame(height: 3)
-            }
-            .onTapGesture {
-                withAnimation {
-                    if page != .chats {
-                        page = .chats
+        VStack {
+            HStack(spacing: Constants.defSpacing) {
+                ForEach(Page.allCases, id: \.self) { page in
+                    VStack {
+                        Text(page.rawValue)
+                            .font(Fonts.main)
+                            .frame(width: tabWidth, alignment: .center)
+                        Rectangle()
+                            .frame(width: tabWidth, height: 3)
+                            .foregroundColor(Color.clear)
+                    }
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            self.page = page
+                        }
                     }
                 }
+                .frame(width: tabWidth, alignment: .top)
             }
-            VStack {
-                Text("Поиск")
-                    .font(Fonts.main)
-                RoundedRectangle(cornerRadius: Constants.corner)
-                    .foregroundColor(page == .search ? Color(.accent) : .clear)
-                    .frame(height: 3)
-            }
-            .onTapGesture {
-                withAnimation {
-                    if page != .search {
-                        page = .search
-                    }
-                }
-            }
+            .overlay(
+                Rectangle()
+                    .frame(width: tabWidth, height: 3)
+                    .foregroundColor(Color(.accent))
+                    .offset(x: CGFloat(Page.allCases.firstIndex(of: self.page) ?? 0) * (tabWidth + Constants.defSpacing), y: 0),
+                alignment: .bottomLeading
+            )
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
+    
+    let tabWidth: CGFloat = UIScreen.main.bounds.width / CGFloat(Page.allCases.count*2)
+    @State private var tabOffset: CGFloat = 0
 }

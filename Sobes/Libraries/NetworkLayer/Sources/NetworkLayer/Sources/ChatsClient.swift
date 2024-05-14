@@ -17,7 +17,12 @@ public struct MessagesResponse: Decodable {
     public let responder: Participant
     public let text: String
     public let date: String
+    public let isRead: Bool
     public let chatId: Int
+}
+
+public struct ReadResponse: Decodable {
+    public let id: Int
 }
 
 public final class ChatsClient {
@@ -77,7 +82,7 @@ public final class ChatsClient {
         }
     }
     
-    public func readMessages(messages: [Int]) async -> Result<[String: String], ClientError> {
+    public func readMessages(messages: [Int]) async -> Result<[ReadResponse], ClientError> {
         await withCheckedContinuation { continuation in
             self.netLayer.makeRequest(method: "POST",
                                       urlPattern: "/chat/read",

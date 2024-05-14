@@ -26,8 +26,7 @@ public protocol ProfileProvider {
     func recoverAccount(email: String) async -> Bool
     func forgotPassword(email: String, password: String) async -> Bool
     func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Result<Bool, CustomError>
-//    func updateToken() async -> Bool
-    func logout()
+    func logout() async
 }
 
 public final class ProfileProviderImpl: ProfileProvider {
@@ -163,7 +162,9 @@ public final class ProfileProviderImpl: ProfileProvider {
         return profile ?? Profile()
     }
     
-    public func logout() {
+    public func logout() async {
+        let authClient = AuthClient()
+        _ = await authClient.logout()
         try? keychain.remove(accessTokenKey)
         try? keychain.remove(refreshTokenKey)
         try? keychain.remove(tokenType)
@@ -206,21 +207,6 @@ public final class ProfileProviderImpl: ProfileProvider {
             return .failure(getError(failure: failure))
         }
     }
-    
-//    public func updateToken() async -> Bool {
-//        try? keychain.remove(accessTokenKey)
-//        let authClient = AuthClient()
-//        let refreshToken = (try? self.keychain.get(refreshTokenKey)) ?? ""
-//        
-//        let result = await authClient.refreshToken(refreshToken: refreshToken)
-//        switch result {
-//        case .success(let success):
-//            try? self.keychain.set(success.accessToken, for: self.accessTokenKey)
-//            return true
-//        case .failure:
-//            return false
-//        }
-//    }
     
     public func getProfiles() -> [Types.Profile] {
         return profiles

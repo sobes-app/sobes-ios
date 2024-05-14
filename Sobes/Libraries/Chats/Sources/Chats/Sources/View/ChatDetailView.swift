@@ -13,6 +13,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     @Binding private var showTabBar: Bool
     @State var isMessagesEmpty: Bool = true
     private let chat: Chat
+    @State var isLoading: Bool = false
     
     public init(showTabBar: Binding<Bool>, chat: Chat, model: Model) {
         self._showTabBar = showTabBar
@@ -35,7 +36,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
             Rectangle()
                 .foregroundColor(Color(.light))
                 .frame(height: 1)
-            if model.isLoading {
+            if isLoading {
                 LoadingScreen(placeholder: "загружаю сообщения...")
             } else {
                 ScrollViewReader { proxy in
@@ -62,8 +63,10 @@ struct ChatDetailView<Model: ChatViewModel>: View {
         .padding(.horizontal, Constants.horizontal)
         .padding(.bottom, Constants.bottom)
         .task {
+            isLoading = true
             _ = await model.fetchMessages(chatId: chat.id)
             await model.readMessages(chat: chat)
+            isLoading = false
         }
         .onAppear {
             showTabBar = false
@@ -79,7 +82,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     private var description: some View {
         VStack(alignment: .leading) {
             if model.getResponder(chat: chat).professions.isEmpty {
-                Text("#\(Profile.createStringOfProfessions(of: model.getResponder(chat: chat)).joined(separator: ", "))")
+                Text("Пользователь еще не заполнил информацию о себе")
                     .font(Fonts.small)
                     .foregroundColor(.black)
             }
@@ -104,6 +107,10 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     
     private var back: some View {
         Button(action: {
+            //TODO: раскостылить
+            Task { @MainActor in
+                await model.getChats()
+            }
             presentationMode.wrappedValue.dismiss()
             showTabBar = true
             if isMessagesEmpty {

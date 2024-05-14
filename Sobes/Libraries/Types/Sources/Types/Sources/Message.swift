@@ -23,8 +23,7 @@ public struct Message: Hashable {
     public init(messageResponse: MessagesResponse, isCurrent: Bool) {
         self.isCurrentUser = isCurrent
         self.text = messageResponse.text
-        // TODO: поменять на ответ
-        self.isRead = false
+        self.isRead = messageResponse.isRead
         self.chatId = messageResponse.chatId
         self.messageId = messageResponse.messageId
 

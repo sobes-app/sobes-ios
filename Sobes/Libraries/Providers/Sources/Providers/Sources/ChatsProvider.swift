@@ -123,7 +123,7 @@ public final class ChatsProviderImpl: ChatsProvider {
     
     public func readMessages(messages: [Int]) async {
         let chatsClient = ChatsClient()
-        let result = await chatsClient.readMessages(messages: messages)
+        _ = await chatsClient.readMessages(messages: messages)
     }
     
     func handleError(failure: ClientError) -> CustomError {
