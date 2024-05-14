@@ -16,6 +16,7 @@ public protocol MaterialsViewModel: ObservableObject {
     var isError: Bool { get }
     func onViewAppear() async
     func onFilterTapped(id: Int) async
+    func updateMaterials() async
     func onMaterialsFilterTapped(id: Int) async
     func getParsedArticle(id: Int) async -> ParsedArticle?
 
@@ -56,6 +57,10 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
 
     public func onFilterTapped(id: Int) async {
         filters[id].isActive.toggle()
+        await updateMaterials()
+    }
+
+    public func updateMaterials() async {
         if filtersNotActive() {
             if materialsFilters.isTipsFilterActive {
                 materials = await getTips()

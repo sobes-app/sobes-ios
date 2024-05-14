@@ -105,6 +105,11 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
                 }
             }
             .scrollIndicators(.hidden)
+            .refreshable {
+                Task { @MainActor in
+                    await model.updateMaterials()
+                }
+            }
         }
     }
 
