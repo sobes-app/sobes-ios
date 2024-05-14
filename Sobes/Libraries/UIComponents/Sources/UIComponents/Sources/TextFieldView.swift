@@ -91,6 +91,9 @@ public struct TextFieldView: View {
             if canClearAll, !input.isEmpty {
                 Image(systemName: "xmark.circle.fill")
                     .foregroundStyle(isFocused ? Color(.black) : Color(.gray))
+                    .onTapGesture {
+                        input = ""
+                    }
             }
         }
         .padding(Constants.elementPadding)
@@ -109,6 +112,9 @@ public struct TextFieldView: View {
             if canClearAll, !input.isEmpty {
                 Image(systemName: "xmark.circle.fill")
                     .foregroundStyle(isFocused ? Color(.black) : Color(.gray))
+                    .onTapGesture {
+                        input = ""
+                    }
             }
         }
         .padding(Constants.elementPadding)

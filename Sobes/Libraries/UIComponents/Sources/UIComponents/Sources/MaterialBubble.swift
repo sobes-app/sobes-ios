@@ -75,7 +75,7 @@ public struct MaterialBubble: View {
                     .lineLimit(5)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(Color(.black))
-                    .font(Fonts.main)
+                    .font(Fonts.small)
             }
 
             Image(systemName: "chevron.right")
