@@ -20,11 +20,8 @@ public struct ErrorResponse: Decodable {
 
 public final class NetworkLayer {
 
-    let baseUrl = "http://158.160.165.222:8080"
-//    let baseUrl = "http://localhost:8080"
-
-    private var isRefreshingToken = false
-    private let refreshLock = DispatchSemaphore(value: 1)
+//    let baseUrl = "http://158.160.165.222:8080"
+    let baseUrl = "http://localhost:8080"
 
     public init() { }
 
@@ -72,6 +69,13 @@ public final class NetworkLayer {
         }
         .resume()
     }
+
+    private var isRefreshingToken = false
+    private let refreshLock = DispatchSemaphore(value: 1)
+    private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
+    private let accessTokenKey = KeychainKey<String>(key: "accessToken")
+    private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
+    private let tokenType = KeychainKey<String>(key: "tokenType")
 
     private func prepareAuthorizationHeader(for request: inout URLRequest) {
         if let tokenType = try? keychain.get(tokenType),
@@ -155,11 +159,6 @@ public final class NetworkLayer {
             }
         }.resume()
     }
-
-    private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
-    private let accessTokenKey = KeychainKey<String>(key: "accessToken")
-    private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
-    private let tokenType = KeychainKey<String>(key: "tokenType")
 
 }
 

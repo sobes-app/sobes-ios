@@ -19,6 +19,7 @@ public struct MainView: View {
             switch selectedTab {
             case .materials:
                 MaterialsView(
+                    showTabBar: $showTabBar,
                     model: MaterialsViewModelImpl(
                         materialsProvider: materialsProvider,
                         profileProvider: profileProvider

@@ -4,9 +4,10 @@ import UIComponents
 
 public struct ArticleView<Model: MaterialsViewModel>: View {
 
-    public init(model: Model, id: Int) {
+    public init(model: Model, article: Types.Article, showTabBar: Binding<Bool>) {
         self._model = ObservedObject(wrappedValue: model)
-        self.id = id
+        self.notParsedArticle = article
+        self._showTabBar = showTabBar
     }
 
     public var body: some View {
@@ -19,11 +20,21 @@ public struct ArticleView<Model: MaterialsViewModel>: View {
                 bodyText
             }
         }
+        .onAppear {
+            withAnimation {
+                showTabBar.toggle()
+            }
+        }
+        .onDisappear {
+            withAnimation {
+                showTabBar.toggle()
+            }
+        }
         .frame(maxWidth: .infinity, alignment: .leading)
         .navigationBarBackButtonHidden()
         .padding(Constants.horizontal)
         .task {
-            article = await model.getParsedArticle(id: id) ?? nil
+            article = await model.getParsedArticle(article: notParsedArticle)
         }
     }
 
@@ -47,10 +58,16 @@ public struct ArticleView<Model: MaterialsViewModel>: View {
                 .font(Fonts.small)
                 .foregroundStyle(Color(.grey))
             Spacer()
-//            Link(destination: URL(string: article?.url ?? "")!) {
-                Text("Читать полную версию статьи")
-                    .font(Fonts.small)
-//            }
+            if let article {
+                Link(destination: URL(string: article.url)!) {
+                    HStack {
+                        Text("К полной версии")
+                            .font(Fonts.small)
+                        Image(systemName: "arrow.right")
+                            .foregroundStyle(.blue)
+                    }
+                }
+            }
         }
         .frame(maxWidth: .infinity)
     }
@@ -82,22 +99,24 @@ public struct ArticleView<Model: MaterialsViewModel>: View {
                         .foregroundStyle(.blue)
                         .font(Fonts.small)
                 }
-                Button {
-                    showAllTags = true
-                } label: {
-                    HStack {
-                        Text("Показать все")
-                            .font(Fonts.small)
-                        Image(systemName: "chevron.down")
+                if article?.tags.count ?? 0 > 3 {
+                    Button {
+                        showAllTags = true
+                    } label: {
+                        HStack {
+                            Text("Показать все")
+                                .font(Fonts.small)
+                            Image(systemName: "chevron.down")
+                        }
+                        .foregroundStyle(.black)
                     }
-                    .foregroundStyle(.black)
                 }
             }
         }
     }
 
     private var authorBubble: some View {
-        VStack {
+        VStack(alignment: .leading) {
             Text(article?.author ?? "")
                 .font(Fonts.main)
                 .foregroundStyle(.black)
@@ -126,6 +145,7 @@ public struct ArticleView<Model: MaterialsViewModel>: View {
     @State private var showAllTags: Bool = false
     @State private var article: ParsedArticle?
     @ObservedObject private var model: Model
-    private let id: Int
+    @Binding private var showTabBar: Bool
+    private let notParsedArticle: Article
 
 }

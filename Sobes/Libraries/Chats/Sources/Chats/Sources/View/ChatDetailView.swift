@@ -135,19 +135,4 @@ struct ChatDetailView<Model: ChatViewModel>: View {
         }
     }
 
-    private func messages() -> some View {
-        ScrollView {
-            ForEach(chat.messages) { message in
-                VStack(spacing: 5) {
-                    MessageBubble(message: message, isCurrentUser: message.isCurrentUser)
-                        .id(message.id)
-                }
-            }
-            Spacer()
-                .frame(height: 0)
-                .id("bottom")
-        }
-        .scrollIndicators(.hidden)
-    }
-
 }

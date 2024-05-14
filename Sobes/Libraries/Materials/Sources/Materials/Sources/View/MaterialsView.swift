@@ -5,10 +5,11 @@ import UIComponents
 
 public struct MaterialsView<Model: MaterialsViewModel>: View {
     
-    public init(model: Model) {
+    public init(showTabBar: Binding<Bool>, model: Model) {
+        self._showTabBar = showTabBar
         self._model = StateObject(wrappedValue: model)
     }
-    
+
     public var body: some View {
         NavigationStack {
             VStack(spacing: Constants.defSpacing) {
@@ -27,7 +28,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
                     }
             }
             .overlay(alignment: .bottom) {
-                adminButtons
+                adminButton
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, Constants.horizontal)
@@ -93,7 +94,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
                 VStack(spacing: Constants.defSpacing) {
                     ForEach(model.materials, id: \.self) { material in
                         if case .article(let article) = material {
-                            NavigationLink(destination: ArticleView(model: model, id: article.id)) {
+                            NavigationLink(destination: ArticleView(model: model, article: article, showTabBar: $showTabBar)) {
                                 MaterialBubble(model: material)
                             }
                         } else {
@@ -101,7 +102,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
                         }
                     }
                     Spacer()
-                        .frame(height: 50)
+                        .frame(height: 70)
                 }
             }
             .scrollIndicators(.hidden)
@@ -114,34 +115,18 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
     }
 
     @ViewBuilder
-    private var adminButtons: some View {
+    private var adminButton: some View {
         if model.appMode == .admin {
             if model.materialsFilters.isTipsFilterActive {
                 addTipButton
                     .padding(.horizontal, 20)
-            } else {
-                addArticleButton
-                    .padding(.horizontal, 20)
+                    .padding(.bottom, Constants.defSpacing)
             }
         }
     }
 
-    private var addArticleButton: some View {
-        NavigationLink(destination: AddMaterialView(model: model, type: .article)) {
-            Text("Добавить статью")
-                .font(Fonts.mainBold)
-                .foregroundStyle(.white)
-                .padding(.vertical, Constants.elementPadding)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .background {
-                    RoundedRectangle(cornerRadius: Constants.corner)
-                        .foregroundStyle(Color(.accent))
-                }
-        }
-    }
-
     private var addTipButton: some View {
-        NavigationLink(destination: AddMaterialView(model: model, type: .tip)) {
+        NavigationLink(destination: AddMaterialView(model: model, showTabBar: $showTabBar)) {
             Text("Добавить совет")
                 .font(Fonts.mainBold)
                 .foregroundStyle(.white)
@@ -156,6 +141,7 @@ public struct MaterialsView<Model: MaterialsViewModel>: View {
 
     @State private var isPresentWebView = false
     @StateObject private var model: Model
+    @Binding private var showTabBar: Bool
 
 }
 
