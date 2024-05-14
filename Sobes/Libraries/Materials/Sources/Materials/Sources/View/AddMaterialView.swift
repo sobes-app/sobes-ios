@@ -23,6 +23,14 @@ public struct AddMaterialView<Model: MaterialsViewModel>: View {
         }
         .padding(.horizontal, Constants.horizontal)
         .navigationBarBackButtonHidden()
+        .overlay {
+            if model.isAddMaterialLoading {
+                LoadingScreen(placeholder: "Добавляем материал...")
+            }
+            if model.isError {
+                ErrorView(retryAction: retryAction)
+            }
+        }
     }
 
     private var header: some View {
@@ -41,30 +49,36 @@ public struct AddMaterialView<Model: MaterialsViewModel>: View {
 
     private var tipForm: some View {
         VStack(alignment: .leading, spacing: Constants.defSpacing) {
-            TextFieldView(model: .customOneLiner(placeholder: "имя, фамилия автора"), input: $authorInput)
+            TextFieldView(model: .customOneLiner(placeholder: "имя, фамилия автора", canClearAll: true), input: $authorInput)
+            TextFieldView(model: .customOneLiner(placeholder: "должность", canClearAll: true), input: $roleInput)
             companyPicker
-            TextFieldView(model: .custom(placeholder: "текст совета"), input: $tipText)
+            TextFieldView(model: .custom(placeholder: "текст совета", canClearAll: true), input: $tipText)
         }
     }
 
     private var articleForm: some View {
         VStack(alignment: .leading, spacing: Constants.defSpacing) {
-            TextFieldView(model: .customOneLiner(placeholder: "ссылка на статью"), input: $linkText)
+            TextFieldView(model: .customOneLiner(placeholder: "ссылка на статью", canClearAll: true), input: $linkText)
         }
     }
 
     private var saveButton: some View {
         MainButton(
             action: {
-                switch materialType {
-                case .article:
-                    guard !linkText.isEmpty else { return }
-                    model.addArticle(link: linkText)
-                    presentationMode.wrappedValue.dismiss()
-                case .tip:
-                    guard !authorInput.isEmpty, !tipText.isEmpty else { return }
-                    model.addTip(company: company, author: authorInput, text: tipText)
-                    presentationMode.wrappedValue.dismiss()
+                Task { @MainActor in
+                    switch materialType {
+                    case .article:
+                        guard !linkText.isEmpty else { return }
+                        if await model.addArticle(link: linkText) {
+                            presentationMode.wrappedValue.dismiss()
+                        }
+
+                    case .tip:
+                        guard !authorInput.isEmpty, !tipText.isEmpty else { return }
+                        if await model.addTip(company: company, author: authorInput, text: tipText, role: roleInput) {
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    }
                 }
             },
             label: "Добавить"
@@ -103,8 +117,26 @@ public struct AddMaterialView<Model: MaterialsViewModel>: View {
         }
     }
 
+    private func retryAction() {
+        Task { @MainActor in
+            switch materialType {
+            case .tip:
+                guard !authorInput.isEmpty, !tipText.isEmpty else { return }
+                if await model.addTip(company: company, author: authorInput, text: tipText, role: roleInput) {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            case .article:
+                guard !linkText.isEmpty else { return }
+                if await model.addArticle(link: linkText) {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }
+        }
+    }
+
     @ObservedObject private var model: Model
     @State private var authorInput: String = ""
+    @State private var roleInput: String = ""
     @State private var tipText: String = ""
     @State private var linkText: String = ""
     private let materialType: MaterialWithoutModel

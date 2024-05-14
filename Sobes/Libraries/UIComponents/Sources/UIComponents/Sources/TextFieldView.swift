@@ -11,8 +11,8 @@ extension View {
 public struct TextFieldView: View {
 
     public enum Model {
-        case custom(placeholder: String)
-        case customOneLiner(placeholder: String)
+        case custom(placeholder: String, canClearAll: Bool = false)
+        case customOneLiner(placeholder: String, canClearAll: Bool = false)
         case name
         case password
         case email
@@ -37,10 +37,10 @@ public struct TextFieldView: View {
     
     public var body: some View {
         switch model {
-        case .custom(let placeholder):
-            custom(placeholder: placeholder)
-        case .customOneLiner(let placeholder):
-            customOneLiner(placeholder: placeholder)
+        case .custom(let placeholder, let canClearAll):
+            custom(placeholder: placeholder, canClearAll: canClearAll)
+        case .customOneLiner(let placeholder, let canClearAll):
+            customOneLiner(placeholder: placeholder, canClearAll: canClearAll)
         case .name:
             name
         case .password:
@@ -80,29 +80,41 @@ public struct TextFieldView: View {
             )
     }
 
-    func custom(placeholder: String) -> some View {
-        TextField(placeholder, text: $input, axis: .vertical)
-            .foregroundColor(.black)
-            .focused($isFocused)
-            .disableAutocorrection(true)
-            .padding(Constants.elementPadding)
-            .lineLimit(5...10)
-            .multilineTextAlignment(.leading)
-            .background {
-                customRoundedBackground
+    func custom(placeholder: String, canClearAll: Bool) -> some View {
+        HStack(alignment: .top, spacing: Constants.smallStack) {
+            TextField(placeholder, text: $input, axis: .vertical)
+                .foregroundColor(.black)
+                .focused($isFocused)
+                .disableAutocorrection(true)
+                .lineLimit(5...10)
+                .multilineTextAlignment(.leading)
+            if canClearAll, !input.isEmpty {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundStyle(isFocused ? Color(.black) : Color(.gray))
             }
+        }
+        .padding(Constants.elementPadding)
+        .background {
+            customRoundedBackground
+        }
     }
 
-    func customOneLiner(placeholder: String) -> some View {
-        TextField(placeholder, text: $input)
-            .foregroundColor(.black)
-            .focused($isFocused)
-            .disableAutocorrection(true)
-            .padding(Constants.elementPadding)
-            .multilineTextAlignment(.leading)
-            .background {
-                customRoundedBackground
+    func customOneLiner(placeholder: String, canClearAll: Bool) -> some View {
+        HStack(alignment: .top, spacing: Constants.smallStack) {
+            TextField(placeholder, text: $input)
+                .foregroundColor(.black)
+                .focused($isFocused)
+                .disableAutocorrection(true)
+                .multilineTextAlignment(.leading)
+            if canClearAll, !input.isEmpty {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundStyle(isFocused ? Color(.black) : Color(.gray))
             }
+        }
+        .padding(Constants.elementPadding)
+        .background {
+            customRoundedBackground
+        }
     }
 
     var name: some View {

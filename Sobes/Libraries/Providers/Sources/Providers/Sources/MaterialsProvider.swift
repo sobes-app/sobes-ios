@@ -8,16 +8,17 @@ public protocol MaterialsProvider {
     func getArticles() async -> Result<[Types.Material], CustomError>
 
     // admin mode functions
-    func addTip(_ tip: Types.Tip)
-    func addArticle(_ article: Types.Article)
+    func addTip(company: String, author: String, text: String, role: String) async -> Result<Void, CustomError>
+    func addArticle(link: String) async -> Result<Void, CustomError>
 }
 
 public final class MaterialsProviderImpl: MaterialsProvider {
 
-    public init() { }
+    public init() { 
+        self.materialsClient = MaterialsClient()
+    }
 
     public func getTips() async -> Result<[Types.Material], CustomError> {
-        let materialsClient = MaterialsClient()
         let result = await materialsClient.getTips()
         switch result {
         case .success(let tips):
@@ -51,7 +52,6 @@ public final class MaterialsProviderImpl: MaterialsProvider {
     }
 
     public func getArticles() async -> Result<[Types.Material], CustomError> {
-        let materialsClient = MaterialsClient()
         let result = await materialsClient.getArticles()
         switch result {
         case .success(let articles):
@@ -73,17 +73,38 @@ public final class MaterialsProviderImpl: MaterialsProvider {
         }
     }
 
-    public func addTip(_ tip: Tip) {
-        print("типа добавили совет")
+    public func addTip(company: String, author: String, text: String, role: String) async -> Result<Void, CustomError> {
+        let result = await materialsClient.addTip(
+            profession: role,
+            company: company,
+            name: author,
+            level: "",
+            text: text
+        )
+
+        switch result {
+        case .success:
+            return .success(())
+        case .failure:
+            return .failure(.error)
+        }
     }
 
-    public func addArticle(_ tip: Article) {
-        print("типа добавили статью")
+    public func addArticle(link: String) async -> Result<Void, CustomError> {
+        let result = await materialsClient.addArticle(title: "", profession: "", content: "", author: "", link: link)
+
+        switch result {
+        case .success:
+            return .success(())
+        case .failure:
+            return .failure(.error)
+        }
     }
 
     private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
     private let accessTokenKey = KeychainKey<String>(key: "accessToken")
     private let tokenType = KeychainKey<String>(key: "tokenType")
+    private let materialsClient: MaterialsClient
 
 //    private var articles: [Types.Material] = [
 //        .article(
