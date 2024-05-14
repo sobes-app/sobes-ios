@@ -12,7 +12,9 @@ public struct Participant: Decodable {
 }
 
 public struct MessagesResponse: Decodable {
+    public let messageId: Int
     public let sender: Participant
+    public let responder: Participant
     public let text: String
     public let date: String
     public let chatId: Int
@@ -60,6 +62,26 @@ public final class ChatsClient {
             self.netLayer.makeRequest(method: "GET",
                                       urlPattern: "/chat/\(chatId)/messages",
                                       body: EmptyRequest()) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    public func deleteChat(chatId: Int) async -> Result<[String: String], ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "DELETE",
+                                      urlPattern: "/chat/\(chatId)",
+                                      body: EmptyRequest()) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    public func readMessages(messages: [Int]) async -> Result<[String: String], ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "POST",
+                                      urlPattern: "/chat/read",
+                                      body: messages) { result in
                 continuation.resume(returning: result)
             }
         }

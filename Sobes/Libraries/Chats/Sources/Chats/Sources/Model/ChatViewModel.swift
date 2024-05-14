@@ -12,7 +12,7 @@ public enum FilterType {
 
 @MainActor
 public protocol ChatViewModel: ObservableObject {
-    var chats: [Chat]? {get}
+    var chats: [Chat]? {get set}
     var profiles: [Profile]? {get}
     var messages: [Types.Message] {get set}
     var messageId: Int {get set}
@@ -29,13 +29,15 @@ public protocol ChatViewModel: ObservableObject {
     func getChats() async
     func clearFilters() async
     func getCurrentUserId() -> Int
-    func createNewChat(responder: Profile) async
+    func createNewChat(responder: Profile) async -> Chat
     func onFilterTapped(id: Int, type: FilterType)
     func getResponder(chat: Chat) -> Profile
     func checkChatExistance(responder: Profile) -> Bool
     func filtersNotActive() -> Bool
     func getChatByResponder(responder: Profile) -> Chat
-    func fetchMessages(chatId: Int) async
+    func fetchMessages(chatId: Int) async -> [Types.Message]
+    func deleteChat(chatId: Int) async
+    func readMessages(chat: Chat) async
     
     func getAccessToken() -> String
     
@@ -153,6 +155,16 @@ public final class ChatViewModelImpl: ChatViewModel {
         }
     }
     
+    func sortChats() {
+        var sortedChats = chats ?? []
+        sortedChats.sort(by: { chat1, chat2 in
+            guard let lastMessage1 = chat1.messages.last else { return false }
+            guard let lastMessage2 = chat2.messages.last else { return true }
+            return lastMessage1.date > lastMessage2.date
+        })
+        chats = sortedChats
+    }
+    
     public func getChats() async {
         isLoading = true
         defer { isLoading = false }
@@ -161,6 +173,7 @@ public final class ChatViewModelImpl: ChatViewModel {
         switch result {
         case .success(let success):
             chats = success
+            sortChats()
         case .failure(let error):
             switch error {
             case .empty:
@@ -184,7 +197,7 @@ public final class ChatViewModelImpl: ChatViewModel {
     }
     
     public func getResponder(chat: Chat) -> Profile {
-        if profilesProvider.profile?.id == chat.firstResponderId {
+        if profilesProvider.getCurrentUser().id == chat.firstResponderId {
             let profile = profiles?.first(where: {$0.id == chat.secondResponderId})
             return profile ?? Profile()
         }
@@ -197,16 +210,33 @@ public final class ChatViewModelImpl: ChatViewModel {
         return chats?.first(where: {$0.firstResponderId == responder.id || $0.secondResponderId == responder.id}) != nil
     }
     
-    public func createNewChat(responder: Profile) async {
+    public func createNewChat(responder: Profile) async -> Chat {
         isLoading = true
         defer { isLoading = false }
         
         let result = await chatProvider.createNewChat(responderId: responder.id)
         switch result {
-        case .success:
+        case .success(let chat):
             chats = chatProvider.chats
+            return chat
         case .failure(let error):
             switch error {
+            case .empty:
+                chats = []
+            case .error:
+                isError = true
+            }
+            return Chat()
+        }
+    }
+    
+    public func deleteChat(chatId: Int) async {
+        let result = await chatProvider.deleteChat(chatId: chatId)
+        switch result {
+        case .success:
+            return
+        case .failure(let failure):
+            switch failure {
             case .empty:
                 chats = []
             case .error:
@@ -264,7 +294,7 @@ public final class ChatViewModelImpl: ChatViewModel {
         return (try? keychain.get(accessTokenKey)) ?? ""
     }
     
-    public func fetchMessages(chatId: Int) async {
+    public func fetchMessages(chatId: Int) async -> [Types.Message] {
         isLoading = true
         defer { isLoading = false }
         
@@ -272,6 +302,7 @@ public final class ChatViewModelImpl: ChatViewModel {
         switch result {
         case .success(let success):
             messages = success
+            return success
         case .failure(let error):
             switch error {
             case .empty:
@@ -279,7 +310,16 @@ public final class ChatViewModelImpl: ChatViewModel {
             case .error:
                 isError = true
             }
+            return []
         }
+    }
+    
+    public func readMessages(chat: Chat) async {
+        let idsArray = chat.messages.map({ message in
+            return message.messageId
+        })
+        
+        await chatProvider.readMessages(messages: idsArray)
     }
     
     public func connect() {
@@ -303,7 +343,6 @@ public final class ChatViewModelImpl: ChatViewModel {
     func sendConnectFrame() {
         let connectFrame = "CONNECT\naccept-version:1.2\nheart-beat:10000,10000\nAuthorization:Bearer \(getAccessToken())\n\n\0"
         _ = sendMessage(text: connectFrame)
-        // Добавляем подписку после отправки команды подключения, чтобы убедиться, что она отправляется после установления соединения
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             self?.subscribeToTopic(topic: "/topic/messages")
         }
@@ -323,33 +362,46 @@ public final class ChatViewModelImpl: ChatViewModel {
                 success = false
             }
         }
-        print("Пытаюсь отправить сообщение: \(message)")
         return success
     }
     
-    func pasreMessageResponse(text: String) -> Bool {
+    func parseMessageResponse(text: String) -> Bool {
+        guard let range = text.range(of: "\\{.*\\}", options: .regularExpression),
+              let jsonData = String(text[range]).data(using: .utf8) else {
+            return false
+        }
+        
         var success = false
-        if let range = text.range(of: "\\{.*\\}", options: .regularExpression) {
-            let jsonPart = String(text[range])
-            
-            if let jsonData = jsonPart.data(using: .utf8) {
-                DispatchQueue.main.async {
-                    do {
-                        print("получил сообщение")
-                        let messagesResponse = try JSONDecoder().decode(MessagesResponse.self, from: jsonData)
-                        if messagesResponse.sender.id != self.profilesProvider.profile?.id {
-                            self.messages.append(Types.Message(messageResponse: messagesResponse, isCurrent: false))
-                        }
-                        success = true
-                    } catch {
-                        success = false
+        
+        DispatchQueue.main.async {
+            do {
+                let messagesResponse = try JSONDecoder().decode(MessagesResponse.self, from: jsonData)
+                print(messagesResponse)
+                let isCurrentUser = messagesResponse.sender.id == self.profilesProvider.getCurrentUser().id
+                let message = Types.Message(messageResponse: messagesResponse, isCurrent: isCurrentUser)
+                
+                if var chats = self.chats,
+                   let chatIndex = chats.firstIndex(where: { $0.id == messagesResponse.chatId }) {
+                        self.messages.append(message)
+                    withAnimation {
+                        chats[chatIndex].messages.append(message)
+                        self.chats = chats
+                        self.sortChats()
+                    }
+                    success = true
+                } else {
+                    Task { @MainActor [weak self] in
+                        guard let self else {return}
+                        await getChats()
                     }
                 }
+            } catch {
+                print(error)
             }
         }
         return success
     }
-    
+
     func receiveMessage() {
         webSocketTask?.receive { [weak self] result in
             switch result {
@@ -358,7 +410,7 @@ public final class ChatViewModelImpl: ChatViewModel {
             case .success(let message):
                 switch message {
                 case .string(let text):
-                    _ = self?.pasreMessageResponse(text: text)
+                    _ = self?.parseMessageResponse(text: text)
                 case .data(let data):
                     print("Received data: \(data)")
                 @unknown default:
@@ -371,9 +423,7 @@ public final class ChatViewModelImpl: ChatViewModel {
     
     public func sendChatMessage(chatId: Int, senderId: Int, text: String) {
         let message = "SEND\ndestination:/app/send\ncontent-type:application/json\n\n{\"chatId\":\"\(chatId)\",\"senderId\":\"\(senderId)\",\"text\":\"\(text)\"}\0"
-        if sendMessage(text: message) {
-            messages.append(Types.Message(isCurrentUser: profilesProvider.profile?.id==senderId, text: text, chatId: chatId, date: Date.now))
-        }
+        _ = sendMessage(text: message)
     }
     
     private let keychain: Keychain = Keychain(service: "com.swifty.keychain")

@@ -15,6 +15,13 @@ public struct Chat: Identifiable, Equatable {
         self.messages = messages
     }
     
+    public init() {
+        self.id = 100
+        self.firstResponderId = 100
+        self.secondResponderId = 100
+        self.messages = []
+    }
+    
     public init(chat: CreateChatResponse) {
         self.id = chat.id 
         self.firstResponderId = chat.participantone.id

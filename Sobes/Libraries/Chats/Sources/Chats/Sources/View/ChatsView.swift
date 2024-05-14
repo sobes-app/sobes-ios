@@ -12,18 +12,18 @@ enum Page {
 
 public struct ChatsView<Model: ChatViewModel>: View {
     @StateObject private var model: Model
-    
-    @State private var presentDetailChat: Bool = false
-    
+
+    @State private var presentChat: Bool = false
     @State private var input: String = ""
-    @FocusState private var isFocused: Bool
-    
+    @State private var chatsSearchInput: String = ""
     @State private var filterPresent: Bool = false
     @State private var filterIsOn: Bool = false
-    
     @State private var page: Page = .chats
     
     @Binding private var showTabBar: Bool
+    
+    @State var chat = Chat()
+    @State var chatsEmpty = false
     
     public init(showTabBar: Binding<Bool>, model: Model) {
         self._showTabBar = showTabBar
@@ -59,14 +59,18 @@ public struct ChatsView<Model: ChatViewModel>: View {
         .onAppear {
             model.connect()
         }
-        .onDisappear {
-            model.disconnect()
-        }
     }
     
-    var filteredItems: [Profile] {
+    var filteredProfiles: [Profile] {
         return model.profiles?.filter { item in
             input.isEmpty || item.name.lowercased().contains(input.lowercased())
+        } ?? []
+    }
+    
+    var filteredChats: [Chat] {
+        return model.chats?.filter { item in
+            chatsSearchInput.isEmpty || 
+            model.getResponder(chat: item).name.lowercased().contains(chatsSearchInput.lowercased())
         } ?? []
     }
     
@@ -78,35 +82,51 @@ public struct ChatsView<Model: ChatViewModel>: View {
             } else if model.isError {
                 ErrorView(retryAction: {
                     Task { @MainActor in
-                        await model.getProfiles()
+                        await model.onViewAppear()
                     }
                 })
             } else if model.profiles != [] && model.profiles != nil {
-                ScrollView {
-                    VStack(spacing: Constants.defSpacing) {
-                        ForEach(filteredItems) { profile in
-                            ProfileElementView(profile: profile, onChatTapped: {
-                                Task {
-                                    await model.createNewChat(responder: profile)
-                                }
-                                withAnimation {
-                                    page = .chats
-                                }
-                            }, chatExists: model.checkChatExistance(responder: profile))
-                        }
-                    }
-                }
-                .scrollDismissesKeyboard(.immediately)
-                .scrollIndicators(.hidden)
+                profilesScroll
             } else {
                 Spacer()
                 EmptyDataView(text: "Тут пока нет профилей")
                 Spacer()
             }
         }
+        .navigationDestination(isPresented: $presentChat, destination: {
+            ChatDetailView(showTabBar: $showTabBar, chat: chat, model: model)
+                .navigationBarBackButtonHidden()
+        })
         .padding(.horizontal, Constants.horizontal)
         .background(.white)
         .transition(.move(edge: .trailing))
+    }
+    
+    var profilesScroll: some View {
+        ScrollView {
+            VStack(spacing: Constants.defSpacing) {
+                ForEach(filteredProfiles) { profile in
+                    ProfileElementView(profile: profile, onChatTapped: {
+                        Task {
+                            chat = await model.createNewChat(responder: profile)
+                            print(chat)
+                            presentChat = true
+                        }
+                    }, chatExists: model.checkChatExistance(responder: profile))
+                    .onTapGesture {
+                        if model.checkChatExistance(responder: profile) {
+                            chat = model.getChatByResponder(responder: profile)
+                            presentChat = true
+                        }
+                    }
+                }
+            }
+        }
+        .refreshable {
+            await model.getProfiles()
+        }
+        .scrollDismissesKeyboard(.immediately)
+        .scrollIndicators(.hidden)
     }
     
     var searchTextField: some View {
@@ -119,35 +139,73 @@ public struct ChatsView<Model: ChatViewModel>: View {
     
     var chats: some View {
         VStack(spacing: Constants.defSpacing) {
+            searchChatTextField
             if model.isLoading {
                 LoadingScreen(placeholder: "Загружаем чаты...")
             } else if model.isError {
                 ErrorView(retryAction: {
                     Task { @MainActor in
-                        await model.getChats()
+                        await model.onViewAppear()
                     }
                 })
-            } else if model.chats != [] && model.chats != nil {
-                ScrollView {
-                    ForEach(model.chats ?? []) { chat in
-                        NavigationLink(destination: ChatDetailView(showTabBar: $showTabBar, chat: chat, model: model)) {
-                            chatView(chat: chat)
-                        }
-                    }
-                }
             } else {
-                Spacer()
-                EmptyDataView(text: "У вас пока нет чатов")
-                Spacer()
+                chatsScroll
             }
-        }
-        .task {
-            await model.getChats()
         }
         .padding(.horizontal, Constants.horizontal)
         .background(.white)
         .transition(.move(edge: .leading))
-        .refreshable {}
+    }
+    
+    var chatsScroll: some View {
+        List {
+            if model.chats?.isEmpty ?? true {
+                VStack {
+                    Spacer()
+                        .frame(height: 100)
+                    EmptyDataView(text: "У вас пока нет чатов")
+                }
+                .listRowSeparator(.hidden)
+            } else {
+                ForEach(filteredChats) { chat in
+                    chatView(chat: chat)
+                        .padding(.bottom, Constants.defSpacing)
+                        .listRowInsets(EdgeInsets())
+                }
+                .onDelete(perform: deleteChat)
+            }
+        }
+        .navigationDestination(isPresented: $presentChat, destination: {
+            ChatDetailView(showTabBar: $showTabBar, chat: chat, model: model)
+                .navigationBarBackButtonHidden()
+        })
+        .listStyle(PlainListStyle())
+        .refreshable {
+            await model.getChats()
+        }
+    }
+    
+    func deleteChat(at offsets: IndexSet) {
+        withAnimation {
+            offsets.forEach { index in
+                if index < model.chats?.count ?? 0 {
+                    let chatId = model.chats?[index].id ?? 0
+                    Task { @MainActor in
+                        await model.deleteChat(chatId: chatId)
+                    }
+                    model.chats?.remove(at: index)
+                }
+            }
+        }
+    }
+    
+    var searchChatTextField: some View {
+        SearchTextFieldView(onAppear: {
+            filterIsOn = model.filtersNotActive()
+        }, input: $input, buttonAction: {
+            filterPresent = true
+        }, filterIsOn: $filterIsOn,
+        isChats: true)
     }
     
     func convertDate(date: Date) -> String {
@@ -158,38 +216,73 @@ public struct ChatsView<Model: ChatViewModel>: View {
     }
     
     func chatView(chat: Chat) -> some View {
-        VStack(spacing: Constants.defSpacing) {
-            HStack {
-                Circle()
-                    .frame(width: 50)
-                    .foregroundColor(Color(.light))
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(model.getResponder(chat: chat).name)
-                        .font(Fonts.mainBold)
-                        .foregroundColor(.black)
-                    HStack {
-                        Text(chat.messages.last?.text ?? "")
-                            .font(Fonts.small)
-                            .foregroundColor(Color("grey", bundle: .module))
-                            .lineLimit(1)
-                        Text(convertDate(date: (chat.messages.last?.date) ?? Date.now))
-                            .foregroundColor((Color(.light)))
-                            .font(.system(size: 10))
+        Button (action: {
+            self.chat = chat
+            presentChat = true
+        }) {
+            VStack(spacing: Constants.defSpacing) {
+                HStack(spacing: Constants.smallStack) {
+                    Image("person", bundle: .module)
+                        .resizable()
+                        .frame(width: 50, height: 50)
+                    VStack(alignment: .leading, spacing: 5) {
+                        HStack(alignment: .top) {
+                            Text(model.getResponder(chat: chat).name)
+                                .font(Fonts.mainBold)
+                                .foregroundColor(.black)
+                            Spacer()
+                            Text(convertDate(date: (chat.messages.last?.date) ?? Date.now))
+                                .foregroundColor(Color("grey", bundle: .module))
+                                .font(Fonts.small)
+                        }
+                        HStack {
+                            Text(chat.messages.last?.text ?? "")
+                                .font(Fonts.small)
+                                .foregroundColor(Color("grey", bundle: .module))
+                                .lineLimit(1)
+                            if(chat.messages.last?.isCurrentUser == true) {
+                                Spacer()
+                                Image(systemName: "chevron.down")
+                                    .frame(width: 10, height: 10)
+                                    .padding(.trailing, 10)
+                                    .foregroundColor(Color(.accent))
+                            } else {
+                                Spacer()
+                                if countUnread(chat: chat) != 0 {
+                                    Text("\(countUnread(chat: chat))")
+                                        .font(Fonts.small)
+                                        .foregroundColor(.white)
+                                        .background {
+                                            Circle()
+                                                .foregroundColor(Color(.accent))
+                                                .frame(width: 20)
+                                        }
+                                        .padding(.trailing, 10)
+                                }
+                            }
+                        }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            Rectangle()
-                .foregroundColor(Color(.light))
-                .frame(height: 1)
         }
+    }
+    
+    func countUnread(chat: Chat) -> Int {
+        var count = 0
+        for message in chat.messages {
+            if !(message.isRead ?? false) && !message.isCurrentUser {
+                count += 1
+            }
+        }
+        return count
     }
     
     var select: some View {
         HStack(spacing: Constants.defSpacing) {
             VStack {
                 Text("Ваши чаты")
-                    .font(page == .chats ? Fonts.mainBold : Fonts.main)
+                    .font(Fonts.main)
                 RoundedRectangle(cornerRadius: Constants.corner)
                     .foregroundColor(page == .chats ? Color(.accent) : .clear)
                     .frame(height: 3)
@@ -203,7 +296,7 @@ public struct ChatsView<Model: ChatViewModel>: View {
             }
             VStack {
                 Text("Поиск")
-                    .font(page == .search ? Fonts.mainBold : Fonts.main)
+                    .font(Fonts.main)
                 RoundedRectangle(cornerRadius: Constants.corner)
                     .foregroundColor(page == .search ? Color(.accent) : .clear)
                     .frame(height: 3)

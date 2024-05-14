@@ -228,11 +228,6 @@ struct SetupProfileDataView<Model: ProfileViewModel>: View {
                     Text("Яндекс")
                         .font(Fonts.main)
                 }
-                HStack(spacing: Constants.smallStack) {
-                    CheckboxView(isOn: $other)
-                    Text("Другое")
-                        .font(Fonts.main)
-                }
             }
         }
     }
