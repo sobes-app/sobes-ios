@@ -31,18 +31,18 @@ public struct InterviewAssessmentView<Model: InterviewViewModel>: View {
         }
         .navigationBarBackButtonHidden()
         .padding(Constants.horizontal)
-        .task {
-            await model.fetchAssessment(question: question, answer: answer)
-        }
         .onAppear {
             withAnimation {
-                showTabBar = false
+                showTabBar.toggle()
             }
         }
         .onDisappear {
             withAnimation {
-                showTabBar = true
+                showTabBar.toggle()
             }
+        }
+        .task {
+            await model.fetchAssessment(question: question, answer: answer)
         }
     }
 

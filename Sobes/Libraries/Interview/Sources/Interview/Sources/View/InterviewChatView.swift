@@ -13,11 +13,25 @@ public struct InterviewChatView<Model: InterviewViewModel>: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: Constants.topPadding) {
             BackButton()
-            messageBubbles
-            Spacer()
-            TextFieldView(model: .chat, input: $input, onSend: {
-                model.onUserMessageSent(question: question.text, text: input)
-            })
+            Group {
+                messageBubbles
+                Spacer()
+                TextFieldView(model: .chat, input: $input, onSend: {
+                    model.onUserMessageSent(question: question.text, text: input)
+                })
+            }
+            .overlay {
+                if model.isLoading {
+                    LoadingScreen(placeholder: "Загружаем чат...")
+                }
+                if model.isError {
+                    ErrorView(retryAction: {
+                        Task { @MainActor in
+                            await model.startDialogueForQuestion(question: question.text, questionId: question.id, text: question.text)
+                        }
+                    })
+                }
+            }
         }
         .navigationBarBackButtonHidden()
         .padding(Constants.horizontal)
