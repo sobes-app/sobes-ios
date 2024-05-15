@@ -17,6 +17,7 @@ public struct AnswerResponse: Decodable {
     public let completeness: Int
     public let satisfaction: Int
     public let score: Double
+    public let answer: String
 }
 
 public struct QuestionResponse: Decodable {

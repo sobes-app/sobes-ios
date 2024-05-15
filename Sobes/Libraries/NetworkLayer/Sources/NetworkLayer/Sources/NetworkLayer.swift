@@ -21,11 +21,8 @@ public struct ErrorResponse: Decodable {
 
 public final class NetworkLayer {
 
-//    let baseUrl = "http://158.160.165.222:8080"
-    let baseUrl = "http://localhost:8080"
-
-    private var isRefreshingToken = false
-    private let refreshLock = DispatchSemaphore(value: 1)
+    let baseUrl = "http://158.160.152.141:8080"
+//    let baseUrl = "http://localhost:8080"
 
     public init() { }
 
@@ -127,7 +124,7 @@ public final class NetworkLayer {
         }
     }
 
-    func refreshAccessToken(completion: @escaping (Result<Void, ClientError>) -> Void) {
+    private func refreshAccessToken(completion: @escaping (Result<Void, ClientError>) -> Void) {
         guard let url = URL(string: baseUrl + "/auth/refreshtoken") else {
             completion(.failure(.responseError))
             return
