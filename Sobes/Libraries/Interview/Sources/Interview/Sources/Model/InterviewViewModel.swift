@@ -130,11 +130,27 @@ public final class InterviewViewModelImpl: InterviewViewModel {
     }
 
     public func startDialogueForQuestion(question: String, questionId: Int, text: String) async {
+        isLoading = true
+        isError = false
         messages = []
         guard await questionsProvider.areQuestionMessagesEmpty(question: question) else {
-            messages = questionsProvider.getMessagesForQuestion(question: question)
+            let result = await questionsProvider.getMessagesForQuestion(question: question)
+            switch result {
+            case .success(let chat):
+                isLoading = false
+                messages = chat
+            case .failure(let error):
+                isLoading = false
+                switch error {
+                case .empty:
+                    messages = []
+                case .error:
+                    isError = true
+                }
+            }
             return
         }
+        isLoading = false
         messages.removeAll()
         let firstMessage = InterviewMessage(id: 0, text: "Привет, я твой интервьюер на сегодняшний день. Давай начнем с такого вопроса...", sender: .gpt(isAssessment: false))
         messages.append(firstMessage)
@@ -167,6 +183,9 @@ public final class InterviewViewModelImpl: InterviewViewModel {
             isLoading = false
             self.assessment = assessment
             return
+        } else if let assessment = await getAssessmentByQuestion(question: question, answer: answer) {
+            self.assessment = assessment
+            return
         }
         let result = await questionsProvider.getAnswerAssessment(
             question: question,
@@ -185,6 +204,26 @@ public final class InterviewViewModelImpl: InterviewViewModel {
             switch error {
             case .empty, .error:
                 isError = true
+            }
+        }
+    }
+
+    private func getAssessmentByQuestion(question: String, answer: String) async -> InterviewAssessment? {
+        let result = await questionsProvider.getAssessmentsForQuestion(question)
+        switch result {
+        case .success(let chat):
+            isLoading = false
+            return chat.first(where: {
+                $0.answer == answer
+            }) ?? nil
+        case .failure(let error):
+            isLoading = false
+            switch error {
+            case .empty:
+                return nil
+            case .error:
+                isError = true
+                return nil
             }
         }
     }

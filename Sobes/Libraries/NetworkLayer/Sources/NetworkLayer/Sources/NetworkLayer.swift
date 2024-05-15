@@ -22,7 +22,6 @@ public struct ErrorResponse: Decodable {
 public final class NetworkLayer {
 
     let baseUrl = "http://158.160.152.141:8080"
-    
     public init() { }
 
     public func makeRequest<T: Decodable, Body: Encodable>(
@@ -123,7 +122,7 @@ public final class NetworkLayer {
         }
     }
 
-    func refreshAccessToken(completion: @escaping (Result<Void, ClientError>) -> Void) {
+    private func refreshAccessToken(completion: @escaping (Result<Void, ClientError>) -> Void) {
         guard let url = URL(string: baseUrl + "/auth/refreshtoken") else {
             completion(.failure(.responseError))
             return
