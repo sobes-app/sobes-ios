@@ -9,11 +9,13 @@ public protocol ChatsProvider {
     var currentChat: Chat? {get set}
     
     func addMessageToChat(chatId: Int, text: String)
-    func createNewChat(responderId: Int) async -> Result<Void, CustomError>
+    func createNewChat(responderId: Int) async -> Result<Chat, CustomError>
+    func deleteChat(chatId: Int) async -> Result<Bool, CustomError>
     
     func getProfiles() async -> Result<[Profile], CustomError>
     func getChats() async -> Result<[Chat], CustomError>
     func getChatMessages(chatId: Int) async -> Result<[Types.Message], CustomError>
+    func readMessages(messages: [Int]) async
 }
 
 public final class ChatsProviderImpl: ChatsProvider {
@@ -59,7 +61,9 @@ public final class ChatsProviderImpl: ChatsProvider {
                 case .failure:
                     chat.messages = []
                 }
-                arrayChats.append(chat)
+                if !chat.messages.isEmpty {
+                    arrayChats.append(chat)
+                }
             }
             chats = arrayChats
             return .success(arrayChats)
@@ -69,7 +73,7 @@ public final class ChatsProviderImpl: ChatsProvider {
         }
     }
     
-    public func createNewChat(responderId: Int) async -> Result<Void, CustomError> {
+    public func createNewChat(responderId: Int) async -> Result<Chat, CustomError> {
         let chatsClient = ChatsClient()
         let result = await chatsClient.createChat(userId: responderId)
         switch result {
@@ -77,7 +81,7 @@ public final class ChatsProviderImpl: ChatsProvider {
             print(success)
             let newChat = Chat(chat: success)
             chats?.append(newChat)
-            return .success(())
+            return .success(newChat)
         case .failure(let failure):
             return .failure(handleError(failure: failure))
         }
@@ -99,9 +103,33 @@ public final class ChatsProviderImpl: ChatsProvider {
         }
     }
     
+    public func deleteChat(chatId: Int) async -> Result<Bool, CustomError> {
+        let chatsClient = ChatsClient()
+        let result = await chatsClient.deleteChat(chatId: chatId)
+        switch result {
+        case .success:
+            var newChats: [Chat] = []
+            for i in 0..<(chats?.count ?? 0) {
+                if chats?[i].id != chatId {
+                    newChats.append(chats?[i] ?? Chat())
+                }
+            }
+            self.chats = newChats
+            return .success(true)
+        case .failure(let error):
+            return .failure(handleError(failure: error))
+        }
+    }
+    
+    public func readMessages(messages: [Int]) async {
+        let chatsClient = ChatsClient()
+        _ = await chatsClient.readMessages(messages: messages)
+    }
+    
     func handleError(failure: ClientError) -> CustomError {
         switch failure {
         case .httpError(let code):
+            print(code)
             if code == 404 {
                 return .empty
             }

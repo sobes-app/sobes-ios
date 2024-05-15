@@ -119,4 +119,14 @@ public final class AuthClient {
             }
         }
     }
+    
+    public func logout() async -> Result<[String: String], ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "GET",
+                                      urlPattern: "/user/logout",
+                                      body: EmptyRequest()) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
 }

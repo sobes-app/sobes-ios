@@ -11,10 +11,16 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     @State private var isPopoverPresented: Bool = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Binding private var showTabBar: Bool
+    @State var isMessagesEmpty: Bool = true
+    private let chat: Chat
+    @State var isLoading: Bool = false
     
     public init(showTabBar: Binding<Bool>, chat: Chat, model: Model) {
         self._showTabBar = showTabBar
         self.chat = chat
+        if !chat.messages.isEmpty {
+            isMessagesEmpty = false
+        }
         self._model = ObservedObject(wrappedValue: model)
     }
     
@@ -30,7 +36,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
             Rectangle()
                 .foregroundColor(Color(.light))
                 .frame(height: 1)
-            if model.isLoading {
+            if isLoading {
                 LoadingScreen(placeholder: "загружаю сообщения...")
             } else {
                 ScrollViewReader { proxy in
@@ -43,7 +49,7 @@ struct ChatDetailView<Model: ChatViewModel>: View {
                     
                     TextFieldView(model: .chat, input: $input, onSend: {
                         model.sendChatMessage(chatId: chat.id, senderId: model.getCurrentUserId(), text: input)
-                        
+                        isMessagesEmpty = false
                         input = ""
                     })
                     .onTapGesture {
@@ -57,29 +63,14 @@ struct ChatDetailView<Model: ChatViewModel>: View {
         .padding(.horizontal, Constants.horizontal)
         .padding(.bottom, Constants.bottom)
         .task {
-            await model.fetchMessages(chatId: chat.id)
+            isLoading = true
+            _ = await model.fetchMessages(chatId: chat.id)
+            await model.readMessages(chat: chat)
+            isLoading = false
         }
         .onAppear {
             showTabBar = false
         }
-        .onDisappear {
-        }
-    }
-
-    private let chat: Chat
-    
-    func messages() -> some View {
-        ScrollView {
-            ForEach(model.messages, id:\.self) { message in
-                VStack(spacing: 5) {
-                    MessageBubble(message: message, isCurrentUser: message.isCurrentUser)
-                }
-            }
-            Spacer()
-                .frame(height: 0)
-                .id("bottom")
-        }
-        .scrollIndicators(.hidden)
     }
     
     var responderName: some View {
@@ -90,6 +81,11 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     
     private var description: some View {
         VStack(alignment: .leading) {
+            if model.getResponder(chat: chat).professions.isEmpty {
+                Text("Пользователь еще не заполнил информацию о себе")
+                    .font(Fonts.small)
+                    .foregroundColor(.black)
+            }
             if !model.getResponder(chat: chat).professions.isEmpty {
                 Text("#\(Profile.createStringOfProfessions(of: model.getResponder(chat: chat)).joined(separator: ", "))")
                     .font(Fonts.small)
@@ -111,8 +107,17 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     
     private var back: some View {
         Button(action: {
+            //TODO: раскостылить
+            Task { @MainActor in
+                await model.getChats()
+            }
             presentationMode.wrappedValue.dismiss()
             showTabBar = true
+            if isMessagesEmpty {
+                Task { @MainActor in
+                    await model.deleteChat(chatId: chat.id)
+                }
+            }
         }) {
             Image(systemName: "chevron.backward")
                 .foregroundColor(.black)
@@ -133,6 +138,20 @@ struct ChatDetailView<Model: ChatViewModel>: View {
                 .presentationCompactAdaptation(.popover)
                 .padding()
         }
+    }
+    
+    func messages() -> some View {
+        ScrollView {
+            ForEach(model.messages, id:\.self) { message in
+                VStack(spacing: 5) {
+                    MessageBubble(message: message, isCurrentUser: message.isCurrentUser)
+                }
+            }
+            Spacer()
+                .frame(height: 0)
+                .id("bottom")
+        }
+        .scrollIndicators(.hidden)
     }
 
 }

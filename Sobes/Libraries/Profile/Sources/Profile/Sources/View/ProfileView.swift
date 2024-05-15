@@ -66,7 +66,7 @@ public struct ProfileView<Model: ProfileViewModel>: View {
             Task { @MainActor in
                 if !(await model.onViewAppear()) {
                     auth.updateStatus(success: false)
-                    model.onLogoutTap()
+                    await model.onLogoutTap()
                 }
             }
         }
@@ -215,7 +215,9 @@ public struct ProfileView<Model: ProfileViewModel>: View {
         Button {
             auth.updateStatus(success: false)
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                model.onLogoutTap()
+                Task {
+                    await model.onLogoutTap()
+                }
             }
         } label: {
             Image(systemName: "rectangle.portrait.and.arrow.right.fill")

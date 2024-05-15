@@ -25,7 +25,7 @@ public protocol ProfileViewModel: ObservableObject {
     func loadAllPages() async
 
     func onViewAppear() async -> Bool
-    func onLogoutTap()
+    func onLogoutTap() async
 
     func isInfoNotEmpty() -> Bool
 }
@@ -97,8 +97,8 @@ public final class ProfileViewModelImpl: ProfileViewModel {
         }
     }
     
-    public func onLogoutTap() {
-        profileProvider.logout()
+    public func onLogoutTap() async {
+        await profileProvider.logout()
         profile = nil
     }
     

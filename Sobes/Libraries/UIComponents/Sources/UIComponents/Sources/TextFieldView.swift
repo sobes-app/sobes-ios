@@ -216,24 +216,31 @@ public struct TextFieldView: View {
         }
     }
     
+    func sendMessage() {
+        if !input.trimmingCharacters(in: .whitespaces).isEmpty {
+            input = input.trimmingCharacters(in: .whitespaces)
+            onSend?()
+            input = ""
+        }
+    }
+    
     var chat: some View {
         HStack(spacing: 5) {
             TextField("сообщение...", text: $input, axis: .vertical)
                 .foregroundColor(.black)
                 .focused($isFocused)
                 .onSubmit {
-                    onSend?()
-                    input = ""
+                    sendMessage()
                 }
                 .padding(Constants.elementPadding)
                 .background {
                     roundedRec
                 }
+                .textInputAutocapitalization(.never)
             Spacer()
             Button(
                 action: {
-                    onSend?()
-                    input = ""
+                    sendMessage()
                 }
             ) {
                 Image(systemName: "arrow.up")
