@@ -2,7 +2,6 @@ import SwiftUI
 import Types
 import NetworkLayer
 import SwiftyKeychainKit
-import NewsAPI
 
 public protocol MaterialsProvider {
     func getTips() async -> Result<[Types.Material], CustomError>

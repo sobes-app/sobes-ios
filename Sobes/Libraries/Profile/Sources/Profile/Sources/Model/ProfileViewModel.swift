@@ -26,6 +26,7 @@ public protocol ProfileViewModel: ObservableObject {
 
     func onViewAppear() async -> Bool
     func onLogoutTap() async
+    func sendFeedback(content: String) async -> Bool
 
     func isInfoNotEmpty() -> Bool
 }
@@ -104,6 +105,19 @@ public final class ProfileViewModelImpl: ProfileViewModel {
     
     public func isInfoNotEmpty() -> Bool {
         profile?.level.rawValue.isEmpty == false
+    }
+    
+    public func sendFeedback(content: String) async -> Bool {
+        isLoading = true
+        isError = false
+        defer { isLoading = false }
+        
+        let result = await profileProvider.sendFeedback(content: content)
+        if result == false {
+            isError = true
+            return false
+        }
+        return true
     }
     
     public func setProfileInfo() async -> Bool {

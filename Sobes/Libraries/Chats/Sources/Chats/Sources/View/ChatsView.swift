@@ -8,6 +8,7 @@ import Combine
 enum Page: String, CaseIterable {
     case chats = "Ваши чаты"
     case search = "Поиск"
+    case feedback = "Обратная связь"
 }
 
 public struct ChatsView<Model: ChatViewModel>: View {
@@ -19,6 +20,7 @@ public struct ChatsView<Model: ChatViewModel>: View {
     @State private var filterPresent: Bool = false
     @State private var filterIsOn: Bool = false
     @State private var page: Page = .chats
+    @State private var availablePages: [Page] = [.chats, .search]
     
     @Binding private var showTabBar: Bool
     
@@ -44,6 +46,8 @@ public struct ChatsView<Model: ChatViewModel>: View {
                     chats
                 case .search:
                     search
+                case .feedback:
+                    feedback
                 }
                 Spacer()
             }
@@ -58,6 +62,9 @@ public struct ChatsView<Model: ChatViewModel>: View {
         }
         .onAppear {
             model.connect()
+            if model.getCurrentUserRole() == .admin {
+                availablePages.append(.feedback)
+            }
         }
     }
     
@@ -99,7 +106,6 @@ public struct ChatsView<Model: ChatViewModel>: View {
         })
         .padding(.horizontal, Constants.horizontal)
         .background(.white)
-        .transition(.move(edge: .trailing))
     }
     
     var profilesScroll: some View {
@@ -154,7 +160,6 @@ public struct ChatsView<Model: ChatViewModel>: View {
         }
         .padding(.horizontal, Constants.horizontal)
         .background(.white)
-        .transition(.move(edge: .leading))
     }
     
     var chatsScroll: some View {
@@ -278,36 +283,83 @@ public struct ChatsView<Model: ChatViewModel>: View {
         return count
     }
     
-    var select: some View {
-        VStack {
-            HStack(spacing: Constants.defSpacing) {
-                ForEach(Page.allCases, id: \.self) { page in
-                    VStack {
-                        Text(page.rawValue)
-                            .font(Fonts.main)
-                            .frame(width: tabWidth, alignment: .center)
-                        Rectangle()
-                            .frame(width: tabWidth, height: 3)
-                            .foregroundColor(Color.clear)
+    var feedback: some View {
+        ScrollView {
+            ForEach(model.feedback ?? []) { item in
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(item.user.username)
+                            .font(Fonts.small.bold())
+                            .foregroundColor(.black)
+                        Spacer()
+                        Text(convertDateFromString(dateString: item.createdAt))
+                            .font(Fonts.small)
+                            .foregroundColor(Color("grey", bundle: .module))
                     }
-                    .onTapGesture {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            self.page = page
-                        }
-                    }
+                    Text(item.user.email)
+                        .font(Fonts.small)
+                        .foregroundColor(Color("grey", bundle: .module))
+                    Text(item.content)
+                        .font(Fonts.small)
+                        .padding(.top, 5)
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundColor(Color(.light))
+                        .padding(.vertical, Constants.smallStack)
                 }
-                .frame(width: tabWidth, alignment: .top)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .overlay(
-                Rectangle()
-                    .frame(width: tabWidth, height: 3)
-                    .foregroundColor(Color(.accent))
-                    .offset(x: CGFloat(Page.allCases.firstIndex(of: self.page) ?? 0) * (tabWidth + Constants.defSpacing), y: 0),
-                alignment: .bottomLeading
-            )
+        }
+        .refreshable {
+            await model.getFeedback()
+        }
+        .padding(.horizontal, Constants.horizontal)
+        .background(.white)
+    }
+    
+    func convertDateFromString(dateString: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        if let date = dateFormatter.date(from: dateString) {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+            let timeString = dateFormatter.string(from: date)
+            return timeString
+        } else {
+            return Date.now.description
         }
     }
     
-    let tabWidth: CGFloat = UIScreen.main.bounds.width / CGFloat(Page.allCases.count*2)
+    var select: some View {
+        VStack {
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: Constants.defSpacing) {
+                        ForEach(availablePages, id: \.self) { page in
+                            VStack {
+                                Text(page.rawValue)
+                                    .font(Fonts.main)
+                                    .animation(.easeInOut(duration: 0.3), value: self.page)
+                                    .lineLimit(1)
+                                    .id(page)
+                                Rectangle()
+                                    .frame(height: 3)
+                                    .padding(.top, 5)
+                                    .foregroundColor(self.page == page ? Color(.accent) : .clear)
+                            }
+                            .onTapGesture {
+                                withAnimation(.easeInOut(duration: 0.5)) {
+                                    self.page = page
+                                    proxy.scrollTo(page, anchor: .center)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @State private var tabOffset: CGFloat = 0
 }

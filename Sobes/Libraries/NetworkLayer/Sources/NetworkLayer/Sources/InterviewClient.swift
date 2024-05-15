@@ -39,6 +39,7 @@ public struct GeneratedQuestionsResponse: Decodable {
     public let question: String
 }
 
+@available(macOS 10.15, iOS 13.0, *)
 public final class InterviewClient {
 
     public init() {

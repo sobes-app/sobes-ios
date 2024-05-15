@@ -107,8 +107,12 @@ struct ChatDetailView<Model: ChatViewModel>: View {
     
     private var back: some View {
         Button(action: {
-            //TODO: раскостылить
             Task { @MainActor in
+                if let chatToRead = model.chats?.first(where: { chat in
+                    chat.id == self.chat.id
+                }) {
+                    await model.readMessages(chat: chatToRead)
+                }
                 await model.getChats()
             }
             presentationMode.wrappedValue.dismiss()

@@ -22,6 +22,7 @@ public struct Source: Decodable {
     public let name: String
 }
 
+@available(macOS 10.15, iOS 13.0, *)
 public final class NewsAPIClient {
 
     public init() {}

@@ -52,6 +52,7 @@ public struct AddArticleResponse: Decodable {
     public let link: String
 }
 
+@available(macOS 10.15, iOS 13.0, *)
 public final class MaterialsClient {
 
     public init() {

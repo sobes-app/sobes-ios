@@ -26,6 +26,7 @@ public protocol ProfileProvider {
     func recoverAccount(email: String) async -> Bool
     func forgotPassword(email: String, password: String) async -> Bool
     func updateProfile(level: String?, professions: [String]?, companies: [String]?) async -> Result<Bool, CustomError>
+    func sendFeedback(content: String) async -> Bool
     func logout() async
 }
 
@@ -60,6 +61,18 @@ public final class ProfileProviderImpl: ProfileProvider {
             return .success(profile.level)
         case .failure(let error):
             return .failure(error)
+        }
+    }
+    
+    public func sendFeedback(content: String) async -> Bool {
+        let authClient = AuthClient()
+        let result = await authClient.sendFeedback(content: content)
+
+        switch result {
+        case .success:
+            return true
+        case .failure:
+            return false
         }
     }
 
