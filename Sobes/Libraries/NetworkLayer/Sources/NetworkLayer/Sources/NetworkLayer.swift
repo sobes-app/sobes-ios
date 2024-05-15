@@ -74,6 +74,13 @@ public final class NetworkLayer {
         .resume()
     }
 
+    private var isRefreshingToken = false
+    private let refreshLock = DispatchSemaphore(value: 1)
+    private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
+    private let accessTokenKey = KeychainKey<String>(key: "accessToken")
+    private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
+    private let tokenType = KeychainKey<String>(key: "tokenType")
+
     private func prepareAuthorizationHeader(for request: inout URLRequest) {
         if let tokenType = try? keychain.get(tokenType),
            let accessToken = try? keychain.get(accessTokenKey) {
@@ -156,11 +163,6 @@ public final class NetworkLayer {
             }
         }.resume()
     }
-
-    private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
-    private let accessTokenKey = KeychainKey<String>(key: "accessToken")
-    private let refreshTokenKey = KeychainKey<String>(key: "refreshToken")
-    private let tokenType = KeychainKey<String>(key: "tokenType")
 
 }
 

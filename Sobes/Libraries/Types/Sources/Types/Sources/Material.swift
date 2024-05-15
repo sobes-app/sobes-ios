@@ -6,10 +6,3 @@ public enum Material: Hashable {
     case article(model: Article)
 
 }
-
-public enum MaterialWithoutModel {
-
-    case tip
-    case article
-
-}

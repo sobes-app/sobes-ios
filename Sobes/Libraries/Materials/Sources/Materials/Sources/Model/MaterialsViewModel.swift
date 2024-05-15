@@ -12,15 +12,16 @@ public protocol MaterialsViewModel: ObservableObject {
     var materialsFilters: [Types.Filter] { get }
     var appMode: ApplicationMode { get }
     var isLoading: Bool { get }
+    var isAddMaterialLoading: Bool { get }
     var isError: Bool { get }
     func onViewAppear() async
     func onFilterTapped(id: Int) async
+    func updateMaterials() async
     func onMaterialsFilterTapped(id: Int) async
-    func getParsedArticle(id: Int) async -> ParsedArticle?
+    func getParsedArticle(article: Types.Article) async -> ParsedArticle?
 
     // admin mode functions
-    func addArticle(link: String)
-    func addTip(company: Company, author: String, text: String)
+    func addTip(company: Company, author: String, text: String, role: Professions) async -> Bool
 }
 
 @MainActor
@@ -31,6 +32,7 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
     @Published public var materialsFilters: [Types.Filter] = []
     @Published public var appMode: ApplicationMode = .user
     @Published public var isLoading: Bool = false
+    @Published public var isAddMaterialLoading: Bool = false
     @Published public var isError: Bool = false
 
     public init(materialsProvider: MaterialsProvider, profileProvider: ProfileProvider) {
@@ -54,31 +56,40 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
 
     public func onFilterTapped(id: Int) async {
         filters[id].isActive.toggle()
-        if filtersNotActive() {
-            if materialsFilters.isTipsFilterActive {
-                materials = await getTips()
-            } else {
-                materials = await getArticles()
-            }
-        } else {
-            var filteredMaterials: [Types.Material] = []
-            for filter in filters {
-                if filter.isActive {
+        await updateMaterials()
+    }
+
+    public func updateMaterials() async {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                if filtersNotActive() {
                     if materialsFilters.isTipsFilterActive {
-                        filteredMaterials.append(contentsOf: await getTips().filter { material in
-                            switch material {
-                            case .tip(let model):
-                                return model.company.rawValue.contains(filter.name)
-                            case .article:
-                                return false
-                            }
-                        })
+                        materials = await getTips()
                     } else {
-                        filteredMaterials = await getArticles()
+                        materials = await getArticles()
                     }
+                } else {
+                    var filteredMaterials: [Types.Material] = []
+                    for filter in filters {
+                        if filter.isActive {
+                            if materialsFilters.isTipsFilterActive {
+                                filteredMaterials.append(contentsOf: await getTips().filter { material in
+                                    switch material {
+                                    case .tip(let model):
+                                        return model.company.rawValue.contains(filter.name)
+                                    case .article:
+                                        return false
+                                    }
+                                })
+                            } else {
+                                filteredMaterials = await getArticles()
+                            }
+                        }
+                    }
+                    materials = filteredMaterials
                 }
             }
-            materials = filteredMaterials
         }
     }
 
@@ -94,18 +105,22 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
         }
     }
 
-    public func getParsedArticle(id: Int) async -> ParsedArticle? {
-        let material = await getArticles()[id]
-        guard case .article(let article) = material else { return nil }
+    public func getParsedArticle(article: Types.Article) async -> ParsedArticle? {
         return await fetchArticle(from: article.url)
     }
 
-    public func addTip(company: Company, author: String, text: String) {
-//        materialsProvider.addTip(tip)
-    }
-
-    public func addArticle(link: String) {
-//        materialsProvider.addArticle(article)
+    public func addTip(company: Company, author: String, text: String, role: Professions) async -> Bool {
+        isAddMaterialLoading = true
+        let result = await materialsProvider.addTip(company: company.rawValue, author: author, text: text, role: role.rawValue)
+        switch result {
+        case .success:
+            isAddMaterialLoading = false
+            return true
+        case .failure:
+            isAddMaterialLoading = false
+            isError = true
+            return false
+        }
     }
 
     private let materialsProvider: MaterialsProvider
@@ -144,7 +159,7 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
         isError = false
         isLoading = true
 
-        let result = await materialsProvider.getArticles()
+        let result = await materialsProvider.fetchArticles()
         switch result {
         case .success(let articles):
             isLoading = false
@@ -185,7 +200,7 @@ public final class MaterialsViewModelImpl: MaterialsViewModel {
 //            let h2 = try doc.select("h2").array().map { try $0.text() }
 //            let h3 = try doc.select("h3").array().map { try $0.text() }
 
-            let paragraphs = try doc.select("p").array().map { try $0.text() }
+            let paragraphs = try doc.select("p").array().dropLast(5).map { try $0.text() }
             let bodyText = paragraphs.joined(separator: "\n\n")
 
             let authorName = try doc.select(".tm-user-info__username").first()?.text()

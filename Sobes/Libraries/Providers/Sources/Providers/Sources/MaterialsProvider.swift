@@ -2,22 +2,25 @@ import SwiftUI
 import Types
 import NetworkLayer
 import SwiftyKeychainKit
+import NewsAPI
 
 public protocol MaterialsProvider {
     func getTips() async -> Result<[Types.Material], CustomError>
     func getArticles() async -> Result<[Types.Material], CustomError>
 
+    func fetchArticles() async -> Result<[Types.Material], CustomError>
+
     // admin mode functions
-    func addTip(_ tip: Types.Tip)
-    func addArticle(_ article: Types.Article)
+    func addTip(company: String, author: String, text: String, role: String) async -> Result<Void, CustomError>
 }
 
 public final class MaterialsProviderImpl: MaterialsProvider {
 
-    public init() { }
+    public init() { 
+        self.materialsClient = MaterialsClient()
+    }
 
     public func getTips() async -> Result<[Types.Material], CustomError> {
-        let materialsClient = MaterialsClient()
         let result = await materialsClient.getTips()
         switch result {
         case .success(let tips):
@@ -51,12 +54,11 @@ public final class MaterialsProviderImpl: MaterialsProvider {
     }
 
     public func getArticles() async -> Result<[Types.Material], CustomError> {
-        let materialsClient = MaterialsClient()
         let result = await materialsClient.getArticles()
         switch result {
         case .success(let articles):
             return .success(articles.map {
-                .article(model: Article(id: $0.id, logo: URL(string: $0.link)?.host(), author: $0.author, text: $0.author, url: $0.link))
+                .article(model: Article(logo: URL(string: $0.link)?.host(), author: $0.author, text: $0.author, url: $0.link))
             })
         case .failure(let error):
             switch error {
@@ -73,17 +75,44 @@ public final class MaterialsProviderImpl: MaterialsProvider {
         }
     }
 
-    public func addTip(_ tip: Tip) {
-        print("типа добавили совет")
+    public func fetchArticles() async -> Result<[Types.Material], CustomError> {
+        let newsService = NewsAPIClient()
+        let result = await newsService.fetchArticles(
+            query: "собеседования OR собеседование OR собеседованию OR IT-собеседованию OR IT-собеседованиях OR бизнес-аналитик OR менеджер проектов OR менеджер проекта OR менеджер продукта OR бизнес аналитик OR IT-собеседование"
+        )
+        switch result {
+        case .success(let articles):
+            return .success(
+                articles.map {
+                    .article(model: Article(logo: URL(string: $0.url)?.host(), author: $0.author, text: $0.description, url: $0.url))
+                }
+            )
+        case .failure:
+            return .failure(.error)
+        }
     }
 
-    public func addArticle(_ tip: Article) {
-        print("типа добавили статью")
+    public func addTip(company: String, author: String, text: String, role: String) async -> Result<Void, CustomError> {
+        let result = await materialsClient.addTip(
+            profession: role,
+            company: company,
+            name: author,
+            level: "",
+            text: text
+        )
+
+        switch result {
+        case .success:
+            return .success(())
+        case .failure:
+            return .failure(.error)
+        }
     }
 
     private let keychain: Keychain = Keychain(service: "com.swifty.keychain")
     private let accessTokenKey = KeychainKey<String>(key: "accessToken")
     private let tokenType = KeychainKey<String>(key: "tokenType")
+    private let materialsClient: MaterialsClient
 
 //    private var articles: [Types.Material] = [
 //        .article(
