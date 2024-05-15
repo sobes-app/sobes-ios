@@ -13,12 +13,21 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/andriyslyusar/SwiftyKeychainKit", from: "1.0.0-beta.2"),
+        .package(url: "https://github.com/AliSoftware/OHHTTPStubs", from: "9.1.0"),
+        .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.9.1"),
     ],
     targets: [
         .target(
             name: "NetworkLayer",
-            dependencies: ["SwiftyKeychainKit"],
+            dependencies: ["SwiftyKeychainKit", "Alamofire"],
             sources: ["Sources"]
+        ),
+        .testTarget(
+            name: "NetworkLayerTests",
+            dependencies: ["NetworkLayer",
+                           .product(name: "OHHTTPStubs", package: "OHHTTPStubs"),
+                           .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs")
+            ]
         ),
     ]
 )

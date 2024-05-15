@@ -7,6 +7,7 @@ public struct ProfileResponse: Decodable {
     public var level: String?
     public var professions: [String]?
     public var companies: [String]?
+    public var role: String
 }
 
 public struct CreateProfileRequest: Encodable {
@@ -26,6 +27,7 @@ public struct ResetPasswordRequest: Encodable {
     var newPassword: String
 }
 
+@available(macOS 10.15, iOS 13.0, *)
 public final class ProfileClient {
     
     public init() {

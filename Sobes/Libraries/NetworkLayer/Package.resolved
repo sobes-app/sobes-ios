@@ -1,0 +1,33 @@
+{
+  "originHash" : "b2490fb48a257cc8220ef5790ae12f5139336d95642d856232672c8a6da39a86",
+  "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "f455c2975872ccd2d9c81594c658af65716e9b9a",
+        "version" : "5.9.1"
+      }
+    },
+    {
+      "identity" : "ohhttpstubs",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AliSoftware/OHHTTPStubs",
+      "state" : {
+        "revision" : "12f19662426d0434d6c330c6974d53e2eb10ecd9",
+        "version" : "9.1.0"
+      }
+    },
+    {
+      "identity" : "swiftykeychainkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/andriyslyusar/SwiftyKeychainKit",
+      "state" : {
+        "revision" : "4d07ad0b2ec3c43df5ef762d59af22e47b9d1bd2",
+        "version" : "1.0.0-beta.2"
+      }
+    }
+  ],
+  "version" : 3
+}

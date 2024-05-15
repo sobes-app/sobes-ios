@@ -24,13 +24,23 @@ public struct FeedbackView<Model: ProfileViewModel>: View {
                     .font(Fonts.heading)
                     .foregroundColor(.black)
                 picker
-                switch selected {
-                case .bug:
-                    bugView
-                case .feature:
-                    featureView
-                case .other:
-                    otherView
+                if model.isLoading {
+                    LoadingScreen(placeholder: "Отправляю")
+                } else if model.isError {
+                    ErrorView(retryAction: {
+                        Task { @MainActor in
+                            await model.sendFeedback(content: text)
+                        }
+                    })
+                } else {
+                    switch selected {
+                    case .bug:
+                        bugView
+                    case .feature:
+                        featureView
+                    case .other:
+                        otherView
+                    }
                 }
             }
             .padding(.top, Constants.topPadding)
@@ -63,25 +73,16 @@ public struct FeedbackView<Model: ProfileViewModel>: View {
             Text("Здесь вы можете написать о возникшей ошибке. Будет круто, если вы сможете описать последовательность действий до возникновения ошибки и/или прикрепите скриншоты")
                 .font(Fonts.small)
                 .foregroundColor(Color("grey", bundle: .module))
-            photoPickerButton
-            if imagesSelection != [] {
-                imagesScroll
-            }
             textField
             Spacer()
-            MainButton(action: {}, label: "Отправить")
-        }
-        .onChange(of: itemsSelection, perform: { value in
-            Task {
-                imagesSelection.removeAll()
-                for item in itemsSelection {
-                    if let image = try? await item.loadTransferable(type: Image.self) {
-                        imagesSelection.append(image)
+            MainButton(action: {
+                Task { @MainActor in
+                    if await model.sendFeedback(content: text) {
+                        presentationMode.wrappedValue.dismiss()
                     }
                 }
-            }
-        })
-        .photosPicker(isPresented: $presentPhotoPicker, selection: $itemsSelection)
+            }, label: "Отправить")
+        }
     }
     
     var featureView: some View {
@@ -106,39 +107,6 @@ public struct FeedbackView<Model: ProfileViewModel>: View {
         }
     }
     
-    var photoPickerButton: some View {
-        Button(action: { presentPhotoPicker = true }, label: {
-            HStack {
-                Text("добавить фото")
-                    .foregroundColor(Color(.accent))
-                    .font(Fonts.small)
-                Image(systemName: "photo")
-                    .accentColor(Color(.accent))
-            }
-        })
-    }
-    
-    var imagesScroll: some View {
-        ScrollView(.horizontal) {
-            HStack {
-                ForEach(0..<imagesSelection.count, id: \.self) { index in
-                    ZStack {
-                        imagesSelection[index]
-                            .resizable()
-                            .frame(width: 70, height: 70)
-                            .cornerRadius(Constants.corner)
-                        Image(systemName: "xmark")
-                            .foregroundColor(.white)
-                            .onTapGesture {
-                                imagesSelection.remove(at: index)
-                            }
-                    }
-                }
-            }
-        }
-        .scrollIndicators(.hidden)
-    }
-    
     var textField: some View {
         TextField("Оставь отзыв", text: $text, axis: .vertical)
             .lineLimit(5...10)
@@ -150,12 +118,8 @@ public struct FeedbackView<Model: ProfileViewModel>: View {
             }
     }
     
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @State private var selected: FeedbackType = .bug
-    
-    @State var imagesSelection: [Image] = []
-    @State var itemsSelection: [PhotosPickerItem] = []
-    
-    @State var presentPhotoPicker: Bool = false
     @State var text: String = ""
     @ObservedObject private var model: Model
     @Binding private var showTabBar: Bool

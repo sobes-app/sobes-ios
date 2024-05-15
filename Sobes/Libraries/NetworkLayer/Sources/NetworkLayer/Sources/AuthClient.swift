@@ -40,9 +40,12 @@ public struct SignUpResponse: Decodable {
     public var token: String
     public var type: String
     public var refreshToken: String
+    public var role: String
 }
 
-public final class AuthClient {
+@available(macOS 10.15, iOS 13.0, *)
+open class AuthClient {
+    
     let netLayer: NetworkLayer
     
     public init() {
@@ -125,6 +128,16 @@ public final class AuthClient {
             self.netLayer.makeRequest(method: "GET",
                                       urlPattern: "/user/logout",
                                       body: EmptyRequest()) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    public func sendFeedback(content: String) async -> Result<FeedbackResponse, ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "POST",
+                                      urlPattern: "/feedback",
+                                      body: FeedbackRequest(content: content)) { result in
                 continuation.resume(returning: result)
             }
         }

@@ -8,7 +8,6 @@ public protocol ChatsProvider {
     var chats: [Chat]? {get set}
     var currentChat: Chat? {get set}
     
-    func addMessageToChat(chatId: Int, text: String)
     func createNewChat(responderId: Int) async -> Result<Chat, CustomError>
     func deleteChat(chatId: Int) async -> Result<Bool, CustomError>
     
@@ -16,6 +15,7 @@ public protocol ChatsProvider {
     func getChats() async -> Result<[Chat], CustomError>
     func getChatMessages(chatId: Int) async -> Result<[Types.Message], CustomError>
     func readMessages(messages: [Int]) async
+    func getFeedback() async -> [FeedbackResponse]
 }
 
 public final class ChatsProviderImpl: ChatsProvider {
@@ -126,6 +126,18 @@ public final class ChatsProviderImpl: ChatsProvider {
         _ = await chatsClient.readMessages(messages: messages)
     }
     
+    public func getFeedback() async -> [FeedbackResponse] {
+        let chatsClient = ChatsClient()
+        let result = await chatsClient.getFeedbacks()
+        
+        switch result {
+        case .success(let success):
+            return success
+        case .failure:
+            return []
+        }
+    }
+    
     func handleError(failure: ClientError) -> CustomError {
         switch failure {
         case .httpError(let code):
@@ -139,9 +151,5 @@ public final class ChatsProviderImpl: ChatsProvider {
         case .jsonDecodeError, .jsonEncodeError, .responseError:
             return .error
         }
-    }
-    
-    public func addMessageToChat(chatId: Int, text: String) {
-
     }
 }

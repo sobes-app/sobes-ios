@@ -9,6 +9,8 @@ public struct CreateChatResponse: Decodable {
 
 public struct Participant: Decodable {
     public let id: Int
+    public let username: String
+    public let email: String
 }
 
 public struct MessagesResponse: Decodable {
@@ -21,10 +23,22 @@ public struct MessagesResponse: Decodable {
     public let chatId: Int
 }
 
+public struct FeedbackResponse: Decodable, Identifiable {
+    public let id: Int
+    public let user: Participant
+    public let content: String
+    public let createdAt: String
+}
+
+public struct FeedbackRequest: Encodable {
+    public let content: String
+}
+
 public struct ReadResponse: Decodable {
     public let id: Int
 }
 
+@available(macOS 10.15, iOS 13.0, *)
 public final class ChatsClient {
     let netLayer: NetworkLayer
     
@@ -87,6 +101,16 @@ public final class ChatsClient {
             self.netLayer.makeRequest(method: "POST",
                                       urlPattern: "/chat/read",
                                       body: messages) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    public func getFeedbacks() async -> Result<[FeedbackResponse], ClientError> {
+        await withCheckedContinuation { continuation in
+            self.netLayer.makeRequest(method: "GET",
+                                      urlPattern: "/feedback",
+                                      body: EmptyRequest()) { result in
                 continuation.resume(returning: result)
             }
         }

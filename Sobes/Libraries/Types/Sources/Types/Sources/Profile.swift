@@ -27,11 +27,12 @@ public struct Profile: Identifiable, Hashable {
     
     public let id: Int
     public var name: String
-    public let email: String
+    public var email: String
     public var professions: [Professions]
     public var companies: [Companies]
     public var level: Levels
     public var mode: ApplicationMode
+    
 
     public init() {
         self.id = 0
@@ -50,7 +51,7 @@ public struct Profile: Identifiable, Hashable {
         self.professions = []
         self.companies = []
         self.level = Levels.no
-        self.mode = email == "barbashina015@mail.ru" ? .admin : .user
+        self.mode = signUpResponse.role == "[ROLE_USER]" ? .user : .admin
     }
     
     public init(profileResponse: ProfileResponse) {
@@ -60,8 +61,9 @@ public struct Profile: Identifiable, Hashable {
         self.professions = Profile.setProfessions(array: Array(profileResponse.professions ?? []))
         self.companies = Profile.setCompanies(array: Array(profileResponse.companies ?? []))
         self.level = Levels(rawValue: profileResponse.level ?? "") ?? .no
-        self.mode = email == "barbashina015@mail.ru" ? .admin : .user
+        self.mode = profileResponse.role == "[ROLE_USER]" ? .user : .admin
     }
+    
     
     public static func createStringOfCompanies(of profile: Profile) -> [String] {
         return profile.companies.map { $0.rawValue }

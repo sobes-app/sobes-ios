@@ -14,6 +14,7 @@ public enum FilterType {
 public protocol ChatViewModel: ObservableObject {
     var chats: [Chat]? {get set}
     var profiles: [Profile]? {get}
+    var feedback: [FeedbackResponse]? {get}
     var messages: [Types.Message] {get set}
     var messageId: Int {get set}
     var isLoading: Bool {get set}
@@ -25,6 +26,7 @@ public protocol ChatViewModel: ObservableObject {
     var filters: [Types.Filter] { get set }
     
     func onViewAppear() async
+    func getCurrentUserRole() -> ApplicationMode
     func getProfiles() async
     func getChats() async
     func clearFilters() async
@@ -38,6 +40,7 @@ public protocol ChatViewModel: ObservableObject {
     func fetchMessages(chatId: Int) async -> [Types.Message]
     func deleteChat(chatId: Int) async
     func readMessages(chat: Chat) async
+    func getFeedback() async
     
     func getAccessToken() -> String
     
@@ -58,6 +61,7 @@ public final class ChatViewModelImpl: ChatViewModel {
     
     @Published public var chats: [Chat]?
     @Published public var profiles: [Profile]?
+    @Published public var feedback: [FeedbackResponse]?
     @Published public var filters: [Types.Filter]
     @Published public var messageId: Int = 8
     
@@ -88,6 +92,10 @@ public final class ChatViewModelImpl: ChatViewModel {
     
     public func getCurrentUserId() -> Int {
         return profilesProvider.profile?.id ?? 0
+    }
+    
+    public func getCurrentUserRole() -> ApplicationMode {
+        return profilesProvider.profile?.mode ?? .user
     }
     
     public func onFilterTapped(id: Int, type: FilterType) {
@@ -184,6 +192,13 @@ public final class ChatViewModelImpl: ChatViewModel {
         }
     }
     
+    public func getFeedback() async {
+        isLoading = true
+        defer { isLoading = false }
+        
+        feedback = await chatProvider.getFeedback()
+    }
+    
     public func onViewAppear() async {
         if profilesProvider.profile == nil {
             _ = await profilesProvider.getProfile()
@@ -193,6 +208,9 @@ public final class ChatViewModelImpl: ChatViewModel {
         }
         if chats == nil {
             await getChats()
+        }
+        if feedback == nil {
+            await getFeedback()
         }
     }
     
@@ -319,7 +337,7 @@ public final class ChatViewModelImpl: ChatViewModel {
     }
     
     public func connect() {
-        let url = URL(string: "ws://localhost:8085/ws/chat")!
+        let url = URL(string: "ws://158.160.152.141:8085/ws/chat")!
         webSocketTask = urlSession.webSocketTask(with: url)
         webSocketTask?.resume()
         receiveMessage()
@@ -372,7 +390,7 @@ public final class ChatViewModelImpl: ChatViewModel {
         DispatchQueue.main.async {
             do {
                 let messagesResponse = try JSONDecoder().decode(MessagesResponse.self, from: jsonData)
-                let isCurrentUser = messagesResponse.sender.id == self.profilesProvider.getCurrentUser().id
+                let isCurrentUser = messagesResponse.sender.id == self.getCurrentUserId()
                 let message = Types.Message(messageResponse: messagesResponse, isCurrent: isCurrentUser)
                 
                 if var chats = self.chats,
